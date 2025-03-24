@@ -17,10 +17,12 @@
 # include <unistd.h>
 # include <stdlib.h>
 # include "../printf/header/ft_printf.h"
+#include <readline/readline.h>
+#include <readline/history.h>
 
 typedef struct s_minishell
 {
-	s_list *tokens;
+	t_list *tokens;
 } t_minishell;
 
 typedef struct s_token

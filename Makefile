@@ -3,7 +3,7 @@ BONUS		= minishell_bonus
 AR         = ar
 ARFLAGS    = -rcs
 CC         = cc
-CFLAGS     = -Wall -Wextra -Werror -g #-fsanitize=address
+CFLAGS     = -Wall -Wextra -Werror -lreadline -lhistory #-fsanitize=address 
 OFLAGS     = -MMD -MF $(@:.o=.d)
 
 # Directorios
@@ -16,7 +16,7 @@ BOBJDIR		= bonus_obj
 PRINTFDIR  = printf
 
 # Archivos de cabecera
-LIB        = header/ft_minishell.h
+LIB        = minishell.h
 
 # Archivos fuente
 SRC        = 
@@ -32,7 +32,7 @@ DEPS       = $(addprefix $(DEPDIR)/, $(SRC:.c=.d) $(UTILS:.c=.d) $(GET:.c=.d))
 LIBPRINTF  = $(PRINTFDIR)/libftprintf.a
 
 # Archivo principal
-MAIN       =
+MAIN       = tokenization.c
 BMAIN		=
 # Colores
 RED        = \033[0;31m

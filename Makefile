@@ -3,7 +3,7 @@ BONUS		= minishell_bonus
 AR         = ar
 ARFLAGS    = -rcs
 CC         = cc
-CFLAGS     = -Wall -Wextra -Werror -lreadline -lhistory #-fsanitize=address 
+CFLAGS     = -Wall -Wextra -Werror  -lreadline -L/opt/homebrew/opt/readline/lib -I/opt/homebrew/opt/readline/include #-fsanitize=address 
 OFLAGS     = -MMD -MF $(@:.o=.d)
 
 # Directorios
@@ -16,7 +16,7 @@ BOBJDIR		= bonus_obj
 PRINTFDIR  = printf
 
 # Archivos de cabecera
-LIB        = minishell.h
+LIB        = header/minishell.h
 
 # Archivos fuente
 SRC        = 

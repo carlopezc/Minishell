@@ -1,12 +1,39 @@
 
 #include "header/minishell.h"
 
+
+int     choose_type(char *input)
+{
+    
+}
+
 void    tokenization(char *input)
 {
-    (void)input;
-    return ;
-    
+    t_minishell *minishell;
+    t_token     *token;
+    t_list      *token_list;
 
+    if (!input)
+        return ;
+
+    minishell = malloc(sizeof(t_minishell));
+    if (!minishell)
+        return ;
+    minishell->tokens = NULL;
+    token_list = malloc(sizeof(t_list));
+    if (!token_list)
+        return ;
+    token_list->content = malloc(sizeof(t_token));
+    if (!token_list->content)
+        return ;
+    token_list->next = NULL;
+    token = malloc(sizeof(t_token));
+    if (!token)
+        return ;
+    token->str = input;
+    token->type = choose_type(input);
+    token_list->content = token;
+    return ;
 }
 
 int main(void)

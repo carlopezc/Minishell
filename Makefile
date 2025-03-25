@@ -1,9 +1,11 @@
 NAME       = minishell
+ 
 BONUS		= minishell_bonus
 AR         = ar
 ARFLAGS    = -rcs
 CC         = cc
-CFLAGS     = -Wall -Wextra -Werror -lreadline -lhistory #-fsanitize=address 
+RFLAGS	= -L/usr/local/lib -I/usr/local/include -lreadline -lncurses
+CFLAGS     = -Wall -Wextra -Werror #-fsanitize=address 
 OFLAGS     = -MMD -MF $(@:.o=.d)
 
 # Directorios
@@ -16,10 +18,10 @@ BOBJDIR		= bonus_obj
 PRINTFDIR  = printf
 
 # Archivos de cabecera
-LIB        = minishell.h
+LIB        = header/ft_minishell.h
 
 # Archivos fuente
-SRC        = 
+SRC        = tokenization.c
 BSRC		= 
 UTILS      =
 
@@ -32,7 +34,7 @@ DEPS       = $(addprefix $(DEPDIR)/, $(SRC:.c=.d) $(UTILS:.c=.d) $(GET:.c=.d))
 LIBPRINTF  = $(PRINTFDIR)/libftprintf.a
 
 # Archivo principal
-MAIN       = tokenization.c
+MAIN       = main.c
 BMAIN		=
 # Colores
 RED        = \033[0;31m
@@ -74,7 +76,7 @@ $(LIBPRINTF):
 # Enlace final del ejecutable
 $(NAME): $(MAIN) $(OBJS) $(LIBPRINTF)
 	@printf "%-42b%b" "$(PURPLE)$<:" "$(BLUE)$(@F)$(RESET)\n"
-	@$(CC) $(CFLAGS) $(MAIN) $(OBJS) $(LIBPRINTF) -o $(NAME)
+	@$(CC) $(CFLAGS) $(MAIN) $(OBJS) $(LIBPRINTF) -o $(NAME) $(RFLAGS)
 
 bonus: $(BONUS) $(LIBPRINTF) $(LIB) Makefile
 

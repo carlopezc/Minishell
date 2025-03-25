@@ -1,13 +1,5 @@
 
-#include "header/minishell.h"
-
-void    tokenization(char *input)
-{
-    (void)input;
-    return ;
-    
-
-}
+#include "header/ft_minishell.h"
 
 int main(void)
 {
@@ -16,9 +8,9 @@ int main(void)
     input = readline("minishell> ");
     while (*input)
     {
-        printf("%s\n", input);
         add_history(input);
-        tokenization(input);
+
+        ft_tokenization(input);
         free(input);
         input = readline("minishell> ");
     }

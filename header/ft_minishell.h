@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   ft_minishell.h                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 14:59:32 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/03/24 15:05:30 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/03/24 15:39:39 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 
 typedef struct s_minishell
 {
+	char	**env;
 	s_list *tokens;
 } t_minishell;
 
@@ -28,5 +29,14 @@ typedef struct s_token
 	char *str;
 	int	type;
 } t_token;
+
+typedef struct s_pipex
+{
+	int	docs[2];
+	int	pipe[2][2];
+	int	pid;
+	char	**command;
+	char	*path;
+} t_pipex;
 
 #endif

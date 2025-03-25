@@ -4,8 +4,12 @@ BONUS		= minishell_bonus
 AR         = ar
 ARFLAGS    = -rcs
 CC         = cc
+<<<<<<< HEAD
 RFLAGS	= -L/usr/local/lib -I/usr/local/include -lreadline -lncurses
 CFLAGS     = -Wall -Wextra -Werror #-fsanitize=address 
+=======
+CFLAGS     = -Wall -Wextra -Werror  -lreadline -L/opt/homebrew/opt/readline/lib -I/opt/homebrew/opt/readline/include #-fsanitize=address 
+>>>>>>> 9caff8f667161ceb62017a70834403d6e5342168
 OFLAGS     = -MMD -MF $(@:.o=.d)
 
 # Directorios
@@ -18,7 +22,11 @@ BOBJDIR		= bonus_obj
 PRINTFDIR  = printf
 
 # Archivos de cabecera
+<<<<<<< HEAD
 LIB        = header/ft_minishell.h
+=======
+LIB        = header/minishell.h
+>>>>>>> 9caff8f667161ceb62017a70834403d6e5342168
 
 # Archivos fuente
 SRC        = tokenization.c

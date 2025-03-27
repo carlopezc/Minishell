@@ -1,63 +1,100 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/25 12:25:20 by carlopez          #+#    #+#             */
+/*   Updated: 2025/03/25 18:54:08 by carlopez         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-<<<<<<< HEAD:main.c
+
 #include "header/ft_minishell.h"
-=======
-#include "header/minishell.h"
 
-
-int     choose_type(char *input)
+void	ft_free_array(char **arr)
 {
-    
+	int	i;
+
+	if (!arr || !*arr)
+		return ;
+	i = 0;
+	while (arr[i])
+		free(arr[i++]);
+	free(arr);
 }
 
-void    tokenization(char *input)
+void	ft_free_node(t_list *token)
 {
-    t_minishell *minishell;
-    t_token     *token;
-    t_list      *token_list;
-
-    if (!input)
-        return ;
-
-    minishell = malloc(sizeof(t_minishell));
-    if (!minishell)
-        return ;
-    minishell->tokens = NULL;
-    token_list = malloc(sizeof(t_list));
-    if (!token_list)
-        return ;
-    token_list->content = malloc(sizeof(t_token));
-    if (!token_list->content)
-        return ;
-    token_list->next = NULL;
-    token = malloc(sizeof(t_token));
-    if (!token)
-        return ;
-    token->str = input;
-    token->type = choose_type(input);
-    token_list->content = token;
-    return ;
-}
->>>>>>> 9caff8f667161ceb62017a70834403d6e5342168:tokenization.c
-
-int main(void)
-{
-    char    *input;
-
-    input = readline("minishell> ");
-    while (*input)
-    {
-        add_history(input);
-
-        ft_tokenization(input);
-        free(input);
-        input = readline("minishell> ");
-    }
-    if (input)
-        free(input);
-    if (!input)       
-        printf("exit\n");
-    //tokenization(input);
-    return (0);
+	if (!token)
+		return ;
+	if (token->content && ((t_token *)token->content)->str)
+		free(((t_token *)token->content)->str);
+	if (token->content)
+		free(token->content);
+	return ;
 }
 
+void	ft_free_list(t_list **tokens)
+{
+	t_list	*rem;
+	t_list	*mov;
+
+	if (!tokens)
+		return ;
+	rem = *tokens;
+	while (rem)
+	{
+		mov = rem->next;
+		ft_free_node(rem);
+		rem = mov;
+	}
+	*tokens = NULL;
+}
+
+void	ft_free_struct(t_minishell *minishell)
+{
+	if (!minishell)
+		return ;
+	ft_free_list(&(minishell->tokens));
+	free(minishell);
+	return ;
+}
+
+//HAY LEAKS POR TODOS LADOS
+int	main(int argc, char **env)
+{
+	char    *input;
+	char	**s_input;
+	t_minishell	*minishell;
+
+	(void)argc;
+	minishell = ft_init_struct();
+	if (!minishell)
+		return (-1);
+	minishell->env = env;
+	input = readline("minishell> ");
+	if (!input || !*input)
+		return (ft_free_struct(minishell), -1);
+	s_input = ft_split(input, ' ');
+	//faltan frees de muchas cosas!!
+	if (!s_input)
+	    return (ft_free_struct(minishell), free(input), -1);
+	while (input && *input)
+	{
+		add_history(input);
+		s_input = ft_split(input, ' ');
+		ft_tokenization(s_input, minishell);
+		free(input);
+		if (s_input)
+			ft_free_array(s_input);
+		input = readline("minishell> ");
+	}
+	//tokenization(input);
+	if (input)
+		free(input);
+	if (s_input && *s_input)
+		ft_free_array(s_input);
+	return (ft_free_struct(minishell), 0);
+}

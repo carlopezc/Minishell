@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 14:59:32 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/03/24 17:18:39 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/03/27 13:02:50 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,17 +20,37 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
-
-typedef struct s_minishell
+typedef enum e_token_type
 {
-	t_list *tokens;
-} t_minishell;
+	PIPE,
+	EXEC,
+	COMMAND,
+	BUILTIN,
+	REDIR_IN,
+	REDIR_OUT,
+	HEREDOC,
+	APPEND,
+	AND,
+	OR,
+	NOT_SET	
+}	t_token_type;
 
 typedef struct s_token
 {
 	char *str;
-	int	type;
-} t_token;
+	t_token_type	type;
+	struct s_token	*next;
+}	t_token;
 
-void    ft_tokenization(char *input);
+typedef struct s_minishell
+{
+	t_token *tokens;
+	char	**env;
+}	t_minishell;
+
+int	ft_init_minishell(t_minishell **minishell, char **env);
+int	ft_process_input(t_minishell **minishell, char *input);
+
+
+	
 #endif

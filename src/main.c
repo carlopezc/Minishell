@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:15:05 by carlopez          #+#    #+#             */
-/*   Updated: 2025/03/26 18:06:49 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/03/27 18:22:54 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ int	main(int argc, char **argv, char **env)
 		return (ft_printf("Error in function readline\n"), -1);
 	if (!ft_init_minishell(&minishell, env))
 		return (free(input), ft_printf("Error in malloc\n"), -1);
+	ft_printf("EL input es %s\n", input);
 	while (input && *input)
 	{
 		if (!ft_process_input(&minishell, input))
@@ -34,6 +35,6 @@ int	main(int argc, char **argv, char **env)
 	}
 	if (input)
 		free(input);
-	return (free(minishell), 0);
+	return (0);
 		
 }

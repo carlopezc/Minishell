@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/03/27 16:47:07 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/03/27 18:48:45 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,14 +123,19 @@ t_token_type	ft_is_operator(char *input)
 		return (NOT_SET);
 }
 
-int	ft_is_builtin(char *input)
+int	ft_is_builtin(char *input, char *next)
 {
 	if (!ft_strncmp(input, "echo", ft_strlen(input)))
 		return (1);
 	else if (!ft_strncmp(input, "cd", ft_strlen(input)))
 		return (1);
 	else if (!ft_strncmp(input, "pwd", ft_strlen(input)))
+	{
+		//si pasa esto habria que meter un exit
+		if (next)
+			ft_printf("pwd: too many arguments\n");
 		return (1);
+	}
 	else if (!ft_strncmp(input, "export", ft_strlen(input)))
 		return (1);
 	else if (!ft_strncmp(input, "unset", ft_strlen(input)))
@@ -151,7 +156,7 @@ int	ft_define_parts(char **s_input, char **input, t_token_type *type, int *i)
 		*input = ft_group_input(s_input, i);
 		return (1);
 	}
-	else if (ft_is_builtin(s_input[*i]))
+	else if (ft_is_builtin(s_input[*i], s_input[*i + 1]))
 	{
 		*type = BUILTIN;
 		*input = ft_group_input(s_input, i);
@@ -169,8 +174,6 @@ int	ft_define_parts(char **s_input, char **input, t_token_type *type, int *i)
 				*input = s_input[++(*i)];
 			else
 				return (0);
-		//si es |, ||, && guay. le paso eso
-		//si es >, <, >> o << le paso como input el siguiente argumento, el archivo que pruebo a abrir
 		}
 		return (1);
 	}
@@ -224,24 +227,35 @@ int	ft_process_input(t_minishell **minishell, char *input)
 	return (1);
 }
 
-char	**ft_strdup_pp(char **str)
+void	ft_free_array(char **arr)
+{
+	int	i;
+
+	if (!arr || !*arr)
+		return ;
+	i = 0;
+	while (arr[i])
+		free(arr[i++]);
+	free(arr);
+}
+
+char	**ft_strdup_env(char **env)
 {
 	int	i;
 	char	**cpy_env;
 
 	i = 0;
-	while (str[i])
+	while (env[i])
 		i++;
-	cpy_env = (char **)malloc(i + 1 * sizeof(char *));
+	cpy_env = (char **)malloc((i + 1) * sizeof(char *));
 	if (!cpy_env)
 		return (NULL);
 	i = 0;
-	while (str[i])
+	while (env[i])
 	{
-		cpy_env[i] = ft_strdup(str[i]);
-		//si se va que libere todo lo de antes tengo que hacer
+		cpy_env[i] = ft_strdup(env[i]);
 		if (!cpy_env[i])
-			return (NULL);
+			return (ft_free_array(cpy_env), NULL);
 		i++;
 	}
 	cpy_env[i] = NULL;
@@ -254,6 +268,6 @@ int	ft_init_minishell(t_minishell **minishell, char **env)
 	if (!(*minishell))
 		return (0);
 	(*minishell)->tokens = NULL;
-	(*minishell)->env = ft_strdup_pp(env);
+	(*minishell)->env = ft_strdup_env(env);
 	return (1);
 }

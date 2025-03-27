@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/03/27 15:06:28 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/03/27 16:47:07 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -224,12 +224,36 @@ int	ft_process_input(t_minishell **minishell, char *input)
 	return (1);
 }
 
+char	**ft_strdup_pp(char **str)
+{
+	int	i;
+	char	**cpy_env;
+
+	i = 0;
+	while (str[i])
+		i++;
+	cpy_env = (char **)malloc(i + 1 * sizeof(char *));
+	if (!cpy_env)
+		return (NULL);
+	i = 0;
+	while (str[i])
+	{
+		cpy_env[i] = ft_strdup(str[i]);
+		//si se va que libere todo lo de antes tengo que hacer
+		if (!cpy_env[i])
+			return (NULL);
+		i++;
+	}
+	cpy_env[i] = NULL;
+	return (cpy_env);
+}
+
 int	ft_init_minishell(t_minishell **minishell, char **env)
 {
 	*minishell = (t_minishell *)malloc(sizeof(t_minishell));
 	if (!(*minishell))
 		return (0);
 	(*minishell)->tokens = NULL;
-	(*minishell)->env = env;
+	(*minishell)->env = ft_strdup_pp(env);
 	return (1);
 }

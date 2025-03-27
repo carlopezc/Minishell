@@ -1,9 +1,24 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2025/03/27 15:14:10 by carlopez          #+#    #+#              #
+#    Updated: 2025/03/27 21:00:10 by lbellmas         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
 NAME       = minishell
+ 
 BONUS		= minishell_bonus
 AR         = ar
 ARFLAGS    = -rcs
 CC         = cc
-CFLAGS     = -Wall -Wextra -Werror -g #-fsanitize=address
+
+RFLAGS	= -L/usr/local/lib -I/usr/local/include -lreadline -lncurses
+CFLAGS     = -Wall -Wextra -Werror #-fsanitize=address 
 OFLAGS     = -MMD -MF $(@:.o=.d)
 
 # Directorios
@@ -14,25 +29,27 @@ DEPDIR     = deps
 OBJDIR     = objs
 BOBJDIR		= bonus_obj
 PRINTFDIR  = printf
+OUTILSDIR	= utils_objects
 
 # Archivos de cabecera
 LIB        = header/ft_minishell.h
 
 # Archivos fuente
-SRC        = 
+SRC        = ft_tokenization.c ft_executor.c
 BSRC		= 
-UTILS      =
+UTILS      = ft_utils.c
 
 # Archivos de objetos
 OBJS       = $(addprefix $(OBJDIR)/, $(SRC:.c=.o))
 BOBOJ		= $(addprefix $(BOBJDIR)/, $(BSRC:.c=.o))
 DEPS       = $(addprefix $(DEPDIR)/, $(SRC:.c=.d) $(UTILS:.c=.d) $(GET:.c=.d))
+OUTILS	= $(addprefix $(OUTILSDIR)/, $(UTILS:.c=.o))
 
 # Biblioteca
 LIBPRINTF  = $(PRINTFDIR)/libftprintf.a
 
 # Archivo principal
-MAIN       =
+MAIN       = src/main.c
 BMAIN		=
 # Colores
 RED        = \033[0;31m
@@ -59,9 +76,17 @@ $(BOBJ): $(BOBJDIR)/%.o : $(BSRCDIR)/%.c Makefile | $(BOBJDIR) $(DEPDIR)
 	@$(CC) $(CFLAGS) $(OFLAGS) -c $< -o $@
 	@mv $(OBJDIR)/*.d $(DEPDIR)
 
+$(OUTILS): $(OUTILSDIR)/%.o : $(UTILSDIR)/%.c Makefile | $(OUTILSDIR) $(DEPSDIR)
+	@printf "%-42b%b" "$(PURPLE)$<:" "$(BLUE)$(@F)$(RESET)\n"
+	@$(CC) $(CFLAGS) $(OFLAGS) -c $< -o $@
+	@mv $(OUTILSDIR)/*.d deps/
+
 # Creación de directorios
 $(OBJDIR):
 	@mkdir -p $(OBJDIR)
+
+$(OUTILSDIR):
+	@mkdir -p $(OUTILSDIR)
 
 $(DEPDIR):
 	@mkdir -p $(DEPDIR)
@@ -72,9 +97,9 @@ $(LIBPRINTF):
 	@$(MAKE) --silent -C $(PRINTFDIR)
 
 # Enlace final del ejecutable
-$(NAME): $(MAIN) $(OBJS) $(LIBPRINTF)
+$(NAME): $(MAIN) $(OBJS) $(OUTILS) $(LIBPRINTF)
 	@printf "%-42b%b" "$(PURPLE)$<:" "$(BLUE)$(@F)$(RESET)\n"
-	@$(CC) $(CFLAGS) $(MAIN) $(OBJS) $(LIBPRINTF) -o $(NAME)
+	@$(CC) $(CFLAGS) $(MAIN) $(OBJS) $(OUTILS) $(LIBPRINTF) -o $(NAME) $(RFLAGS)
 
 bonus: $(BONUS) $(LIBPRINTF) $(LIB) Makefile
 

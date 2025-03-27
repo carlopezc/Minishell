@@ -1,42 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_minishell.h                                     :+:      :+:    :+:   */
+/*   ft_utils.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/24 14:59:32 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/03/27 12:12:54 by lbellmas         ###   ########.fr       */
+/*   Created: 2025/03/27 17:47:17 by lbellmas          #+#    #+#             */
+/*   Updated: 2025/03/27 17:55:39 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINISHELL_H
-# define MINISHELL_H
+#include <stdlib.h>
+#include <unistd.h>
 
-# include <stdio.h>
-# include <unistd.h>
-# include <stdlib.h>
-# include "../printf/header/ft_printf.h"
-
-typedef struct s_token
+void	ft_clear_split(char **split)
 {
-	char *str;
-	int	type;
-} t_token;
+	int 	p;
 
-typedef struct s_minishell
-{
-	char	**env;
-	t_token *tokens;
-} t_minishell;
-
-typedef struct s_pipex
-{
-	int	docs[2];
-	int	pipe[2][2];
-	int	pid;
-	char	**command;
-	char	*path;
-} t_pipex;
-
-#endif
+	if (!split)
+		return ;
+	p = 0;
+	while (split[p])
+	{
+		free(split[p]);
+		p++;
+	}
+	free(split);
+}

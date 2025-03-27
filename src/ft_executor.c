@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/03/26 15:31:38 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/03/27 12:34:30 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,24 +56,24 @@ void	ft_exec_command(t_pipex *pipex, char **env)
 {
 	char	*temp;
 	char	*path_command;
-	char	*command;
+	char	**command;
 
 	temp = ft_strjoin("/", pipex->command[0]);
 	path_command = ft_strjoin(pipex->path, temp);
 	free(temp);
-	command = ft_free_exec_cmd(pipex);
+	//command = ft_free_exec_cmd(pipex);
 	execve(path_command, command, env);
 }
 
-void	ft_check_cd(char *temp, char *pwd)
+int	ft_check_cd(char *file, char *pwd)
 {
-	char	temp;
+	char	*temp;
 	char	*final;
 
 	temp = ft_strjoin(pwd, "/");
-	final = ft_strjoin(temp, temp);
+	final = ft_strjoin(temp, file);
 	free(temp);
-	if (acces(final, F_OK) != 0)
+	if (access(final, F_OK) != 0)
 		return (free(final), 0);
 	else
 		return (free(final), 1);
@@ -88,48 +88,48 @@ void	ft_cd(t_minishell *shell, char *cmd)
 
 	if (ft_strlen(cmd) == 2)
 	{
-		while (shell->env[p] && ft_strncmp(env[p], "PWD=", 4) != 0)
+		while (shell->env[p] && ft_strncmp(shell->env[p], "PWD=", 4) != 0)
 			p++;
 		if (!shell->env[p])
 			return ;
 		free(shell->env[p]);
 		u = 0;
-		while (shell->env[u] && ft_strncmp(env[u], "USER=", 5))
+		while (shell->env[u] && ft_strncmp(shell->env[u], "USER=", 5))
 			u++;
 		shell->env[p] = ft_strjoin("/home", shell->env[u] + 5);
 		return ;
 	}
 	if (cmd[3] == '/')
 	{
-		while (shell->env[p] && ft_strncmp(env[p], "PWD=", 4) != 0)
+		while (shell->env[p] && ft_strncmp(shell->env[p], "PWD=", 4) != 0)
 			p++;
 		if (!shell->env[p])
 			return ;
 		if (access(cmd + 3, F_OK) != 0)
 		{
 			free(shell->env[p]);
-			env[p] = ft_strjoin(cmd + 3, "\n");
+			shell->env[p] = ft_strjoin(cmd + 3, "\n");
 			return ;
 		}
 		else
 			return ;
 	}
-	if (ft_strncmp(ft_strchr(cmd, " ") + 1, "..", 2) == 0)
+	if (ft_strncmp(ft_strchr(cmd, ' ') + 1, "..", 2) == 0)
 	{
-		ft_errase_pwd(shell);
-		temp = ft_strchr(cmd, "/");
-		while (temp && ft_strncmp(temp + 1), "..")
+		//ft_errase_pwd(shell);
+		temp = ft_strchr(cmd, '/');
+		while (temp && ft_strncmp(temp + 1, "..", 2) == 0)
 		{
-			ft_errase_pwd(shell);
-			temp = ft_strchr(temp + 1, "/");
+			//ft_errase_pwd(shell);
+			temp = ft_strchr(temp + 1, '/');
 		}
 	}
 	else
-		temp = ft_strchr(cmd, " ");
+		temp = ft_strchr(cmd, ' ');
 	if (temp)
 	{
 		p = 0;
-		while (shell->env[p] && ft_strncmp(env[p], "PWD=", 4) != 0)
+		while (shell->env[p] && ft_strncmp(shell->env[p], "PWD=", 4) != 0)
 			p++;
 		if (!shell->env[p])
 			return ;
@@ -139,8 +139,8 @@ void	ft_cd(t_minishell *shell, char *cmd)
 				return ;
 			join = ft_strjoin(shell->env[p], "/");
 			free(shell->env[p]);
-			shell->env[p] = t_strjoin(join, temp + 1);
-			temp = ft_strchr(temp + 1, "/");
+			shell->env[p] = ft_strjoin(join, temp + 1);
+			temp = ft_strchr(temp + 1, '/');
 		}
 	}
 	temp = ft_strdup(shell->env[p]);
@@ -154,9 +154,9 @@ void	ft_pwd(t_minishell *shell)
 	int	p;
 
 	p = 0;
-	while (shell->env[p] && ft_strncmp(env[p], "PWD=", 4) != 0)
+	while (shell->env[p] && ft_strncmp(shell->env[p], "PWD=", 4) != 0)
 		p++;
-	ft_printf("%s", ft_strchr(shell->env[p], "/"));
+	ft_printf("%s", ft_strchr(shell->env[p], '/'));
 }
 
 void	ft_env(t_minishell *shell)
@@ -175,10 +175,10 @@ void	ft_echo(char *cmd)
 {
 	char	*temp;
 
-	temp = ft_strchr(cmd, " ");
+	temp = ft_strchr(cmd, ' ');
 	if (ft_strncmp(temp + 1, "-n", 2) == 0)
 	{
-		temp = ft_strchr(temp, " ");
+		temp = ft_strchr(temp, ' ');
 		write(1, temp + 1, ft_strlen(temp + 1) - 1);
 	}
 	else
@@ -187,23 +187,26 @@ void	ft_echo(char *cmd)
 
 void	ft_exec_build(t_minishell *shell, char *cmd)
 {
-	if (ft_strncmp(shell->tokens[p]->str, "echo", 4) == 0)
+	if (ft_strncmp(cmd, "echo", 4) == 0)
 		ft_echo(cmd);
-	if (ft_strncmp(shell->tokens[p]->str, "cd", 2) == 0)
+	if (ft_strncmp(cmd, "cd", 2) == 0)
 		ft_cd(shell, cmd);
-	if (ft_strncmp(shell->tokens[p]->str, "pwd", 3) == 0)
+	if (ft_strncmp(cmd, "pwd", 3) == 0)
 		ft_pwd(shell);
-	if (ft_strncmp(shell->tokens[p]->str, "export", 6) == 0)
-		ft_export();
-	if (ft_strncmp(shell->tokens[p]->str, "unset", 5) == 0)
-		ft_unset();
-	if (ft_strncmp(shell->tokens[p]->str, "env", 3) == 0)
+	if (ft_strncmp(cmd, "export", 6) == 0)
+		return ;
+		//ft_export();
+	if (ft_strncmp(cmd, "unset", 5) == 0)
+		return ;
+		//ft_unset();
+	if (ft_strncmp(cmd, "env", 3) == 0)
 		ft_env(shell);
-	if (ft_strncmp(shell->tokens[p]->str, "exit", 4) == 0)
-		ft_exit();
+	if (ft_strncmp(cmd, "exit", 4) == 0)
+		return ;
+		//ft_exit();
 }
 
-void	ft_exec_command(t_pipex *pipex, char **env, t_token *cmd)
+void	ft_pre_exec_command(t_pipex *pipex, char **env, t_token *cmd)
 {
 	char	*temp;
 	char	*path_command;
@@ -211,7 +214,7 @@ void	ft_exec_command(t_pipex *pipex, char **env, t_token *cmd)
 
 	if (cmd->type == ejecutable)
 	{
-		command = ft_split(cmd->str);
+		command = ft_split(cmd->str, ' ');
 		path_command = command[0];
 	}
 	else
@@ -234,11 +237,11 @@ void	ft_exec_command(t_pipex *pipex, char **env, t_token *cmd)
 
 void	ft_exec(t_minishell *shell, t_pipex *pipex, int p)
 {
-	if (shell->tokens[p]->type == build)
+	if (shell->tokens[p].type == build)
 	{
-		ft_exec_build(shell, shell->tokens[p]->str);
+		ft_exec_build(shell, shell->tokens[p].str);
 	}
-	if (shell->tokens[p]->type == command || shell->tokens[p]->type == ejecutable)
+	if (shell->tokens[p].type == command || shell->tokens[p].type == ejecutable)
 	{
 		if (pipex->docs[0] != 0)
 		{
@@ -257,10 +260,10 @@ void	ft_exec(t_minishell *shell, t_pipex *pipex, int p)
 		}
 		else
 		{
-			dup2(pipex->pipe[1], 1);
-			close(pipex->pipe[1]);
+			dup2(pipex->pipe[1][1], 1);
+			close(pipex->pipe[1][1]);
 		}
-		ft_exec_command(pipex, shell->env, shell->tokens[p]);
+		ft_pre_exec_command(pipex, shell->env, &(shell->tokens[p]));
 	}
 }
 
@@ -282,7 +285,8 @@ static int	ft_good_path(char *path, t_pipex **pipex, char **split, int p)
 {
 	free(path);
 	(*pipex)->path = ft_strdup(split[p]);
-	return (ft_clear_split(split), 1);
+	//return (ft_clear_split(split), 1);
+	return (1);
 }
 
 int	ft_path(char **env, t_pipex **pipex, char *cmd)

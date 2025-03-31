@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/03/27 21:07:00 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/03/31 15:36:46 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,22 @@ int	ft_check_cd(char *file, char *pwd)
 		return (free(final), 1);
 }
 
+void	ft_errase_pwd(t_minishell *shell)
+{
+	int	p;
+	int	c;
+
+	p = 0;
+	while (shell->env[p] && ft_strncmp(shell->env[p], "PWD=", 4) != 0)
+		p++;
+	if (!shell->env[p])
+		return ;
+	c = ft_strlen(shell->env[p]) - 1;
+	while (shell->env[p][c] != '/')
+		shell->env[p][c++] = '\0';
+	shell->env[p][c] = '\0';
+}
+
 void	ft_cd(t_minishell *shell, char *cmd)
 {
 	char	*temp;
@@ -118,11 +134,11 @@ void	ft_cd(t_minishell *shell, char *cmd)
 	}
 	if (ft_strncmp(ft_strchr(cmd, ' ') + 1, "..", 2) == 0)
 	{
-		//ft_errase_pwd(shell);
+		ft_errase_pwd(shell);
 		temp = ft_strchr(cmd, '/');
 		while (temp && ft_strncmp(temp + 1, "..", 2) == 0)
 		{
-			//ft_errase_pwd(shell);
+			ft_errase_pwd(shell);
 			temp = ft_strchr(temp + 1, '/');
 		}
 	}
@@ -203,7 +219,7 @@ void	ft_exec_build(t_minishell *shell, char *cmd)
 	if (ft_strncmp(cmd, "env", 3) == 0)
 		ft_env(shell);
 	if (ft_strncmp(cmd, "exit", 4) == 0)
-		return ;
+		exit(0) ;
 		//ft_exit();
 }
 

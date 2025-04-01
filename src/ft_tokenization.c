@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/04/01 18:27:33 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/01 18:55:31 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -309,6 +309,54 @@ char	**ft_strdup_env(char **env)
 	cpy_env[i] = NULL;
 	return (cpy_env);
 }
+char	*ft_quote_string(char *str)
+{
+	int 	i;
+	char	*quoted_str;
+
+	i = 0;
+	if (!str)
+		return (NULL);
+	i = ft_strlen(str);
+	quoted_str = (char *)malloc((i + 3) * sizeof(char));
+	if (!quoted_str)
+		return (NULL);
+	i = 0;
+	quoted_str[i++] = '"';
+	while (str[i])
+	{
+		quoted_str[i] = str[i];
+		i++;
+	}
+	quoted_str[i++] = '"';
+	quoted_str[i] = '\0';
+	return (quoted_str);
+}
+
+char	**ft_add_quotes(char **export)
+{
+	char	**quoted_export;
+	int		j;
+
+	j = 0;
+	if (!export || !*export)
+		return (NULL);
+	while (export[j])
+		j++;
+	quoted_export = (char **)malloc((j + 1) * sizeof(char *));
+	if (!quoted_export)
+		return (NULL);
+	j = 0;
+	while (export[j])
+	{
+		quoted_export[j] = ft_quote_string(export[j]);
+		if (!quoted_export[j])
+			return (ft_free_array(export), NULL);
+		j++;
+	}
+	quoted_export[j] = NULL;
+	return (quoted_export);
+}
 
 char	**ft_create_export(char **export)
 {
@@ -340,7 +388,7 @@ char	**ft_create_export(char **export)
 			i++;
 		}
 	}
-	return (export);
+	return (ft_add_quotes(export));
 }
 
 int	ft_init_minishell(t_minishell **minishell, char **env)

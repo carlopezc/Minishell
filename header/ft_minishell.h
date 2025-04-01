@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_minishell.h                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
+/*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 14:59:32 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/03/27 17:49:30 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/04/01 12:39:49 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ typedef struct s_minishell
 {
 	t_token *tokens;
 	char	**env;
-	char	**mexport;
+	char	**s_input;
 }	t_minishell;
 
 typedef struct s_pipex
@@ -62,5 +62,6 @@ int	ft_init_minishell(t_minishell **minishell, char **env);
 int	ft_process_input(t_minishell **minishell, char *input);
 int	ft_executor(t_minishell *shell);
 void	ft_clear_split(char **split);
+
 	
 #endif

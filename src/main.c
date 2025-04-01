@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:15:05 by carlopez          #+#    #+#             */
-/*   Updated: 2025/03/31 21:27:51 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/01 11:50:45 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,12 +27,12 @@ int	main(int argc, char **argv, char **env)
 		return (ft_printf("Error in function readline\n"), -1);
 	if (!ft_init_minishell(&minishell, env))
 		return (free(input), ft_printf("Error in malloc\n"), -1);
-	
 	while (input && *input)
 	{
 		if (!ft_process_input(&minishell, input))
 			return (free(input), free(minishell), ft_printf("Error in process input \n"), -1);
 		free(input);
+		//Solo para ver la tokenizacion
 		while (minishell->tokens)
 		{
 			ft_printf("El input es %s\n", ((minishell)->tokens->str));
@@ -41,8 +41,5 @@ int	main(int argc, char **argv, char **env)
 		}
 		input = readline("minishell> ");
 	}
-	
-	if (input)
-		free(input);
 	return (0);
 }

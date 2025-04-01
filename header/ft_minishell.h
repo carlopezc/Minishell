@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 14:59:32 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/03/28 17:58:13 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/01 13:21:52 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ typedef struct s_minishell
 {
 	t_token *tokens;
 	char	**env;
+	char	**export;
 	char	**s_input;
 }	t_minishell;
 

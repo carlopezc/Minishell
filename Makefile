@@ -6,7 +6,7 @@ ARFLAGS    = -rcs
 CC         = cc
 
 RFLAGS	= -L/usr/local/lib -I/usr/local/include -lreadline -lncurses
-CFLAGS     = -Wall -Wextra -Werror -fsanitize=address 
+CFLAGS     = -Wall -Wextra -Werror #-fsanitize=address 
 OFLAGS     = -MMD -MF $(@:.o=.d)
 
 # Directorios
@@ -17,19 +17,21 @@ DEPDIR     = deps
 OBJDIR     = objs
 BOBJDIR		= bonus_obj
 PRINTFDIR  = printf
+OUTILSDIR = utils_objects
 
 # Archivos de cabecera
 LIB        = header/ft_minishell.h
 
 # Archivos fuente
-SRC        = ft_tokenization.c
+SRC        = ft_tokenization.c ft_executor.c
 BSRC		= 
-UTILS      =
+UTILS      = ft_utils.c
 
 # Archivos de objetos
 OBJS       = $(addprefix $(OBJDIR)/, $(SRC:.c=.o))
 BOBOJ		= $(addprefix $(BOBJDIR)/, $(BSRC:.c=.o))
 DEPS       = $(addprefix $(DEPDIR)/, $(SRC:.c=.d) $(UTILS:.c=.d) $(GET:.c=.d))
+OUTILS 		= $(addprefix $(OUTILSDIR)/, $(UTILS:.c=.o))
 
 # Biblioteca
 LIBPRINTF  = $(PRINTFDIR)/libftprintf.a
@@ -62,9 +64,17 @@ $(BOBJ): $(BOBJDIR)/%.o : $(BSRCDIR)/%.c Makefile | $(BOBJDIR) $(DEPDIR)
 	@$(CC) $(CFLAGS) $(OFLAGS) -c $< -o $@
 	@mv $(OBJDIR)/*.d $(DEPDIR)
 
+$(OUTILS): $(OUTILSDIR)/%.o : $(UTILSDIR)/%.c Makefile | $(OUTILSDIR) $(DEPDIR)
+	@printf "%-42b%b" "$(PURPLE)$<:" "$(BLUE)$(@F)$(RESET)\n"
+	@$(CC) $(CFLAGS) $(OFLAGS) -c $< -o $@
+	@mv $(OUTILSDIR)/*.d deps/
+
 # Creación de directorios
 $(OBJDIR):
 	@mkdir -p $(OBJDIR)
+
+$(OUTILSDIR):
+	@mkdir -p $(OUTILSDIR)
 
 $(DEPDIR):
 	@mkdir -p $(DEPDIR)
@@ -75,9 +85,9 @@ $(LIBPRINTF):
 	@$(MAKE) --silent -C $(PRINTFDIR)
 
 # Enlace final del ejecutable
-$(NAME): $(MAIN) $(OBJS) $(LIBPRINTF)
+$(NAME): $(MAIN) $(OBJS) $(OUTILS) $(LIBPRINTF)
 	@printf "%-42b%b" "$(PURPLE)$<:" "$(BLUE)$(@F)$(RESET)\n"
-	@$(CC) $(CFLAGS) $(MAIN) $(OBJS) $(LIBPRINTF) -o $(NAME) $(RFLAGS)
+	@$(CC) $(CFLAGS) $(MAIN) $(OBJS) $(OUTILS) $(LIBPRINTF) -o $(NAME) $(RFLAGS)
 
 bonus: $(BONUS) $(LIBPRINTF) $(LIB) Makefile
 
@@ -90,6 +100,7 @@ clean:
 	@printf "%b" "$(BLUE)Cleaning objects...$(RESET)\n"
 	@rm -rf $(OBJDIR)
 	@rm -rf $(DEPDIR)
+	@rm -rf $(OUTILSDIR)
 	@$(MAKE) -C $(PRINTFDIR) clean --silent
 
 # Limpiar todo

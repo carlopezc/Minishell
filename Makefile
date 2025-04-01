@@ -6,7 +6,7 @@ ARFLAGS    = -rcs
 CC         = cc
 
 RFLAGS	= -L/usr/local/lib -I/usr/local/include -lreadline -lncurses
-CFLAGS     = -Wall -Wextra -Werror #-fsanitize=address 
+CFLAGS     = -Wall -Wextra -Werror -fsanitize=address 
 OFLAGS     = -MMD -MF $(@:.o=.d)
 
 # Directorios

@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/04/01 13:59:44 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/01 18:27:33 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,13 @@ void	ft_expand(char **input, char **env)
 }
 char	*ft_check_var(t_minishell *minishell, char *s_input)
 {
+	/*
+	if (!ft_strncmp(s_input, "$?", ft_strlen(s_input)))
+	{
+		//Funcion que imprima el exit status
+		return (//Funcion que imprima el exit status)
+	}
+		*/
 	if (!ft_strncmp(s_input, "$", 1))
 		ft_expand(&s_input, minishell->env);
 	return (s_input);
@@ -115,7 +122,9 @@ char	*ft_group_input(t_minishell *minishell, int *i)
 	while (input && minishell->s_input[*i + 1])
 	{
 		//este me controla tb el ||
-		if (minishell->s_input[*i + 1] && !ft_strncmp(minishell->s_input[*i + 1], "|", 2))
+		if (minishell->s_input[*i + 1] && !ft_strncmp(minishell->s_input[*i + 1], "||", 3))
+			return (input);
+		else if (minishell->s_input[*i + 1] && !ft_strncmp(minishell->s_input[*i + 1], "|", 2))
 			return (input);
 		else if (minishell->s_input[*i + 1] && !ft_strncmp(minishell->s_input[*i + 1], "<", 2))
 			return (input);
@@ -132,7 +141,7 @@ char	*ft_group_input(t_minishell *minishell, int *i)
 			tmp = ft_strjoin(input, " ");
 			input = ft_check_var(minishell, minishell->s_input[++(*i)]);
 			if (!input)
-				return (free(tmp), input);
+				input = "";
 			input = ft_strjoin(tmp, input);
 			free(tmp);
 		}

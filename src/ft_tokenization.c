@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/04/01 18:55:31 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/02 12:16:40 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -312,6 +312,7 @@ char	**ft_strdup_env(char **env)
 char	*ft_quote_string(char *str)
 {
 	int 	i;
+	int		j;
 	char	*quoted_str;
 
 	i = 0;
@@ -322,14 +323,16 @@ char	*ft_quote_string(char *str)
 	if (!quoted_str)
 		return (NULL);
 	i = 0;
-	quoted_str[i++] = '"';
+	j = 0;
+	while (str[i] && str[i] != '=')
+		quoted_str[j++] = str[i++];
+	if (str[i] && str[i] == '=')
+		quoted_str[j++] = str[i++];
+	quoted_str[j++] = '"';
 	while (str[i])
-	{
-		quoted_str[i] = str[i];
-		i++;
-	}
-	quoted_str[i++] = '"';
-	quoted_str[i] = '\0';
+		quoted_str[j++] = str[i++];
+	quoted_str[j++] = '"';
+	quoted_str[j] = '\0';
 	return (quoted_str);
 }
 

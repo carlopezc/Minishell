@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_executor.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
+/*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/04/01 16:05:33 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/04/02 11:27:16 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -206,6 +206,7 @@ void	ft_export(t_minishell *shell)
 		ft_printf("%s\n", shell->export[p]);
 		p++;
 	}
+	return ;
 }
 
 

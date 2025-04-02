@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/03/31 21:51:49 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/01 13:59:44 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ void	ft_add_node_back(t_token **lst, t_token *new)
 t_token	*ft_create_node(char *str, t_token_type type)
 {
 	t_token	*token;
-	//no se como comprobar el token_type
+
 	if (!str)
 		return (NULL);
 	token = (t_token *)malloc(sizeof(t_token));
@@ -99,15 +99,10 @@ void	ft_expand(char **input, char **env)
 	*input = NULL;
 	return (free(name_var));
 }
-char	*ft_check_var(char **input, t_minishell *minishell, char *s_input)
+char	*ft_check_var(t_minishell *minishell, char *s_input)
 {
-	if (!input || !*input)
-		return (NULL);
-	if (!ft_strncmp(s_input , "$", 1))
-	{
+	if (!ft_strncmp(s_input, "$", 1))
 		ft_expand(&s_input, minishell->env);
-		*input = s_input;
-	}
 	return (s_input);
 }
 
@@ -115,9 +110,8 @@ char	*ft_group_input(t_minishell *minishell, int *i)
 {
 	char	*input;
 	char	*tmp;
-	//char	*var;
 
-	input = ft_check_var(&input, minishell, minishell->s_input[*i]);
+	input = ft_check_var(minishell, minishell->s_input[*i]);
 	while (input && minishell->s_input[*i + 1])
 	{
 		//este me controla tb el ||
@@ -135,9 +129,11 @@ char	*ft_group_input(t_minishell *minishell, int *i)
 			return (input);
 		else
 		{
-
 			tmp = ft_strjoin(input, " ");
-			input = ft_strjoin(tmp, ft_check_var(&input, minishell, minishell->s_input[++(*i)]));
+			input = ft_check_var(minishell, minishell->s_input[++(*i)]);
+			if (!input)
+				return (free(tmp), input);
+			input = ft_strjoin(tmp, input);
 			free(tmp);
 		}
 	}
@@ -172,7 +168,7 @@ int	ft_is_builtin(char *input, char *next)
 		return (1);
 	else if (!ft_strncmp(input, "pwd", ft_strlen(input)))
 	{
-		//si pasa esto habria que meter un exit
+		//si pasa esto habria que meter un exit, o no se si lo gestionamos aqui o en el execve
 		if (next)
 			ft_printf("pwd: too many arguments\n");
 		return (1);
@@ -222,6 +218,8 @@ int	ft_define_parts(t_minishell **minishell, char **input, t_token_type *type, i
 	{
 		*type = COMMAND;
 		*input = ft_group_input(*minishell, i);
+		if (!*input)
+			return (0);
 		return (1);
 	}
 	return (0);
@@ -230,14 +228,14 @@ int	ft_define_parts(t_minishell **minishell, char **input, t_token_type *type, i
 int	ft_group_command(t_minishell **minishell, int *i)
 {
 	t_token_type	type;
-	//char	**s_input;
 	char	*input;
 	t_token	*token;
 
 	token = NULL;
 	input = NULL;
 	type = NOT_SET;
-	ft_define_parts(minishell, &input, &type, i);
+	if (!ft_define_parts(minishell, &input, &type, i))
+		return (0);
 	token = ft_create_node(input, type);
 	if (!token)
 		return (0);
@@ -284,6 +282,8 @@ char	**ft_strdup_env(char **env)
 	char	**cpy_env;
 
 	i = 0;
+	if (!env || !*env)
+		return (NULL);
 	while (env[i])
 		i++;
 	cpy_env = (char **)malloc((i + 1) * sizeof(char *));
@@ -301,6 +301,39 @@ char	**ft_strdup_env(char **env)
 	return (cpy_env);
 }
 
+char	**ft_create_export(char **export)
+{
+	int 	i;
+	int		j;
+	int swapped;
+	char	*tmp;
+
+	i = 0;
+	j = 0;
+	swapped = 1;
+	if (!export || !*export)
+		return (NULL); //Caso especial que ha dicho luqui no se que habra que hacer
+	while (export[j])
+		j++;
+	while (swapped)
+	{
+		swapped = 0;
+		i = 0;
+		while (i < j - 1)
+		{
+			if (ft_strncmp(export[i], export[i + 1], ft_strlen(export[i])) > 0)
+			{
+				tmp = export[i];
+				export[i] = export[i + 1];
+				export[i + 1] = tmp;
+				swapped = 1;
+			}
+			i++;
+		}
+	}
+	return (export);
+}
+
 int	ft_init_minishell(t_minishell **minishell, char **env)
 {
 	*minishell = (t_minishell *)malloc(sizeof(t_minishell));
@@ -308,6 +341,7 @@ int	ft_init_minishell(t_minishell **minishell, char **env)
 		return (0);
 	(*minishell)->tokens = NULL;
 	(*minishell)->env = ft_strdup_env(env);
+	(*minishell)->export = ft_create_export(ft_strdup_env(env));
 	(*minishell)->s_input = NULL;
 	return (1);
 }

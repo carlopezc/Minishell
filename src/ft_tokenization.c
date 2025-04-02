@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/04/02 12:16:40 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/02 16:08:45 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,22 @@ t_token	*ft_create_node(char *str, t_token_type type)
 	token->next = NULL;
 	return (token);
 }
+
+void	ft_free_tokens(t_token **tokens)
+{
+	t_token 	*tmp;
+
+	while (tokens && *tokens)
+	{
+		tmp = (*tokens)->next;
+		if ((*tokens)->str)
+			free((*tokens)->str);
+		free(*tokens);
+		*tokens = tmp;
+	}
+	return ;
+}
+
 
 void	ft_expand(char **input, char **env)
 {

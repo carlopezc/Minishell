@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:15:05 by carlopez          #+#    #+#             */
-/*   Updated: 2025/04/02 15:52:05 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/02 16:08:53 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,8 @@ int	main(int argc, char **argv, char **env)
 		}
 		//ft_executor(minishell);
 		free(input);
+		ft_free_tokens(&minishell->tokens);
+		minishell->tokens = NULL;
 		//Solo para ver la tokenizacion
 		
 		input = readline("minishell> ");

@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/04/02 19:05:30 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/02 19:44:43 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,16 +187,24 @@ void	ft_env(t_minishell *shell, char *cmd)
 {
 	int	p;
 	int	i;
+	int flag;
+	char	**env;
 
 	p = 0;
 	i = 3;
+	flag = 0;
+	env = shell->env;
 	// Falta mirar si los caracteres son validos para nombre de variable
+	ft_printf("%s\n", cmd);
 	while (cmd[i])
 	{
+		ft_printf("la letra es %c\n", cmd[i]);
 		if (cmd[i] == '=')
 		{
 			ft_printf("Entra\n");
-			ft_add_to_env(&shell, cmd + 4);
+			//usare misma funcion cuando haga export, 1 para var temporal (en este caso), 0 para global
+			ft_add_to_env(&shell, cmd + 4, 1);
+			flag = 1;
 			break ;
 			//lo añade y ademas imprime el env
 			//ademas no se añade al export porque es variable temporal
@@ -204,9 +212,15 @@ void	ft_env(t_minishell *shell, char *cmd)
 		}
 		i++;
 	}
-	while (shell->env[p])
+	ft_printf("Flag vale %i\n", flag);
+	if (flag)
 	{
-		ft_printf("%s\n", shell->env[p]);
+		ft_printf("env temporal \n");
+		env = shell->env_temporal;
+	}
+	while (env[p])
+	{
+		ft_printf("%s\n", env[p]);
 		p++;
 	}
 }
@@ -293,6 +307,7 @@ void	ft_exec(t_minishell *shell, t_pipex *pipex, t_token *save)
 {
 	if (save->type == BUILTIN)
 	{
+		ft_printf("El save str es: %s\n", save->str);
 		ft_exec_build(shell, save->str);
 	}
 	if (save->type == COMMAND || save->type == EXEC)

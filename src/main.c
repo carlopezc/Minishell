@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:15:05 by carlopez          #+#    #+#             */
-/*   Updated: 2025/04/02 18:58:10 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/02 19:33:04 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ int	main(int argc, char **argv, char **env)
 		ft_executor(minishell);
 		free(input);
 		ft_free_tokens(&minishell->tokens);
+		minishell->env_temporal = NULL;
 		minishell->tokens = NULL;
 		input = readline("minishell> ");
 		add_history(input);

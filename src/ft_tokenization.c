@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/04/02 18:03:22 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/02 19:37:31 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -326,7 +326,7 @@ char	**ft_strdup_env(char **env)
 	return (cpy_env);
 }
 
-void	ft_add_to_env(t_minishell **minishell, char *str)
+void	ft_add_to_env(t_minishell **minishell, char *str, int flag)
 {
 	int	i;
 	char	**cpy;
@@ -352,7 +352,13 @@ void	ft_add_to_env(t_minishell **minishell, char *str)
 	cpy[i++] = str;
 	cpy[i] = NULL;
 	ft_free_array(env);
-	(*minishell)->env = cpy;
+	if (flag)
+	{
+		ft_printf("entra aqui\n");
+		(*minishell)->env_temporal = cpy;
+	}
+	else
+		(*minishell)->env = cpy;
 	return ;
 }
 char	*ft_quote_string(char *str)
@@ -447,6 +453,7 @@ int	ft_init_minishell(t_minishell **minishell, char **env)
 		return (0);
 	(*minishell)->tokens = NULL;
 	(*minishell)->env = ft_strdup_env(env);
+	(*minishell)->env_temporal = NULL;
 	(*minishell)->export = ft_create_export(ft_strdup_env(env));
 	(*minishell)->s_input = NULL;
 	return (1);

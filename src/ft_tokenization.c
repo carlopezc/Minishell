@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/04/02 16:08:45 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/02 18:03:22 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -324,6 +324,36 @@ char	**ft_strdup_env(char **env)
 	}
 	cpy_env[i] = NULL;
 	return (cpy_env);
+}
+
+void	ft_add_to_env(t_minishell **minishell, char *str)
+{
+	int	i;
+	char	**cpy;
+	char	**env;
+
+	i = 0;
+	env = (*minishell)->env;
+	if (!env || !*env || !str)
+		return ;
+	while (env[i])
+		i++;
+	cpy = (char **)malloc((i + 2) * sizeof(char *));
+	if (!cpy)
+		return ;
+	i = 0;
+	while (env[i])
+	{
+		cpy[i] = ft_strdup(env[i]);
+		if (!cpy[i])
+			return (ft_free_array(cpy));
+		i++;
+	}
+	cpy[i++] = str;
+	cpy[i] = NULL;
+	ft_free_array(env);
+	(*minishell)->env = cpy;
+	return ;
 }
 char	*ft_quote_string(char *str)
 {

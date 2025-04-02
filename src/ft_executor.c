@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/04/02 13:59:53 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/02 19:05:30 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,11 +183,27 @@ void	ft_pwd(t_minishell *shell)
 	ft_printf("%s\n", ft_strchr(shell->env[p], '/'));
 }
 
-void	ft_env(t_minishell *shell)
+void	ft_env(t_minishell *shell, char *cmd)
 {
 	int	p;
+	int	i;
 
 	p = 0;
+	i = 3;
+	// Falta mirar si los caracteres son validos para nombre de variable
+	while (cmd[i])
+	{
+		if (cmd[i] == '=')
+		{
+			ft_printf("Entra\n");
+			ft_add_to_env(&shell, cmd + 4);
+			break ;
+			//lo añade y ademas imprime el env
+			//ademas no se añade al export porque es variable temporal
+			//solo se añade para este readline, luego tiene que volver a antes !!! amai
+		}
+		i++;
+	}
 	while (shell->env[p])
 	{
 		ft_printf("%s\n", shell->env[p]);
@@ -239,7 +255,7 @@ void	ft_exec_build(t_minishell *shell, char *cmd)
 		return ;
 		//ft_unset();
 	if (ft_strncmp(cmd, "env", 3) == 0)
-		ft_env(shell);
+		ft_env(shell, cmd);
 	if (ft_strncmp(cmd, "exit", 4) == 0)
 		exit(0) ;
 		//ft_exit();

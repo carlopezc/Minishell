@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:15:05 by carlopez          #+#    #+#             */
-/*   Updated: 2025/04/02 16:08:53 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/02 18:58:10 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ int	main(int argc, char **argv, char **env)
 	(void)argv;
 	minishell = NULL;
 	input = readline("minishell> ");
+	add_history(input);
 	if (!input)
 		return (ft_printf("Error in function readline\n"), -1);
 	if (!ft_init_minishell(&minishell, env))
@@ -31,6 +32,7 @@ int	main(int argc, char **argv, char **env)
 	{
 		if (!ft_process_input(&minishell, input))
 			return (free(input), free(minishell), ft_printf("Error in process input \n"), -1);
+		/*
 		t_token *token;
 		token = minishell->tokens;
 		while (token)
@@ -39,13 +41,13 @@ int	main(int argc, char **argv, char **env)
 			ft_printf("El token type es: %s\n", token_type_to_str(token->type));
 			token = token->next;
 		}
-		//ft_executor(minishell);
+		*/
+		ft_executor(minishell);
 		free(input);
 		ft_free_tokens(&minishell->tokens);
 		minishell->tokens = NULL;
-		//Solo para ver la tokenizacion
-		
 		input = readline("minishell> ");
+		add_history(input);
 	}
 	return (0);
 }

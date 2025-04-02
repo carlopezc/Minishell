@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:15:05 by carlopez          #+#    #+#             */
-/*   Updated: 2025/04/02 11:07:28 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/02 15:52:05 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ int	main(int argc, char **argv, char **env)
 			ft_printf("El token type es: %s\n", token_type_to_str(token->type));
 			token = token->next;
 		}
-		ft_executor(minishell);
+		//ft_executor(minishell);
 		free(input);
 		//Solo para ver la tokenizacion
 		

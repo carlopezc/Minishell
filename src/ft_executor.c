@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/04/02 11:27:16 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/02 13:59:53 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -208,7 +208,6 @@ void	ft_export(t_minishell *shell)
 	}
 	return ;
 }
-
 
 void	ft_echo(char *cmd)
 {

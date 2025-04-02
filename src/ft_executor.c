@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_executor.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
+/*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/04/02 11:17:14 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/01 16:05:33 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,13 +116,10 @@ void	ft_cd(t_minishell *shell, char *cmd)
 		free(shell->env[p]);
 		shell->env[p] = NULL;
 		u = 0;
-		while (shell->env[u] && ft_strncmp(shell->env[u], "HOME=", 5) != 0)
+		while (u != p && shell->env[u] && ft_strncmp(shell->env[u], "HOME=", 5) != 0)
 			u++;
 		if (!shell->env[u])
-		{
-			ft_printf("hola\n");
 			return ;
-		}
 		shell->env[p] = ft_strdup(shell->env[u] + 5);
 		return ;
 	}
@@ -164,14 +161,14 @@ void	ft_cd(t_minishell *shell, char *cmd)
 		{
 			if (ft_check_cd(temp + 1, shell->env[p] + 4) == 0)
 				return ;
-			join = ft_strjoin(shell->env[p], "/");
+			join = ft_strjoin(shell->env[p] + 4, "/");
 			free(shell->env[p]);
 			shell->env[p] = ft_strjoin(join, temp + 1);
 			temp = ft_strchr(temp + 1, '/');
 		}
 	}
-	shell->env[p] = ft_strdup(shell->env[p]);
-	free(shell->env[p]);
+	//shell->env[p] = ft_strdup(shell->env[p]);
+	//free(shell->env[p]);
 //	shell->env[p] = ft_strjoin(temp, "\n");
 //	free(temp);
 }
@@ -183,7 +180,6 @@ void	ft_pwd(t_minishell *shell)
 	p = 0;
 	while (shell->env[p] && ft_strncmp(shell->env[p], "PWD=", 4) != 0)
 		p++;
-	ft_printf("%s\n", shell->env[p]);
 	ft_printf("%s\n", ft_strchr(shell->env[p], '/'));
 }
 
@@ -198,6 +194,20 @@ void	ft_env(t_minishell *shell)
 		p++;
 	}
 }
+
+void	ft_export(t_minishell *shell)
+{
+	int	p;
+
+	p = 0;
+	while (shell->export[p])
+	{
+		ft_printf("declare -x ");
+		ft_printf("%s\n", shell->export[p]);
+		p++;
+	}
+}
+
 
 void	ft_echo(char *cmd)
 {
@@ -224,8 +234,7 @@ void	ft_exec_build(t_minishell *shell, char *cmd)
 	if (ft_strncmp(cmd, "pwd", 3) == 0)
 		ft_pwd(shell);
 	if (ft_strncmp(cmd, "export", 6) == 0)
-		return ;
-		//ft_export();
+		ft_export(shell);
 	if (ft_strncmp(cmd, "unset", 5) == 0)
 		return ;
 		//ft_unset();

@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:15:05 by carlopez          #+#    #+#             */
-/*   Updated: 2025/04/01 19:20:06 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/02 11:07:28 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,17 +31,18 @@ int	main(int argc, char **argv, char **env)
 	{
 		if (!ft_process_input(&minishell, input))
 			return (free(input), free(minishell), ft_printf("Error in process input \n"), -1);
+		t_token *token;
+		token = minishell->tokens;
+		while (token)
+		{
+			ft_printf("El input es %s\n", (token->str));
+			ft_printf("El token type es: %s\n", token_type_to_str(token->type));
+			token = token->next;
+		}
 		ft_executor(minishell);
 		free(input);
 		//Solo para ver la tokenizacion
-		/*
-		while (minishell->tokens)
-		{
-			ft_printf("El input es %s\n", ((minishell)->tokens->str));
-			ft_printf("El token type es: %s\n", token_type_to_str((minishell)->tokens->type));
-			minishell->tokens = minishell->tokens->next;
-		}
-		*/
+		
 		input = readline("minishell> ");
 	}
 	return (0);

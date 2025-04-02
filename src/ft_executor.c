@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_executor.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
+/*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/04/01 19:35:31 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/01 14:12:56 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

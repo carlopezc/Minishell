@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/04/02 15:55:45 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/04/03 12:48:48 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -306,7 +306,7 @@ void	ft_exec(t_minishell *shell, t_pipex *pipex, t_token *save)
 		}
 		else if (pipex->pipe[1][1])
 		{
-			ft_printf("ecribe pipe %i\n", pipex->pipe[1][0]);
+			ft_printf("ecribe pipe %i\n", pipex->pipe[1][1]);
 			close(pipex->pipe[1][0]);
 			dup2(pipex->pipe[1][1], 1);
 			close(pipex->pipe[1][1]);
@@ -395,8 +395,8 @@ int	ft_executor(t_minishell *shell)
 	t_pipex	*pipex = (t_pipex *)malloc(sizeof(pipex));
 	pipex->docs[0] = 0;
 	pipex->docs[1] = 0;
-	pipex->path = NULL;
-	pipex->command = NULL;
+	//pipex->path = NULL;
+	//pipex->command = NULL;
 
 	save = shell->tokens;
 	while (save)

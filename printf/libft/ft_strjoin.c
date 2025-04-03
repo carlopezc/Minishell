@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 15:33:37 by lbellmas          #+#    #+#             */
-/*   Updated: 2024/09/26 10:58:24 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/04/03 12:06:15 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ char	*ft_strjoin(char const *s1, char const *s2)
 		str[p] = s1[p];
 		p++;
 	}
-	ft_memmove((str + p), s2, (len - (size_t)p + 1));
+	ft_memmove((str + p), s2, (len - (size_t)p));
 	return (str);
 }
 

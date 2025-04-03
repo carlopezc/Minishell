@@ -3,14 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_executor.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
+/*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2025/04/03 12:48:48 by lbellmas         ###   ########.fr       */
-=======
-/*   Updated: 2025/04/03 16:18:02 by carlotalcd       ###   ########.fr       */
->>>>>>> 0ef4948 ("error en number of arguments")
+/*   Updated: 2025/04/04 15:33:10 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

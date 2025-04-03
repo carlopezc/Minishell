@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/04/03 13:24:34 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/04/03 19:58:14 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,21 +72,24 @@ t_token	*ft_create_node(char *str, t_token_type type)
 	return (token);
 }
 
-void	ft_free_tokens(t_token **tokens)
+void	ft_free_tokens(t_minishell **minishell)
 {
 	t_token 	*tmp;
+	t_token 	*token;
 
-	while (tokens && *tokens)
+	token = (*minishell)->tokens;
+	tmp = NULL;
+	while (token)
 	{
-		tmp = (*tokens)->next;
-		if ((*tokens)->str)
-			free((*tokens)->str);
-		free(*tokens);
-		*tokens = tmp;
+		tmp = token->next;
+		if (token->str)
+			free(token->str);
+		free(token);
+		token = tmp;
 	}
+	(*minishell)->tokens = NULL;
 	return ;
 }
-
 
 void	ft_expand(char **input, char **env)
 {
@@ -155,6 +158,7 @@ char	*ft_group_input(t_minishell *minishell, int *i)
 		else
 		{
 			tmp = ft_strjoin(input, " ");
+			free(input);
 			input = ft_check_var(minishell, minishell->s_input[++(*i)]);
 			if (!input)
 				input = "";
@@ -299,9 +303,22 @@ void	ft_free_array(char **arr)
 	while (arr[i])
 		free(arr[i++]);
 	free(arr);
+	return ;
 }
 
-char	**ft_strdup_env(char **env)
+int	ft_arraylen(char **arr)
+{
+	int	i;
+
+	i = 0;
+	if (!arr || !*arr)
+		return (i);
+	while (arr[i])
+		i++;
+	return (i);
+}
+
+char	**ft_strdup_env(char **env, int flag)
 {
 	int	i;
 	char	**cpy_env;
@@ -309,8 +326,7 @@ char	**ft_strdup_env(char **env)
 	i = 0;
 	if (!env || !*env)
 		return (NULL);
-	while (env[i])
-		i++;
+	i = ft_arraylen(env);
 	cpy_env = (char **)malloc((i + 1) * sizeof(char *));
 	if (!cpy_env)
 		return (NULL);
@@ -323,6 +339,11 @@ char	**ft_strdup_env(char **env)
 		i++;
 	}
 	cpy_env[i] = NULL;
+	(void)flag;
+	/*
+	if (flag)
+		ft_free_array(env);
+		*/
 	return (cpy_env);
 }
 
@@ -427,8 +448,7 @@ char	**ft_create_export(char **export)
 	swapped = 1;
 	if (!export || !*export)
 		return (NULL); //Caso especial que ha dicho luqui no se que habra que hacer
-	while (export[j])
-		j++;
+	j = ft_arraylen(export);
 	while (swapped)
 	{
 		swapped = 0;
@@ -450,14 +470,18 @@ char	**ft_create_export(char **export)
 
 int	ft_init_minishell(t_minishell **minishell, char **env)
 {
+	(void)env;
 	*minishell = (t_minishell *)malloc(sizeof(t_minishell));
 	if (!(*minishell))
 		return (0);
 	(*minishell)->tokens = NULL;
-	(*minishell)->env = ft_strdup_env(env);
-	(*minishell)->env_temporal = NULL;
-	(*minishell)->export = ft_create_export(ft_strdup_env(env));
-
+	//aqui hago una copia de env
+	//(*minishell)->env = ft_strdup_env(env, 0);
+	//(*minishell)->env_temporal = NULL;
+	//aqui hago otra copia
+	//(*minishell)->export = ft_create_export(ft_strdup_env(env, 1));
 	(*minishell)->s_input = NULL;
+	//la flag para saber si libero o no el environment
+	//en el segundo caso si
 	return (1);
 }

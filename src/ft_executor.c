@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_executor.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
+/*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/04/03 13:35:34 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/04/03 12:48:48 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,11 +116,11 @@ void	ft_cd(t_minishell *shell, char *cmd)
 		free(shell->env[p]);
 		shell->env[p] = NULL;
 		u = 0;
-		while (u != p && shell->env[u] && ft_strncmp(shell->env[u], "HOME=", 5) != 0)
+		while ((u == p) || (shell->env[u] && ft_strncmp(shell->env[u], "HOME=", 5) != 0))
 			u++;
 		if (!shell->env[u])
 			return ;
-		shell->env[p] = ft_strdup(shell->env[u] + 5);
+		shell->env[p] = ft_strjoin("PWD=", shell->env[u] + 5);
 		return ;
 	}
 	if (cmd[3] == '/')
@@ -129,10 +129,10 @@ void	ft_cd(t_minishell *shell, char *cmd)
 			p++;
 		if (!shell->env[p])
 			return ;
-		if (access(cmd + 3, F_OK) != 0)
+		if (access(cmd + 3, F_OK) == 0)
 		{
 			free(shell->env[p]);
-			shell->env[p] = ft_strjoin(cmd + 3, "\n");
+			shell->env[p] = ft_strjoin("PWD=", cmd + 3);
 			return ;
 		}
 		else
@@ -157,15 +157,14 @@ void	ft_cd(t_minishell *shell, char *cmd)
 			p++;
 		if (!shell->env[p])
 			return ;
-		while (temp)
-		{
-			if (ft_check_cd(temp + 1, shell->env[p] + 4) == 0)
-				return ;
-			join = ft_strjoin(shell->env[p] + 4, "/");
-			free(shell->env[p]);
-			shell->env[p] = ft_strjoin(join, temp + 1);
-			temp = ft_strchr(temp + 1, '/');
-		}
+		if (ft_check_cd(temp + 1, shell->env[p] + 4) == 0)
+			return ;
+		join = ft_strjoin(shell->env[p] + 4, "/");
+		free(shell->env[p]);
+		shell->env[p] = ft_strjoin(join, temp + 1);
+		temp = shell->env[p];
+		shell->env[p] = ft_strjoin("PWD=", temp);
+		free(temp);
 	}
 	//shell->env[p] = ft_strdup(shell->env[p]);
 	//free(shell->env[p]);
@@ -180,50 +179,23 @@ void	ft_pwd(t_minishell *shell)
 	p = 0;
 	while (shell->env[p] && ft_strncmp(shell->env[p], "PWD=", 4) != 0)
 		p++;
+	if (!shell->env[p])
+		ft_printf("te cagas\n");
 	ft_printf("%s\n", ft_strchr(shell->env[p], '/'));
+	return ;
 }
 
-void	ft_env(t_minishell *shell, char *cmd)
+void	ft_env(t_minishell *shell)
 {
-	int	p = 0;
-	int	i;
-	int flag;
-	char	**env;
+	int	p;
 
 	p = 0;
-	i = 3;
-	flag = 0;
-	env = shell->env;
-	// Falta mirar si los caracteres son validos para nombre de variable
-	ft_printf("%s\n", cmd);
-	while (cmd[i])
+	while (shell->env[p])
 	{
-		ft_printf("la letra es %c\n", cmd[i]);
-		if (cmd[i] == '=')
-		{
-			ft_printf("Entra\n");
-			//usare misma funcion cuando haga export, 1 para var temporal (en este caso), 0 para global
-			ft_add_to_env(&shell, cmd + 4, 1);
-			flag = 1;
-			break ;
-			//lo añade y ademas imprime el env
-			//ademas no se añade al export porque es variable temporal
-			//solo se añade para este readline, luego tiene que volver a antes !!! amai
-		}
-		i++;
-	}
-	ft_printf("Flag vale %i\n", flag);
-	if (flag)
-	{
-		ft_printf("env temporal \n");
-		env = shell->env_temporal;
-	}
-	//(void)cmd;
-	while (env[p])
-	{
-		ft_printf("%s\n", env[p]);
+		ft_printf("%s\n", shell->env[p]);
 		p++;
 	}
+	return ;
 }
 
 void	ft_export(t_minishell *shell)
@@ -240,6 +212,7 @@ void	ft_export(t_minishell *shell)
 	return ;
 }
 
+
 void	ft_echo(char *cmd)
 {
 	char	*temp;
@@ -251,6 +224,7 @@ void	ft_echo(char *cmd)
 	}
 	else
 		ft_printf("%s\n", temp + 1);
+	return ;
 }
 
 void	ft_exec_build(t_minishell *shell, char *cmd)
@@ -270,10 +244,11 @@ void	ft_exec_build(t_minishell *shell, char *cmd)
 		return ;
 		//ft_unset();
 	if (ft_strncmp(cmd, "env", 3) == 0)
-		ft_env(shell, cmd);
+		ft_env(shell);
 	if (ft_strncmp(cmd, "exit", 4) == 0)
 		exit(0) ;
 		//ft_exit();
+	exit(0);
 }
 
 void	ft_pre_exec_command(t_pipex *pipex, char **env, t_token *cmd)
@@ -308,8 +283,6 @@ void	ft_exec(t_minishell *shell, t_pipex *pipex, t_token *save)
 {
 	if (save->type == BUILTIN)
 	{
-		//printf("El save str es: %s\n", save->str);
-		//return ;
 		ft_exec_build(shell, save->str);
 	}
 	if (save->type == COMMAND || save->type == EXEC)
@@ -333,7 +306,7 @@ void	ft_exec(t_minishell *shell, t_pipex *pipex, t_token *save)
 		}
 		else if (pipex->pipe[1][1])
 		{
-			ft_printf("ecribe pipe %i\n", pipex->pipe[1][0]);
+			ft_printf("ecribe pipe %i\n", pipex->pipe[1][1]);
 			close(pipex->pipe[1][0]);
 			dup2(pipex->pipe[1][1], 1);
 			close(pipex->pipe[1][1]);
@@ -422,6 +395,8 @@ int	ft_executor(t_minishell *shell)
 	t_pipex	*pipex = (t_pipex *)malloc(sizeof(pipex));
 	pipex->docs[0] = 0;
 	pipex->docs[1] = 0;
+	//pipex->path = NULL;
+	//pipex->command = NULL;
 
 	save = shell->tokens;
 	while (save)
@@ -439,7 +414,7 @@ int	ft_executor(t_minishell *shell)
 				tmp = save;
 				save = save->next;
 			}
-			if (save && (save->type == BUILTIN || save->type == EXEC))
+			else if (save && (save->type == BUILTIN || save->type == EXEC))
 			{
 				pipex->pid = fork();
 				if (pipex->pid > 0)
@@ -451,11 +426,13 @@ int	ft_executor(t_minishell *shell)
 			{
 				pipex->docs[0] = open(save->str, O_RDONLY);
 				save = save->next;
+				ft_printf("redir in\n");
 			}
 			if (pipex->pid == 0 && save && save->type == REDIR_OUT)
 			{
 				pipex->docs[1] = open(save->str, O_WRONLY);
 				save = save->next;
+				ft_printf("redir out\n");
 			}
 			if (pipex->pid == 0 && save && save->type == PIPE)//&& pipe(pipex->pipe[1]) == -1)
 			{
@@ -484,5 +461,6 @@ int	ft_executor(t_minishell *shell)
 		ft_arrange_fd(pipex);
 		ft_printf("fin del bucle\n");
 	}
+	ft_free_pipex(pipex);
 	return (1);
 }

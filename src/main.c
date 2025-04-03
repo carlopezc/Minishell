@@ -6,7 +6,11 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:15:05 by carlopez          #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2025/04/03 20:06:58 by carlopez         ###   ########.fr       */
+=======
+/*   Updated: 2025/04/03 16:33:50 by carlotalcd       ###   ########.fr       */
+>>>>>>> 0ef4948 ("error en number of arguments")
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +62,11 @@ int	main(int argc, char **argv, char **env)
 	(void)argc;
 	(void)argv;
 	if (argc != 1 || !argv[0])
+<<<<<<< HEAD
 		return (ft_printf("Wrong number of arguments (no argunments needed)\n"), -1);
+=======
+		return (ft_printf("Wrong number of arguments (no arguments needed)\n"));
+>>>>>>> 0ef4948 ("error en number of arguments")
 	minishell = NULL;
 	input = readline("minishell> ");
 	if (!input)

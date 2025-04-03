@@ -6,7 +6,11 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2025/04/03 12:48:48 by lbellmas         ###   ########.fr       */
+=======
+/*   Updated: 2025/04/03 16:18:02 by carlotalcd       ###   ########.fr       */
+>>>>>>> 0ef4948 ("error en number of arguments")
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -403,6 +407,7 @@ int	ft_executor(t_minishell *shell)
 	{
 		while (save && save->type != PIPE)
 		{
+			ft_printf("Dentro de exec el save str es %s\n", save->str);
 			if (save && save->type == COMMAND)
 			{
 				pipex->command = ft_split(save->str, ' ');
@@ -446,6 +451,7 @@ int	ft_executor(t_minishell *shell)
 				pipex->docs[0] = 0;
 			if (pipex->docs[1] < 0)
 				pipex->docs[1] = 0;
+			ft_printf("Dentro de exec el save str es %s\n", tmp->str);
 			if (pipex->pid == 0)
 				ft_exec(shell, pipex, tmp);
 			else

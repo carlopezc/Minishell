@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:15:05 by carlopez          #+#    #+#             */
-/*   Updated: 2025/04/02 19:33:04 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/03 13:37:18 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,7 @@ int	main(int argc, char **argv, char **env)
 	{
 		if (!ft_process_input(&minishell, input))
 			return (free(input), free(minishell), ft_printf("Error in process input \n"), -1);
-		/*
-		t_token *token;
+		/*t_token *token;
 		token = minishell->tokens;
 		while (token)
 		{
@@ -43,6 +42,7 @@ int	main(int argc, char **argv, char **env)
 		}
 		*/
 		ft_executor(minishell);
+		ft_printf("Ha pasado yuhu\n");
 		free(input);
 		ft_free_tokens(&minishell->tokens);
 		minishell->env_temporal = NULL;

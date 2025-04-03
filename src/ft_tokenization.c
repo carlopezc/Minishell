@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/04/02 19:37:31 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/03 13:24:34 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -405,11 +405,13 @@ char	**ft_add_quotes(char **export)
 	while (export[j])
 	{
 		quoted_export[j] = ft_quote_string(export[j]);
+		free(export[j]);
 		if (!quoted_export[j])
-			return (ft_free_array(export), NULL);
+			return (free(export), NULL);
 		j++;
 	}
 	quoted_export[j] = NULL;
+	free(export);
 	return (quoted_export);
 }
 
@@ -455,6 +457,7 @@ int	ft_init_minishell(t_minishell **minishell, char **env)
 	(*minishell)->env = ft_strdup_env(env);
 	(*minishell)->env_temporal = NULL;
 	(*minishell)->export = ft_create_export(ft_strdup_env(env));
+
 	(*minishell)->s_input = NULL;
 	return (1);
 }

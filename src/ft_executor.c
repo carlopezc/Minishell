@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/04/02 19:44:43 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/03 13:35:34 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,7 +185,7 @@ void	ft_pwd(t_minishell *shell)
 
 void	ft_env(t_minishell *shell, char *cmd)
 {
-	int	p;
+	int	p = 0;
 	int	i;
 	int flag;
 	char	**env;
@@ -218,6 +218,7 @@ void	ft_env(t_minishell *shell, char *cmd)
 		ft_printf("env temporal \n");
 		env = shell->env_temporal;
 	}
+	//(void)cmd;
 	while (env[p])
 	{
 		ft_printf("%s\n", env[p]);
@@ -307,7 +308,8 @@ void	ft_exec(t_minishell *shell, t_pipex *pipex, t_token *save)
 {
 	if (save->type == BUILTIN)
 	{
-		ft_printf("El save str es: %s\n", save->str);
+		//printf("El save str es: %s\n", save->str);
+		//return ;
 		ft_exec_build(shell, save->str);
 	}
 	if (save->type == COMMAND || save->type == EXEC)
@@ -388,6 +390,29 @@ int	ft_path(char **env, t_pipex **pipex, char *cmd)
 	}
 	(*pipex)->path = NULL;
 	return (ft_clear_split(split), 0);
+}
+
+void	ft_free_pipex(t_pipex *pipex)
+{
+	int	p;
+
+	p = 0;
+	if (!pipex)
+		return ;
+	if (pipex->path)
+		free(pipex->path);
+	if (pipex->command)
+	{
+		while (pipex->command[p])
+		{
+			free(pipex->command[p]);
+			p++;
+		}
+		free(pipex->command);
+	}
+	pipex->path = NULL;
+	pipex->command = NULL;
+	//free(pipex);
 }
 
 int	ft_executor(t_minishell *shell)

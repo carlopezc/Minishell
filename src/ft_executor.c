@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/04/04 15:33:10 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/04 16:54:28 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,18 +185,48 @@ void	ft_pwd(t_minishell *shell)
 	return ;
 }
 
-void	ft_env(t_minishell *shell)
+void	ft_env(t_minishell *shell, char *cmd)
 {
-	int	p;
-
-	p = 0;
-	while (shell->env[p])
-	{
-		ft_printf("%s\n", shell->env[p]);
-		p++;
-	}
+	//esta funcion esta mal jeje
+ 	int	i;
+ 	int flag;
+ 	char	**env;
+	int		p;
+ 
+ 	p = 0;
+ 	i = 3;
+ 	flag = 0;
+ 	env = shell->env;
+ 	// Falta mirar si los caracteres son validos para nombre de variable
+ 	ft_printf("%s\n", cmd);
+ 	while (cmd[i])
+ 	{
+ 		ft_printf("la letra es %c\n", cmd[i]);
+ 		if (cmd[i] == '=')
+ 		{
+ 			ft_printf("Entra\n");
+ 			//usare misma funcion cuando haga export, 1 para var temporal (en este caso), 0 para global
+ 			ft_add_to_env(&shell, cmd + 4, 1);
+ 			flag = 1;
+ 			break ;
+ 			//lo añade y ademas imprime el env
+ 			//ademas no se añade al export porque es variable temporal
+ 			//solo se añade para este readline, luego tiene que volver a antes !!! amai
+ 		}
+ 		i++;
+ 	}
+ 	if (flag)
+ 	{
+ 		ft_printf("env temporal \n");
+ 		env = shell->env_temporal;
+ 	}
+ 	while (env[p])
+ 	{
+ 		ft_printf("%s\n", env[p]);
+ 		p++;
+ 	}
 	return ;
-}
+ }
 
 void	ft_export(t_minishell *shell)
 {
@@ -244,7 +274,7 @@ void	ft_exec_build(t_minishell *shell, char *cmd)
 		return ;
 		//ft_unset();
 	if (ft_strncmp(cmd, "env", 3) == 0)
-		ft_env(shell);
+		ft_env(shell, cmd);
 	if (ft_strncmp(cmd, "exit", 4) == 0)
 		exit(0) ;
 		//ft_exit();
@@ -403,7 +433,7 @@ int	ft_executor(t_minishell *shell)
 	{
 		while (save && save->type != PIPE)
 		{
-			ft_printf("Dentro de exec el save str es %s\n", save->str);
+			//ft_printf("Dentro de exec el save str es %s\n", save->str);
 			if (save && save->type == COMMAND)
 			{
 				pipex->command = ft_split(save->str, ' ');
@@ -447,7 +477,7 @@ int	ft_executor(t_minishell *shell)
 				pipex->docs[0] = 0;
 			if (pipex->docs[1] < 0)
 				pipex->docs[1] = 0;
-			ft_printf("Dentro de exec el save str es %s\n", tmp->str);
+			//ft_printf("Dentro de exec el save str es %s\n", tmp->str);
 			if (pipex->pid == 0)
 				ft_exec(shell, pipex, tmp);
 			else

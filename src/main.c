@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:15:05 by carlopez          #+#    #+#             */
-/*   Updated: 2025/04/04 16:34:15 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/04 16:43:11 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ int		ft_main_loop(t_minishell **minishell)
 			return (ft_printf("Error in process input \n"), -1);
 		}
 		ft_print_tokens((*minishell)->tokens);
-		//ft_executor(minishell);
+		ft_executor(*minishell);
 		if (input)
 			free(input);
 		input = NULL;

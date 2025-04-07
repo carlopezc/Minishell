@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/04/03 19:58:14 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/04/03 20:22:13 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -290,7 +290,7 @@ int	ft_process_input(t_minishell **minishell, char *input)
 			return (0);
 		i++;
 	}
-	return (1);
+	return (ft_free_array((*minishell)->s_input), 1);
 }
 
 void	ft_free_array(char **arr)
@@ -476,10 +476,10 @@ int	ft_init_minishell(t_minishell **minishell, char **env)
 		return (0);
 	(*minishell)->tokens = NULL;
 	//aqui hago una copia de env
-	//(*minishell)->env = ft_strdup_env(env, 0);
-	//(*minishell)->env_temporal = NULL;
+	(*minishell)->env = ft_strdup_env(env, 0);
+	(*minishell)->env_temporal = NULL;
 	//aqui hago otra copia
-	//(*minishell)->export = ft_create_export(ft_strdup_env(env, 1));
+	(*minishell)->export = ft_create_export(ft_strdup_env(env, 1));
 	(*minishell)->s_input = NULL;
 	//la flag para saber si libero o no el environment
 	//en el segundo caso si

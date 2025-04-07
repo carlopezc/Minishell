@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:15:05 by carlopez          #+#    #+#             */
-/*   Updated: 2025/04/03 20:06:58 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/04/03 20:19:56 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,14 +20,21 @@ void	ft_free_minishell(t_minishell **minishell)
 		return ;
 	if ((*minishell)->tokens)
 		ft_free_tokens(minishell);
-	/*
 	if ((*minishell)->env)
+	{
 		ft_free_array((*minishell)->env);
+		(*minishell)->env = NULL;
+	}
 	if ((*minishell)->env_temporal)
+	{
 		ft_free_array((*minishell)->env_temporal);
+		(*minishell)->env_temporal = NULL;
+	}
 	if ((*minishell)->export)
+	{
 		ft_free_array((*minishell)->export);
-		*/
+		(*minishell)->env_temporal = NULL;
+	}
 	if ((*minishell)->s_input)
 	{
 		ft_free_array((*minishell)->s_input);

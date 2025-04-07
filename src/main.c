@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:15:05 by carlopez          #+#    #+#             */
-/*   Updated: 2025/04/03 20:19:56 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/04/07 11:34:28 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void	ft_free_minishell(t_minishell **minishell)
 	if ((*minishell)->export)
 	{
 		ft_free_array((*minishell)->export);
-		(*minishell)->env_temporal = NULL;
+		(*minishell)->export = NULL;
 	}
 	if ((*minishell)->s_input)
 	{
@@ -57,33 +57,46 @@ void	ft_print_tokens(t_token	*token)
 	return ;
 }
 
-int	main(int argc, char **argv, char **env)
+int		ft_main_loop(t_minishell **minishell)
 {
 	char	*input;
+
+	//para parar el bucle señales o exit
+	while (1)
+	{
+		input = readline("minishell> ");
+			//input puede ser nulo si recibe el EOF (CTRL + D)
+		if (!input)
+			return (ft_printf("exit\n"), 0);
+		if (*input)
+			add_history(input);
+		if (!ft_process_input(minishell, input))
+		{
+			if (input)
+				free(input);
+			return (ft_printf("Error in process input \n"), -1);
+		}
+		ft_print_tokens((*minishell)->tokens);
+		ft_executor(*minishell);
+		if (input)
+			free(input);
+		input = NULL;
+		ft_free_tokens(minishell);
+	}
+}
+
+int	main(int argc, char **argv, char **env)
+{
 	t_minishell	*minishell;
 
 	(void)argc;
 	(void)argv;
-	if (argc != 1 || !argv[0])
-		return (ft_printf("Wrong number of arguments (no argunments needed)\n"), -1);
 	minishell = NULL;
-	input = readline("minishell> ");
-	if (!input)
-		return (ft_printf("Error in function readline\n"), -1);
+	if (argc != 1 || !argv[0])
+		return (ft_printf("Wrong number of arguments (no arguments needed)\n"), -1);
 	if (!ft_init_minishell(&minishell, env))
-		return (free(input), ft_printf("Error in malloc\n"), -1);
-	while (input && *input)
-	{
-		add_history(input);
-		if (!ft_process_input(&minishell, input))
-			return (free(input), ft_free_minishell(&minishell), ft_printf("Error in process input \n"), -1);
-		//ft_print_tokens(minishell->tokens);
-		//ft_executor(minishell);
-		free(input);
-		ft_free_tokens(&minishell);
-		input = readline("minishell> ");
-	}
-	if (input)
-		free(input);
+		return (ft_printf("Error in malloc\n"), -1);
+	if (!ft_main_loop(&minishell))
+		return (ft_free_minishell(&minishell), -1);
 	return (ft_free_minishell(&minishell), 0);
 }

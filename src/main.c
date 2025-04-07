@@ -6,24 +6,25 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:15:05 by carlopez          #+#    #+#             */
-/*   Updated: 2025/04/03 12:17:36 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/04/03 13:54:46 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 # include "../header/ft_minishell.h"
 
-void	ft_free_tokens(t_minishell *minishell)
+void	ft_free_tokens(t_token **tokens)
 {
-	int	p;
+	t_token 	*tmp;
 
-	if (!minishell || !minishell->tokens)
-		return ;
-	p = 0;
-	while ((p * sizeof(t_token) < sizeof(minishell->tokens)))
+	while (tokens && *tokens)
 	{
-		free(minishell->tokens[p++].str);
+		tmp = (*tokens)->next;
+		if ((*tokens)->str)
+			free((*tokens)->str);
+		free(*tokens);
+		*tokens = tmp;
 	}
-	free(minishell->tokens);
+	return ;
 }
 
 int	main(int argc, char **argv, char **env)
@@ -46,7 +47,7 @@ int	main(int argc, char **argv, char **env)
 		free(input);
 		ft_executor(minishell);
 		ft_printf("%s\n", minishell->tokens[0].str);
-		//ft_free_tokens(minishell);
+		ft_free_tokens(&minishell->tokens);
 		input = readline("minishell> ");
 	}
 	if (input)

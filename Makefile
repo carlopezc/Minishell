@@ -1,3 +1,15 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2025/03/27 15:14:10 by carlopez          #+#    #+#              #
+#    Updated: 2025/04/08 16:54:03 by carlopez         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
 NAME       = minishell
  
 BONUS		= minishell_bonus
@@ -6,7 +18,7 @@ ARFLAGS    = -rcs
 CC         = cc
 
 RFLAGS	= -L/usr/local/lib -I/usr/local/include -lreadline -lncurses
-CFLAGS     = -Wall -Wextra -Werror -g #-fsanitize=address  
+CFLAGS     = -g -Wall -Wextra -Werror #-fsanitize=address 
 OFLAGS     = -MMD -MF $(@:.o=.d)
 
 # Directorios
@@ -17,7 +29,7 @@ DEPDIR     = deps
 OBJDIR     = objs
 BOBJDIR		= bonus_obj
 PRINTFDIR  = printf
-OUTILSDIR = utils_objects
+OUTILSDIR	= utils_objects
 
 # Archivos de cabecera
 LIB        = header/ft_minishell.h
@@ -31,7 +43,7 @@ UTILS      = ft_utils.c
 OBJS       = $(addprefix $(OBJDIR)/, $(SRC:.c=.o))
 BOBOJ		= $(addprefix $(BOBJDIR)/, $(BSRC:.c=.o))
 DEPS       = $(addprefix $(DEPDIR)/, $(SRC:.c=.d) $(UTILS:.c=.d) $(GET:.c=.d))
-OUTILS 		= $(addprefix $(OUTILSDIR)/, $(UTILS:.c=.o))
+OUTILS	= $(addprefix $(OUTILSDIR)/, $(UTILS:.c=.o))
 
 # Biblioteca
 LIBPRINTF  = $(PRINTFDIR)/libftprintf.a
@@ -64,7 +76,7 @@ $(BOBJ): $(BOBJDIR)/%.o : $(BSRCDIR)/%.c Makefile | $(BOBJDIR) $(DEPDIR)
 	@$(CC) $(CFLAGS) $(OFLAGS) -c $< -o $@
 	@mv $(OBJDIR)/*.d $(DEPDIR)
 
-$(OUTILS): $(OUTILSDIR)/%.o : $(UTILSDIR)/%.c Makefile | $(OUTILSDIR) $(DEPDIR)
+$(OUTILS): $(OUTILSDIR)/%.o : $(UTILSDIR)/%.c Makefile | $(OUTILSDIR) $(DEPSDIR)
 	@printf "%-42b%b" "$(PURPLE)$<:" "$(BLUE)$(@F)$(RESET)\n"
 	@$(CC) $(CFLAGS) $(OFLAGS) -c $< -o $@
 	@mv $(OUTILSDIR)/*.d deps/

@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/04/07 15:04:55 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/04/08 16:20:25 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ void	ft_add_node_back(t_token **lst, t_token *new)
 		return ;
 	}
 	temp = *lst;
-	while (temp->next != NULL)
+	while (temp->next)
 		temp = temp->next;
 	temp->next = new;
 	return ;
@@ -68,7 +68,7 @@ t_token	*ft_create_node(char *str, t_token_type type)
 	token = (t_token *)malloc(sizeof(t_token));
 	if (!token)
 		return (NULL);
-	token->str = str;
+	token->str = ft_strdup(str);
 	token->type = type;
 	token->next = NULL;
 	return (token);
@@ -90,7 +90,6 @@ void	ft_free_tokens(t_minishell **minishell)
 			ft_printf("liberando su str...\n");
 			token->str = NULL;
 		}
-		ft_printf("Peta aqui?\n");
 		free(token);
 		token = tmp;
 	}
@@ -139,10 +138,14 @@ char	*ft_check_var(t_minishell *minishell, char *s_input)
 		return (//Funcion que imprima el exit status)
 	}
 		*/
-	dup = ft_strdup(s_input);
+	dup = NULL;
 	if (!ft_strncmp(s_input, "$", 1))
+	{
+		dup = ft_strdup(s_input);
 		ft_expand(&dup, minishell->env);
-	return (dup);
+		return (dup);
+	}
+	return (s_input);
 }
 
 char	*ft_group_input(t_minishell *minishell, int *i)
@@ -173,8 +176,6 @@ char	*ft_group_input(t_minishell *minishell, int *i)
 			if (input)
 				free(input);
 			input = ft_check_var(minishell, minishell->s_input[++(*i)]);
-			if (!input)
-				input = "";
 			input = ft_strjoin(tmp, input);
 			free(tmp);
 		}
@@ -259,8 +260,6 @@ int	ft_define_parts(t_minishell **minishell, char **input, t_token_type *type, i
 	{
 		*type = COMMAND;
 		*input = ft_group_input(*minishell, i);
-		if (!*input)
-			return (0);
 		return (1);
 	}
 }
@@ -280,9 +279,6 @@ int	ft_group_command(t_minishell **minishell, int *i)
 	if (!token)
 		return (0);
 	ft_add_node_back(&((*minishell)->tokens), token);
-	ft_printf("Tras anadir el nodo: \n");
-	ft_print_tokens((*minishell)->tokens);
-	ft_printf("Hasta aqui: \n");
 	return (1);
 }
 
@@ -293,11 +289,6 @@ int	ft_process_input(t_minishell **minishell, char *input)
 	i = 0;
 	if (!minishell || !input)
 		return (0);
-	if ((*minishell)->s_input)
-	{
-		ft_free_array((*minishell)->s_input);
-		(*minishell)->s_input = NULL;
-	}
 	(*minishell)->s_input = ft_split(input, ' ');
 	if (!(*minishell)->s_input)
 		return (0);
@@ -441,8 +432,7 @@ char	**ft_add_quotes(char **export)
 	j = 0;
 	if (!export || !*export)
 		return (NULL);
-	while (export[j])
-		j++;
+	j = ft_arraylen(export);
 	quoted_export = (char **)malloc((j + 1) * sizeof(char *));
 	if (!quoted_export)
 		return (NULL);
@@ -453,11 +443,15 @@ char	**ft_add_quotes(char **export)
 		free(export[j]);
 		export[j] = NULL;
 		if (!quoted_export[j])
-			return (free(export), NULL);
+		{
+			ft_free_array(export);
+			export = NULL;
+			return (NULL);
+		}
 		j++;
 	}
 	quoted_export[j] = NULL;
-	free(export);
+	ft_free_array(export);
 	export = NULL;
 	return (quoted_export);
 }
@@ -507,11 +501,7 @@ int	ft_init_minishell(t_minishell **minishell, char **env)
 	//si no me pasan environment tengo que crear uno con x cosas
 	(*minishell)->export = ft_create_export(ft_strdup_env(env));
 	if (!(*minishell)->export)
-	{
-		ft_free_array((*minishell)->env);
-		(*minishell)->env = NULL;
-		return (free(*minishell), ft_printf("Error creating export \n"), 0);
-	}
+		return (ft_free_minishell(minishell), ft_printf("Error creating export \n"), 0);
 	(*minishell)->s_input = NULL;
 	return (1);
 }

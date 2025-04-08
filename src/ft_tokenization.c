@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/04/01 13:59:44 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/07 11:37:15 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,28 @@ t_token	*ft_create_node(char *str, t_token_type type)
 	return (token);
 }
 
+void	ft_free_tokens(t_minishell **minishell)
+{
+	t_token 	*tmp;
+	t_token 	*token;
+
+	token = (*minishell)->tokens;
+	tmp = NULL;
+	while (token)
+	{
+		tmp = token->next;
+		if (token->str)
+		{
+			free(token->str);
+			token->str = NULL;
+		}
+		free(token);
+		token = tmp;
+	}
+	(*minishell)->tokens = NULL;
+	return ;
+}
+
 void	ft_expand(char **input, char **env)
 {
 	int 	i;
@@ -90,20 +112,34 @@ void	ft_expand(char **input, char **env)
 		{
 			final_var = ft_substr(env[i], ft_strlen(name_var) + 1, ft_strlen(env[i]) - ft_strlen(name_var) - 1);
 			if (!final_var)
-				return ;
-			*input = final_var;
-			return (free(name_var));
+				return (free(name_var));
+			free(name_var);
+			free(*input);
+			*input = ft_strdup(final_var);
+			free(final_var);
+			return ;
 		}
 		i++;
 	}
+	free(*input);
 	*input = NULL;
-	return (free(name_var));
+	free(name_var);
+	return ;
 }
 char	*ft_check_var(t_minishell *minishell, char *s_input)
 {
+	char	*dup;
+	/*
+	if (!ft_strncmp(s_input, "$?", ft_strlen(s_input)))
+	{
+		//Funcion que imprima el exit status
+		return (//Funcion que imprima el exit status)
+	}
+		*/
+	dup = ft_strdup(s_input);
 	if (!ft_strncmp(s_input, "$", 1))
-		ft_expand(&s_input, minishell->env);
-	return (s_input);
+		ft_expand(&dup, minishell->env);
+	return (dup);
 }
 
 char	*ft_group_input(t_minishell *minishell, int *i)
@@ -114,8 +150,9 @@ char	*ft_group_input(t_minishell *minishell, int *i)
 	input = ft_check_var(minishell, minishell->s_input[*i]);
 	while (input && minishell->s_input[*i + 1])
 	{
-		//este me controla tb el ||
-		if (minishell->s_input[*i + 1] && !ft_strncmp(minishell->s_input[*i + 1], "|", 2))
+		if (minishell->s_input[*i + 1] && !ft_strncmp(minishell->s_input[*i + 1], "||", 3))
+			return (input);
+		else if (minishell->s_input[*i + 1] && !ft_strncmp(minishell->s_input[*i + 1], "|", 2))
 			return (input);
 		else if (minishell->s_input[*i + 1] && !ft_strncmp(minishell->s_input[*i + 1], "<", 2))
 			return (input);
@@ -130,9 +167,11 @@ char	*ft_group_input(t_minishell *minishell, int *i)
 		else
 		{
 			tmp = ft_strjoin(input, " ");
+			if (input)
+				free(input);
 			input = ft_check_var(minishell, minishell->s_input[++(*i)]);
 			if (!input)
-				return (free(tmp), input);
+				input = "";
 			input = ft_strjoin(tmp, input);
 			free(tmp);
 		}
@@ -209,8 +248,6 @@ int	ft_define_parts(t_minishell **minishell, char **input, t_token_type *type, i
 		{
 			if ((*minishell)->s_input[*i + 1])
 				*input = (*minishell)->s_input[++(*i)];
-			else
-				return (0);
 		}
 		return (1);
 	}
@@ -222,7 +259,6 @@ int	ft_define_parts(t_minishell **minishell, char **input, t_token_type *type, i
 			return (0);
 		return (1);
 	}
-	return (0);
 }
 
 int	ft_group_command(t_minishell **minishell, int *i)
@@ -245,35 +281,52 @@ int	ft_group_command(t_minishell **minishell, int *i)
 
 int	ft_process_input(t_minishell **minishell, char *input)
 {
-	char	**s_input;
 	int	i;
 
 	i = 0;
-	if (!minishell | !input)
+	if (!minishell || !input)
 		return (0);
-	s_input = ft_split(input, ' ');
-	if (!s_input)
+	if ((*minishell)->s_input)
+		ft_free_array((*minishell)->s_input);
+	(*minishell)->s_input = ft_split(input, ' ');
+	if (!(*minishell)->s_input)
 		return (0);
-	(*minishell)->s_input = s_input;
 	while ((*minishell)->s_input && (*minishell)->s_input[i])
 	{
 		if (!ft_group_command(minishell, &i))
 			return (0);
 		i++;
 	}
-	return (1);
+	return (ft_free_array((*minishell)->s_input), 1);
 }
 
 void	ft_free_array(char **arr)
 {
 	int	i;
 
-	if (!arr || !*arr)
+	if (!arr)
 		return ;
 	i = 0;
 	while (arr[i])
-		free(arr[i++]);
+	{
+		free(arr[i]);
+		arr[i++] = NULL;
+	}
 	free(arr);
+	arr = NULL;
+	return ;
+}
+
+int	ft_arraylen(char **arr)
+{
+	int	i;
+
+	i = 0;
+	if (!arr)
+		return (i);
+	while (arr[i])
+		i++;
+	return (i);
 }
 
 char	**ft_strdup_env(char **env)
@@ -284,8 +337,7 @@ char	**ft_strdup_env(char **env)
 	i = 0;
 	if (!env || !*env)
 		return (NULL);
-	while (env[i])
-		i++;
+	i = ft_arraylen(env);
 	cpy_env = (char **)malloc((i + 1) * sizeof(char *));
 	if (!cpy_env)
 		return (NULL);
@@ -294,11 +346,111 @@ char	**ft_strdup_env(char **env)
 	{
 		cpy_env[i] = ft_strdup(env[i]);
 		if (!cpy_env[i])
-			return (ft_free_array(cpy_env), NULL);
+		{
+			ft_free_array(cpy_env);
+			cpy_env = NULL;
+			return (NULL);
+		}
 		i++;
 	}
 	cpy_env[i] = NULL;
 	return (cpy_env);
+}
+
+void	ft_add_to_env(t_minishell **minishell, char *str, int flag)
+{
+	int	i;
+	char	**cpy;
+	char	**env;
+
+	i = 0;
+	env = (*minishell)->env;
+	if (!env || !*env || !str)
+		return ;
+	while (env[i])
+		i++;
+	cpy = (char **)malloc((i + 2) * sizeof(char *));
+	if (!cpy)
+		return ;
+	i = 0;
+	while (env[i])
+	{
+		cpy[i] = ft_strdup(env[i]);
+		if (!cpy[i])
+		{
+			ft_free_array(cpy);
+			cpy = NULL;
+			return ;
+		}
+		i++;
+	}
+	cpy[i++] = str;
+	cpy[i] = NULL;
+	ft_free_array(env);
+	env = NULL;
+	if (flag)
+	{
+		ft_printf("entra aqui\n");
+		(*minishell)->env_temporal = cpy;
+	}
+	else
+		(*minishell)->env = cpy;
+	return ;
+}
+char	*ft_quote_string(char *str)
+{
+	int 	i;
+	int		j;
+	char	*quoted_str;
+
+	i = 0;
+	if (!str)
+		return (NULL);
+	i = ft_strlen(str);
+	quoted_str = (char *)malloc((i + 3) * sizeof(char));
+	if (!quoted_str)
+		return (NULL);
+	i = 0;
+	j = 0;
+	while (str[i] && str[i] != '=')
+		quoted_str[j++] = str[i++];
+	if (str[i] && str[i] == '=')
+		quoted_str[j++] = str[i++];
+	quoted_str[j++] = '"';
+	while (str[i])
+		quoted_str[j++] = str[i++];
+	quoted_str[j++] = '"';
+	quoted_str[j] = '\0';
+	return (quoted_str);
+}
+
+char	**ft_add_quotes(char **export)
+{
+	char	**quoted_export;
+	int		j;
+
+	j = 0;
+	if (!export || !*export)
+		return (NULL);
+	while (export[j])
+		j++;
+	quoted_export = (char **)malloc((j + 1) * sizeof(char *));
+	if (!quoted_export)
+		return (NULL);
+	j = 0;
+	while (export[j])
+	{
+		quoted_export[j] = ft_quote_string(export[j]);
+		free(export[j]);
+		export[j] = NULL;
+		if (!quoted_export[j])
+			return (free(export), NULL);
+		j++;
+	}
+	quoted_export[j] = NULL;
+	free(export);
+	export = NULL;
+	return (quoted_export);
 }
 
 char	**ft_create_export(char **export)
@@ -313,8 +465,7 @@ char	**ft_create_export(char **export)
 	swapped = 1;
 	if (!export || !*export)
 		return (NULL); //Caso especial que ha dicho luqui no se que habra que hacer
-	while (export[j])
-		j++;
+	j = ft_arraylen(export);
 	while (swapped)
 	{
 		swapped = 0;
@@ -331,7 +482,7 @@ char	**ft_create_export(char **export)
 			i++;
 		}
 	}
-	return (export);
+	return (ft_add_quotes(export));
 }
 
 int	ft_init_minishell(t_minishell **minishell, char **env)
@@ -340,8 +491,14 @@ int	ft_init_minishell(t_minishell **minishell, char **env)
 	if (!(*minishell))
 		return (0);
 	(*minishell)->tokens = NULL;
+	(*minishell)->env_temporal = NULL;
 	(*minishell)->env = ft_strdup_env(env);
+	if (!(*minishell)->env)
+		return (free(*minishell), ft_printf("Error creating environment \n"), 0);
+	//si no me pasan environment tengo que crear uno con x cosas
 	(*minishell)->export = ft_create_export(ft_strdup_env(env));
+	if (!(*minishell)->export)
+		return (ft_free_array((*minishell)->env), free(*minishell), ft_printf("Error creating export \n"), 0);
 	(*minishell)->s_input = NULL;
 	return (1);
 }

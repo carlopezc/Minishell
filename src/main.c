@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:15:05 by carlopez          #+#    #+#             */
-/*   Updated: 2025/04/07 11:34:28 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/04/07 17:26:52 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,10 @@ void	ft_free_minishell(t_minishell **minishell)
 	if (!minishell || !*minishell)
 		return ;
 	if ((*minishell)->tokens)
+	{
 		ft_free_tokens(minishell);
+		(*minishell)->tokens = NULL;
+	}
 	if ((*minishell)->env)
 	{
 		ft_free_array((*minishell)->env);
@@ -50,7 +53,7 @@ void	ft_print_tokens(t_token	*token)
 {
 	while (token)
 	{
-		ft_printf("El input es %s\n", (token->str));
+		ft_printf("El input es %s\n", token->str);
 		ft_printf("El token type es: %s\n", token_type_to_str(token->type));
 		token = token->next;
 	}
@@ -76,12 +79,14 @@ int		ft_main_loop(t_minishell **minishell)
 				free(input);
 			return (ft_printf("Error in process input \n"), -1);
 		}
-		ft_print_tokens((*minishell)->tokens);
-		ft_executor(*minishell);
+		//ft_print_tokens((*minishell)->tokens);
+		//ft_executor(*minishell);
 		if (input)
 			free(input);
 		input = NULL;
+		ft_print_tokens((*minishell)->tokens);
 		ft_free_tokens(minishell);
+		(*minishell)->tokens = NULL;
 	}
 }
 

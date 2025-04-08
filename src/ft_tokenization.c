@@ -6,11 +6,13 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/04/07 11:37:15 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/04/07 15:04:55 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 # include "../header/ft_minishell.h"
+
+void	ft_print_tokens(t_token	*token);
 
 char	*token_type_to_str(t_token_type type)
 {
@@ -82,15 +84,16 @@ void	ft_free_tokens(t_minishell **minishell)
 	while (token)
 	{
 		tmp = token->next;
+		ft_printf("LIBERANDO CADENA , DIR DE MEMORIA: %p\n", (void *)token);
 		if (token->str)
 		{
-			free(token->str);
+			ft_printf("liberando su str...\n");
 			token->str = NULL;
 		}
+		ft_printf("Peta aqui?\n");
 		free(token);
 		token = tmp;
 	}
-	(*minishell)->tokens = NULL;
 	return ;
 }
 
@@ -248,6 +251,7 @@ int	ft_define_parts(t_minishell **minishell, char **input, t_token_type *type, i
 		{
 			if ((*minishell)->s_input[*i + 1])
 				*input = (*minishell)->s_input[++(*i)];
+
 		}
 		return (1);
 	}
@@ -276,6 +280,9 @@ int	ft_group_command(t_minishell **minishell, int *i)
 	if (!token)
 		return (0);
 	ft_add_node_back(&((*minishell)->tokens), token);
+	ft_printf("Tras anadir el nodo: \n");
+	ft_print_tokens((*minishell)->tokens);
+	ft_printf("Hasta aqui: \n");
 	return (1);
 }
 
@@ -287,7 +294,10 @@ int	ft_process_input(t_minishell **minishell, char *input)
 	if (!minishell || !input)
 		return (0);
 	if ((*minishell)->s_input)
+	{
 		ft_free_array((*minishell)->s_input);
+		(*minishell)->s_input = NULL;
+	}
 	(*minishell)->s_input = ft_split(input, ' ');
 	if (!(*minishell)->s_input)
 		return (0);
@@ -297,7 +307,9 @@ int	ft_process_input(t_minishell **minishell, char *input)
 			return (0);
 		i++;
 	}
-	return (ft_free_array((*minishell)->s_input), 1);
+	ft_free_array((*minishell)->s_input);
+	(*minishell)->s_input = NULL;
+	return (1);
 }
 
 void	ft_free_array(char **arr)
@@ -389,10 +401,7 @@ void	ft_add_to_env(t_minishell **minishell, char *str, int flag)
 	ft_free_array(env);
 	env = NULL;
 	if (flag)
-	{
-		ft_printf("entra aqui\n");
 		(*minishell)->env_temporal = cpy;
-	}
 	else
 		(*minishell)->env = cpy;
 	return ;
@@ -498,7 +507,11 @@ int	ft_init_minishell(t_minishell **minishell, char **env)
 	//si no me pasan environment tengo que crear uno con x cosas
 	(*minishell)->export = ft_create_export(ft_strdup_env(env));
 	if (!(*minishell)->export)
-		return (ft_free_array((*minishell)->env), free(*minishell), ft_printf("Error creating export \n"), 0);
+	{
+		ft_free_array((*minishell)->env);
+		(*minishell)->env = NULL;
+		return (free(*minishell), ft_printf("Error creating export \n"), 0);
+	}
 	(*minishell)->s_input = NULL;
 	return (1);
 }

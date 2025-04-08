@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/04/04 16:54:28 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/08 16:42:20 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -276,7 +276,10 @@ void	ft_exec_build(t_minishell *shell, char *cmd)
 	if (ft_strncmp(cmd, "env", 3) == 0)
 		ft_env(shell, cmd);
 	if (ft_strncmp(cmd, "exit", 4) == 0)
+	{
+		ft_free_minishell(&shell);
 		exit(0) ;
+	}
 		//ft_exit();
 	exit(0);
 }
@@ -300,12 +303,8 @@ void	ft_pre_exec_command(t_pipex *pipex, char **env, t_token *cmd)
 		ft_printf("%s\n", path_command);
 		command = pipex->command;
 	}
-//	if (pipex->path)
-//		free(pipex->path);
-//	free(pipex);
-//	while (*env)
-//		free(*env++);
-//	free(env);
+	if (pipex->path)
+		free(pipex->path);
 	execve(path_command, command, env);
 }
 
@@ -341,7 +340,9 @@ void	ft_exec(t_minishell *shell, t_pipex *pipex, t_token *save)
 			dup2(pipex->pipe[1][1], 1);
 			close(pipex->pipe[1][1]);
 		}
-		ft_pre_exec_command(pipex, shell->env, save);
+		char **env = ft_strdup_env(shell->env);
+		ft_free_minishell(&shell);
+		ft_pre_exec_command(pipex, env, save);
 	}
 }
 

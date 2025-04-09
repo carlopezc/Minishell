@@ -6,7 +6,7 @@
 #    By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/27 15:14:10 by carlopez          #+#    #+#              #
-#    Updated: 2025/04/08 16:54:03 by carlopez         ###   ########.fr        #
+#    Updated: 2025/04/09 10:38:52 by carlopez         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,7 @@ ARFLAGS    = -rcs
 CC         = cc
 
 RFLAGS	= -L/usr/local/lib -I/usr/local/include -lreadline -lncurses
-CFLAGS     = -g -Wall -Wextra -Werror #-fsanitize=address 
+CFLAGS     = -g -Wall -Wextra -Werror -fsanitize=address 
 OFLAGS     = -MMD -MF $(@:.o=.d)
 
 # Directorios

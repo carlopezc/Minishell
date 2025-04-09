@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/04/08 16:20:25 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/04/09 17:07:42 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,10 +84,11 @@ void	ft_free_tokens(t_minishell **minishell)
 	while (token)
 	{
 		tmp = token->next;
-		ft_printf("LIBERANDO CADENA , DIR DE MEMORIA: %p\n", (void *)token);
+		//ft_printf("LIBERANDO CADENA , DIR DE MEMORIA: %p\n", (void *)token);
 		if (token->str)
 		{
-			ft_printf("liberando su str...\n");
+			//ft_printf("liberando su str...\n");
+			//ft_safe_free((void **)&token->str);
 			token->str = NULL;
 		}
 		free(token);
@@ -123,7 +124,13 @@ void	ft_expand(char **input, char **env)
 		}
 		i++;
 	}
-	free(*input);
+	/*
+	if (*input)
+	{
+		free(*input);
+		*input = NULL;
+	}
+	*/
 	*input = NULL;
 	free(name_var);
 	return ;
@@ -145,7 +152,7 @@ char	*ft_check_var(t_minishell *minishell, char *s_input)
 		ft_expand(&dup, minishell->env);
 		return (dup);
 	}
-	return (s_input);
+	return (ft_strdup(s_input));
 }
 
 char	*ft_group_input(t_minishell *minishell, int *i)
@@ -174,8 +181,9 @@ char	*ft_group_input(t_minishell *minishell, int *i)
 		{
 			tmp = ft_strjoin(input, " ");
 			if (input)
-				free(input);
+				ft_safe_free((void **)&input);
 			input = ft_check_var(minishell, minishell->s_input[++(*i)]);
+			ft_printf("Input pasado por check_var es %s\n", input);
 			input = ft_strjoin(tmp, input);
 			free(tmp);
 		}
@@ -298,6 +306,7 @@ int	ft_process_input(t_minishell **minishell, char *input)
 			return (0);
 		i++;
 	}
+	//ft_printf("Liberando el s_input en process input\n");
 	ft_free_array((*minishell)->s_input);
 	(*minishell)->s_input = NULL;
 	return (1);
@@ -312,11 +321,10 @@ void	ft_free_array(char **arr)
 	i = 0;
 	while (arr[i])
 	{
-		free(arr[i]);
-		arr[i++] = NULL;
+		//ft_printf("LIBERANDO EN FREE ARRAY PUNTERO:  %p\n", arr[i]);
+		ft_safe_free((void **)&arr[i++]);
 	}
 	free(arr);
-	arr = NULL;
 	return ;
 }
 
@@ -350,6 +358,7 @@ char	**ft_strdup_env(char **env)
 		cpy_env[i] = ft_strdup(env[i]);
 		if (!cpy_env[i])
 		{
+			//ft_printf("Liberando cpy env en strdup env\n");
 			ft_free_array(cpy_env);
 			cpy_env = NULL;
 			return (NULL);
@@ -370,8 +379,7 @@ void	ft_add_to_env(t_minishell **minishell, char *str, int flag)
 	env = (*minishell)->env;
 	if (!env || !*env || !str)
 		return ;
-	while (env[i])
-		i++;
+	i = ft_arraylen(env);
 	cpy = (char **)malloc((i + 2) * sizeof(char *));
 	if (!cpy)
 		return ;
@@ -381,6 +389,7 @@ void	ft_add_to_env(t_minishell **minishell, char *str, int flag)
 		cpy[i] = ft_strdup(env[i]);
 		if (!cpy[i])
 		{
+			//ft_printf("Liberando cpy en add to env\n");
 			ft_free_array(cpy);
 			cpy = NULL;
 			return ;
@@ -389,12 +398,14 @@ void	ft_add_to_env(t_minishell **minishell, char *str, int flag)
 	}
 	cpy[i++] = str;
 	cpy[i] = NULL;
-	ft_free_array(env);
-	env = NULL;
 	if (flag)
 		(*minishell)->env_temporal = cpy;
 	else
+	{
+		ft_free_array((*minishell)->env);
+		(*minishell)->env = NULL;
 		(*minishell)->env = cpy;
+	}
 	return ;
 }
 char	*ft_quote_string(char *str)
@@ -444,13 +455,16 @@ char	**ft_add_quotes(char **export)
 		export[j] = NULL;
 		if (!quoted_export[j])
 		{
-			ft_free_array(export);
+			//ft_printf("Libreando quoted export en add quotes\n");
+			ft_free_array(quoted_export);
+			quoted_export = NULL;
 			export = NULL;
 			return (NULL);
 		}
 		j++;
 	}
 	quoted_export[j] = NULL;
+	//ft_printf("Libreando quoted export en add quotes\n");
 	ft_free_array(export);
 	export = NULL;
 	return (quoted_export);

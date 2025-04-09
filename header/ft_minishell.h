@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 14:59:32 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/04/08 16:55:58 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/04/09 16:42:12 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,5 +71,8 @@ void 	ft_add_to_env(t_minishell **minishell, char *str, int flag);
 void	ft_free_array(char **arr);
 void	ft_free_minishell(t_minishell **minishell);
 char	**ft_strdup_env(char **env);
+void	ft_safe_free(void **p);
+char	**ft_create_export(char **export);
+int	ft_arraylen(char **arr);
 	
 #endif

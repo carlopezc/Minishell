@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:15:05 by carlopez          #+#    #+#             */
-/*   Updated: 2025/04/08 16:25:56 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/04/09 15:48:04 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,10 @@ int		ft_main_loop(t_minishell **minishell)
 		*/
 		ft_free_tokens(minishell);
 		(*minishell)->tokens = NULL;
+		/*
+		ft_free_array((*minishell)->env_temporal);
+		(*minishell)->env_temporal = NULL;
+		*/
 	}
 }
 

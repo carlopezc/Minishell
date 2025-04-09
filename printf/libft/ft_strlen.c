@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 17:10:24 by lbellmas          #+#    #+#             */
-/*   Updated: 2024/09/25 09:50:22 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/04/09 16:53:18 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ size_t	ft_strlen(const char *s)
 	size_t	p;
 
 	p = 0;
-	while (s[p] != '\0')
+	while (s && s[p] != '\0')
 		p++;
 	return (p);
 }

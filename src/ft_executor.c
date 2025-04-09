@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/04/09 19:45:01 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/04/09 21:37:19 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -213,6 +213,8 @@ void	ft_env(t_minishell *shell, char *cmd)
  
  	i = 3;
  	flag = 0;
+	if (!ft_strncmp(cmd, "env", ft_strlen(cmd)))
+		return (ft_print_env(shell->env));
  	env = shell->env;
  	// Falta mirar si los caracteres son validos para nombre de variable
  	while (cmd[i])
@@ -231,20 +233,22 @@ void	ft_env(t_minishell *shell, char *cmd)
  		i++;
  	}
  	if (flag)
+	{
  		env = shell->env_temporal;
-	ft_print_env(env);
+		ft_print_env(env);
+	}
 	return ;
  }
 
-void	ft_print_export(t_minishell *shell)
+void	ft_print_export(char	**export)
 {
 	int	p;
 
 	p = 0;
-	while (shell->export[p])
+	while (export[p])
 	{
 		ft_printf("declare -x ");
-		ft_printf("%s\n", shell->export[p]);
+		ft_printf("%s\n", export[p]);
 		p++;
 	}
 	return ;
@@ -277,6 +281,7 @@ void	ft_add_to_export(char *cmd, t_minishell **shell)
 	}
 	cpy[i++] = cmd;
 	cpy[i] = NULL;
+	ft_free_array((*shell)->export);
 	(*shell)->export = cpy;
 	return ;
 }
@@ -287,7 +292,7 @@ void	ft_export(t_minishell *shell, char *cmd)
 
 	i = 6;
 	if (!ft_strncmp(cmd, "export", ft_strlen(cmd)))
-		return (ft_print_export(shell));
+		return (ft_print_export(shell->export));
 	while (cmd[i])
 	{
 		if (cmd[i] == '=')
@@ -297,17 +302,20 @@ void	ft_export(t_minishell *shell, char *cmd)
 		}
 		i++;
 	}
+	/*
 	if (shell->export)
 	{
 		ft_free_array(shell->export);
 		shell->export = NULL;
 	}
+	*/
 	if (!cmd[i])
 		ft_add_to_export(cmd + 7, &shell);
 	else
 		shell->export = ft_create_export(ft_strdup_env(shell->env));
+	//LAS VARIABLES SIN VALOR ME LAS BORRA PORQUE COJO DE REFERENCIA EL ENV Y AHI NO ESTAN
 	//si hay arg no deberia imprimir solo para probar
-	ft_print_export(shell);
+	ft_print_export(shell->export);
 	return ;
 }
 

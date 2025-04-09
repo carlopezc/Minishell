@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/04/09 21:11:20 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/04/09 21:22:07 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -416,6 +416,7 @@ char	**ft_check_duplicated(char *str, char **env)
 	name_to_add = ft_get_name(str);
 	if (!name_to_add)
 		return (ft_printf("Error en malloc!!!!!!\n"), NULL);
+	i = 0;
 	while (env && env[i])
 	{
 		name_added = ft_get_name(env[i]);

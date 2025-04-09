@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/04/09 21:22:07 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/04/09 21:41:36 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -363,7 +363,6 @@ char	*ft_get_name(char *str)
 	char	*name;
 
 	i = 0;
-	ft_printf("Peta aqui?????????\n");
 	while (str && str[i])
 	{
 		if (str[i] == '=')
@@ -371,7 +370,6 @@ char	*ft_get_name(char *str)
 		i++;
 	}
 	name = ft_substr(str, 0, i);
-	ft_printf("Acabando get_name?\n");
 	return (name);
 }
 

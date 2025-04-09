@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 14:59:32 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/04/09 16:42:12 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/04/09 21:55:03 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,5 +74,6 @@ char	**ft_strdup_env(char **env);
 void	ft_safe_free(void **p);
 char	**ft_create_export(char **export);
 int	ft_arraylen(char **arr);
+char	*ft_get_name(char *str);
 	
 #endif

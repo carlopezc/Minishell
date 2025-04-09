@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/04/09 21:37:19 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/04/09 22:27:14 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@ void	ft_safe_free(void **p)
 {
 	if (p && *p)
 	{
-		//ft_printf("Liberando puntero : %p\n", *p);
 		free(*p);
 		*p  = NULL;
 	}
@@ -332,6 +331,63 @@ void	ft_echo(char *cmd)
 	return ;
 }
 
+void	ft_clear_line(t_minishell **shell, int i)
+{
+	char	**env;
+	int	j;
+	int	x;
+	char	**cpy;
+
+	env = ft_strdup_env((*shell)->env);
+	j = ft_arraylen(env);
+	cpy = (char **)malloc(j * sizeof(char *));
+	if (!cpy)
+		return ;
+	j = 0;
+	x = 0;
+	while (env && env[j])
+	{
+		if (i == j)
+		{
+			free(env[j]);
+			j++;
+		}
+		cpy[x++] = env[j++];
+
+	}
+	cpy[x] = NULL;
+	//ft_free_array((*shell)->env);
+	//ft_free_array((*shell)->export);
+	(*shell)->env = cpy;
+	(*shell)->export = ft_create_export(ft_strdup_env((*shell)->env));
+	return ;
+}
+
+void	ft_unset(t_minishell *shell, char *cmd)
+{
+	int	i;
+	char	*name;
+
+	i = 0;
+	ft_printf("entra a unset\n");
+	while (shell->env && shell->env[i])
+	{
+		name = ft_get_name(shell->env[i]);
+		ft_printf("name vale %s\n", name);
+		ft_printf("name vale %s\n", name);
+		if (!ft_strncmp(cmd, name, ft_strlen(name)))
+		{
+			ft_clear_line(&shell, i);
+			ft_print_env(shell->env);
+			free(name);
+			return ;
+		}
+		free(name);
+		i++;
+	}
+	return ;
+}
+
 void	ft_exec_build(t_minishell *shell, char *cmd)
 {
 	if (ft_strncmp(cmd, "echo", 4) == 0)
@@ -346,8 +402,7 @@ void	ft_exec_build(t_minishell *shell, char *cmd)
 	if (ft_strncmp(cmd, "export", 6) == 0)
 		ft_export(shell, cmd);
 	if (ft_strncmp(cmd, "unset", 5) == 0)
-		return ;
-		//ft_unset();
+		ft_unset(shell, cmd + 6);
 	if (ft_strncmp(cmd, "env", 3) == 0)
 		ft_env(shell, cmd);
 	if (ft_strncmp(cmd, "exit", 4) == 0)

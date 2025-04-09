@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/04/09 17:07:42 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/04/09 18:53:03 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,13 +124,6 @@ void	ft_expand(char **input, char **env)
 		}
 		i++;
 	}
-	/*
-	if (*input)
-	{
-		free(*input);
-		*input = NULL;
-	}
-	*/
 	*input = NULL;
 	free(name_var);
 	return ;
@@ -183,7 +176,6 @@ char	*ft_group_input(t_minishell *minishell, int *i)
 			if (input)
 				ft_safe_free((void **)&input);
 			input = ft_check_var(minishell, minishell->s_input[++(*i)]);
-			ft_printf("Input pasado por check_var es %s\n", input);
 			input = ft_strjoin(tmp, input);
 			free(tmp);
 		}
@@ -306,7 +298,6 @@ int	ft_process_input(t_minishell **minishell, char *input)
 			return (0);
 		i++;
 	}
-	//ft_printf("Liberando el s_input en process input\n");
 	ft_free_array((*minishell)->s_input);
 	(*minishell)->s_input = NULL;
 	return (1);
@@ -320,10 +311,7 @@ void	ft_free_array(char **arr)
 		return ;
 	i = 0;
 	while (arr[i])
-	{
-		//ft_printf("LIBERANDO EN FREE ARRAY PUNTERO:  %p\n", arr[i]);
 		ft_safe_free((void **)&arr[i++]);
-	}
 	free(arr);
 	return ;
 }
@@ -389,7 +377,6 @@ void	ft_add_to_env(t_minishell **minishell, char *str, int flag)
 		cpy[i] = ft_strdup(env[i]);
 		if (!cpy[i])
 		{
-			//ft_printf("Liberando cpy en add to env\n");
 			ft_free_array(cpy);
 			cpy = NULL;
 			return ;
@@ -401,13 +388,10 @@ void	ft_add_to_env(t_minishell **minishell, char *str, int flag)
 	if (flag)
 		(*minishell)->env_temporal = cpy;
 	else
-	{
-		ft_free_array((*minishell)->env);
-		(*minishell)->env = NULL;
 		(*minishell)->env = cpy;
-	}
 	return ;
 }
+
 char	*ft_quote_string(char *str)
 {
 	int 	i;
@@ -455,7 +439,6 @@ char	**ft_add_quotes(char **export)
 		export[j] = NULL;
 		if (!quoted_export[j])
 		{
-			//ft_printf("Libreando quoted export en add quotes\n");
 			ft_free_array(quoted_export);
 			quoted_export = NULL;
 			export = NULL;
@@ -464,7 +447,6 @@ char	**ft_add_quotes(char **export)
 		j++;
 	}
 	quoted_export[j] = NULL;
-	//ft_printf("Libreando quoted export en add quotes\n");
 	ft_free_array(export);
 	export = NULL;
 	return (quoted_export);
@@ -512,7 +494,7 @@ int	ft_init_minishell(t_minishell **minishell, char **env)
 	(*minishell)->env = ft_strdup_env(env);
 	if (!(*minishell)->env)
 		return (free(*minishell), ft_printf("Error creating environment \n"), 0);
-	//si no me pasan environment tengo que crear uno con x cosas
+	//si no me pasan environment tengo que crear uno con x cosas, si ejecutan minishell con env -i ./minishell el env tiene x cosas
 	(*minishell)->export = ft_create_export(ft_strdup_env(env));
 	if (!(*minishell)->export)
 		return (ft_free_minishell(minishell), ft_printf("Error creating export \n"), 0);

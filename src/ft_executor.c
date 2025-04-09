@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/04/09 17:02:46 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/04/09 18:37:48 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -297,17 +297,15 @@ void	ft_export(t_minishell *shell, char *cmd)
 		}
 		i++;
 	}
+	if (shell->export)
+	{
+		ft_free_array(shell->export);
+		shell->export = NULL;
+	}
 	if (!cmd[i])
 		ft_add_to_export(cmd + 7, &shell);
 	else
-	{
-		if (shell->export)
-		{
-			ft_free_array(shell->export);
-			shell->export = NULL;
-		}
 		shell->export = ft_create_export(ft_strdup_env(shell->env));
-	}
 	//si hay arg no deberia imprimir solo para probar
 	ft_print_export(shell);
 	return ;

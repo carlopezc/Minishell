@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/04/09 18:53:03 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/04/09 21:11:20 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -357,6 +357,84 @@ char	**ft_strdup_env(char **env)
 	return (cpy_env);
 }
 
+char	*ft_get_name(char *str)
+{
+	int	i;
+	char	*name;
+
+	i = 0;
+	ft_printf("Peta aqui?????????\n");
+	while (str && str[i])
+	{
+		if (str[i] == '=')
+			break ;
+		i++;
+	}
+	name = ft_substr(str, 0, i);
+	ft_printf("Acabando get_name?\n");
+	return (name);
+}
+
+char	**ft_change_value(int j, char *str, char **env)
+{
+	//funcion pochisima a ver si funciona
+	int	i;
+	char	**cpy;
+
+	i = ft_arraylen(env);
+	cpy = (char **)malloc((i + 1) * sizeof(char *));
+	if (!cpy)
+		return (NULL);
+	i = 0;
+	while (env && env[i])
+	{
+		if (i == j)
+			cpy[i] = ft_strdup(str);
+		else
+		{
+			cpy[i] = ft_strdup(env[i]);
+			if (!cpy[i])
+			{
+				ft_free_array(cpy);
+				cpy = NULL;
+				return (NULL);
+			}
+		}
+		i++;
+	}
+	cpy[i] = NULL;
+	return (cpy);
+}
+
+char	**ft_check_duplicated(char *str, char **env)
+{
+	char	*name_to_add;
+	char	*name_added;
+	int	i;
+	char	**cpy;
+
+	name_to_add = ft_get_name(str);
+	if (!name_to_add)
+		return (ft_printf("Error en malloc!!!!!!\n"), NULL);
+	while (env && env[i])
+	{
+		name_added = ft_get_name(env[i]);
+		ft_printf("name added es %s\n", name_added);
+		if (!ft_strncmp(name_to_add, name_added, ft_strlen(name_added)))
+		{
+			cpy = ft_change_value(i, str, env);
+			ft_safe_free((void **)&name_added);
+			ft_safe_free((void **)&name_to_add);
+			return (cpy);
+		}
+		ft_safe_free((void **)&name_added);
+		i++;
+	}
+	ft_safe_free((void **)&name_added);
+	ft_safe_free((void **)&name_to_add);
+	return (NULL);
+}
+
 void	ft_add_to_env(t_minishell **minishell, char *str, int flag)
 {
 	int	i;
@@ -368,23 +446,28 @@ void	ft_add_to_env(t_minishell **minishell, char *str, int flag)
 	if (!env || !*env || !str)
 		return ;
 	i = ft_arraylen(env);
-	cpy = (char **)malloc((i + 2) * sizeof(char *));
+	cpy = ft_check_duplicated(str, env);
+	//si nombres coinciden en la posicion que este crea string con valor nuevo
 	if (!cpy)
-		return ;
-	i = 0;
-	while (env[i])
 	{
-		cpy[i] = ft_strdup(env[i]);
-		if (!cpy[i])
-		{
-			ft_free_array(cpy);
-			cpy = NULL;
+		cpy = (char **)malloc((i + 2) * sizeof(char *));
+		if (!cpy)
 			return ;
+		i = 0;
+		while (env[i])
+		{
+			cpy[i] = ft_strdup(env[i]);
+			if (!cpy[i])
+			{
+				ft_free_array(cpy);
+				cpy = NULL;
+				return ;
+			}
+			i++;
 		}
-		i++;
+		cpy[i++] = str;
+		cpy[i] = NULL;
 	}
-	cpy[i++] = str;
-	cpy[i] = NULL;
 	if (flag)
 		(*minishell)->env_temporal = cpy;
 	else

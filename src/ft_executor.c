@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/04/09 18:37:48 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/04/09 19:45:01 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -318,9 +318,7 @@ void	ft_echo(char *cmd)
 
 	temp = ft_strchr(cmd, ' ');
 	if (ft_strncmp(temp + 1, "-n", 2) == 0)
-	{
 		ft_printf("%s", temp + 4);
-	}
 	else
 		ft_printf("%s\n", temp + 1);
 	return ;

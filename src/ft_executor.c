@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_executor.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
+/*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/04/09 22:27:14 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/04/10 21:38:32 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void	ft_safe_free(void **p)
 
 void	ft_arrange_fd(t_pipex *pipex)
 {
-	if (!pipex || !pipex->pipe)
+	if (!pipex /*|| !pipex->pipe*/)
 		return ;
 	if (pipex->pipe[0][0] != 0)
 	{
@@ -636,6 +636,7 @@ int	ft_executor(t_minishell *shell)
 					pipex->childs++;
 				if (pipex->pid == 0 && save->type == COMMAND)
 				{
+					ft_manage_child_signals();
 					pipex->command = ft_split(save->str, ' ');
 					if (ft_path(shell->env, &pipex, pipex->command[0]) == 0)
 						return (-1);
@@ -655,6 +656,7 @@ int	ft_executor(t_minishell *shell)
 			}
 			if (pipex->pid == 0)
 			{
+				ft_manage_child_signals();
 				ft_exec(shell, pipex, tmp);
 				save = save->next;
 			}

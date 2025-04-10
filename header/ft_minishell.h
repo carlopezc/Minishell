@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 14:59:32 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/04/09 21:55:03 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/04/10 21:41:44 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include "../printf/header/ft_printf.h"
 #include <readline/readline.h>
 #include <readline/history.h>
+#include <signal.h>
 
 typedef enum e_token_type
 {
@@ -75,5 +76,6 @@ void	ft_safe_free(void **p);
 char	**ft_create_export(char **export);
 int	ft_arraylen(char **arr);
 char	*ft_get_name(char *str);
+void	ft_manage_child_signals();
 	
 #endif

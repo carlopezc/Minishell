@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:15:05 by carlopez          #+#    #+#             */
-/*   Updated: 2025/04/09 15:48:04 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/04/10 21:39:59 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,12 +63,33 @@ void	ft_print_tokens(t_token	*token)
 	}
 	return ;
 }
+void	ft_manage_sigint(int signal)
+{
+	(void)signal;
+	write(1, "\n", 1);
+	rl_replace_line("", 0);
+	rl_on_new_line();
+	rl_redisplay();
+	return ;
+}
+
+void	ft_manage_shell_signals()
+{
+	signal(SIGINT, ft_manage_sigint);
+	signal(SIGQUIT, SIG_IGN);
+}
+void	ft_manage_child_signals()
+{
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
+}
 
 int		ft_main_loop(t_minishell **minishell)
 {
 	char	*input;
 
 	//para parar el bucle señales o exit
+	
 	while (1)
 	{
 		input = readline("minishell> ");
@@ -123,6 +144,7 @@ int	main(int argc, char **argv, char **env)
 	minishell = NULL;
 	if (argc != 1 || !argv[0])
 		return (ft_printf("Wrong number of arguments (no arguments needed)\n"), -1);
+	ft_manage_shell_signals();
 	if (!ft_init_minishell(&minishell, env))
 		return (ft_printf("Error in malloc\n"), -1);
 	if (!ft_main_loop(&minishell))

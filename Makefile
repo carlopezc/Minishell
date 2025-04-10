@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+         #
+#    By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/27 15:14:10 by carlopez          #+#    #+#              #
-#    Updated: 2025/04/09 10:38:52 by carlopez         ###   ########.fr        #
+#    Updated: 2025/04/10 21:51:27 by carlotalcd       ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,7 @@ AR         = ar
 ARFLAGS    = -rcs
 CC         = cc
 
-RFLAGS	= -L/usr/local/lib -I/usr/local/include -lreadline -lncurses
+RFLAGS = -I/opt/homebrew/opt/readline/include -L/opt/homebrew/opt/readline/lib -lreadline -lhistory
 CFLAGS     = -g -Wall -Wextra -Werror -fsanitize=address 
 OFLAGS     = -MMD -MF $(@:.o=.d)
 

@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 14:59:32 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/04/10 21:41:44 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/11 18:46:51 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,13 @@ typedef enum e_token_type
 	NOT_SET	
 }	t_token_type;
 
+typedef struct s_env
+{
+	char *name;
+	char	*value;
+	struct s_env *next;
+}	t_env;
+
 typedef struct s_token
 {
 	char *str;
@@ -46,9 +53,9 @@ typedef struct s_token
 typedef struct s_minishell
 {
 	t_token *tokens;
-	char	**env;
-	char	**env_temporal;
-	char	**export;
+	t_env	*env;
+	t_env	*env_tmp;
+	t_env	*export;
 	char	**s_input;
 }	t_minishell;
 
@@ -71,11 +78,18 @@ void	ft_free_tokens(t_minishell **minishell);
 void 	ft_add_to_env(t_minishell **minishell, char *str, int flag);
 void	ft_free_array(char **arr);
 void	ft_free_minishell(t_minishell **minishell);
-char	**ft_strdup_env(char **env);
+t_env	*ft_strdup_env(t_env *env);
 void	ft_safe_free(void **p);
 char	**ft_create_export(char **export);
 int	ft_arraylen(char **arr);
 char	*ft_get_name(char *str);
+char	*ft_get_value(char *str);
 void	ft_manage_child_signals();
+void	ft_print_env(t_env *env);
+char **ft_create_array_env(t_env *env);
+t_env *ft_create_env(char	**env_array);
+int	ft_check_duplicated(char *str, t_env **env);
+t_env	*ft_create_node(char *name, char *value);
+void	ft_connect_node(t_env **env, t_env *node);
 	
 #endif

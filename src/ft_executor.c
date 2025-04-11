@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/04/10 21:38:32 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/11 18:59:11 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void	ft_safe_free(void **p)
 
 void	ft_arrange_fd(t_pipex *pipex)
 {
-	if (!pipex /*|| !pipex->pipe*/)
+	if (!pipex)
 		return ;
 	if (pipex->pipe[0][0] != 0)
 	{
@@ -47,7 +47,7 @@ void	ft_arrange_fd(t_pipex *pipex)
 	if (pipex->docs_out)
 		ft_safe_free((void **)&pipex->docs_out);
 }
-
+/*
 static char	**ft_free_exec_cmd(t_pipex **pipex)
 {
 	char	**return_v;
@@ -92,19 +92,19 @@ int	ft_check_cd(char *file, char *pwd)
 
 void	ft_errase_pwd(t_minishell *shell)
 {
-	int	p;
 	int	c;
+	t_env *env;
 
-	p = 0;
-	while (shell->env[p] && ft_strncmp(shell->env[p], "PWD=", 4) != 0)
-		p++;
-	if (!shell->env[p])
+	env = shell->env;
+	while (env && ft_strncmp(env->name, "PWD=", 4))
+		env = env->next;
+	if (!env)
 		return ;
-	c = ft_strlen(shell->env[p]) - 1;
-	while (shell->env[p][c] != '/')
-		shell->env[p][c--] = '\0';
-	if (shell->env[p][c] != '=' && shell->env[p][c -1] != '=')
-		shell->env[p][c] = '\0';
+	c = ft_strlen(env->value - 1);
+	while (env->value[c] != '/')
+		env->value[c--] = '\0';
+	if (env->value[c] != '=' && env->value[c -1] != '=')
+		env->value[c] = '\0';
 }
 
 void	ft_cd(t_minishell *shell, char *cmd)
@@ -114,19 +114,19 @@ void	ft_cd(t_minishell *shell, char *cmd)
 	int	p;
 	int	u;
 
-
+	//puedo guardarme en p y en u las direcciones de memoria  y ya
 	p = 0;
 	if (ft_strncmp(cmd, "cd", 3) == 0)
 	{
-		while (shell->env[p] && ft_strncmp(shell->env[p], "PWD=", 4) != 0)
+		while (shell->env[p] && ft_strncmp(shell->env[p], "PWD=", 4))
 			p++;
 		if (!shell->env[p])
 			return ;
 		ft_safe_free((void **)&shell->env[p]);
 		u = 0;
-		while ((u == p) || (shell->env[u] && ft_strncmp(shell->env[u], "HOME=", 5) != 0))
+		while ((u == p) || (shell->env[u] && ft_strncmp(shell->env[u], "HOME=", 5)))
 			u++;
-		if (!shell->env[u])
+		if (!shekk->env[u])
 			return ;
 		shell->env[p] = ft_strjoin("PWD=", shell->env[u] + 5);
 		return ;
@@ -192,53 +192,67 @@ void	ft_pwd(t_minishell *shell)
 	ft_printf("%s\n", ft_strchr(shell->env[p], '/'));
 	return ;
 }
-
-void	ft_print_env(char **env)
+*/
+void	ft_print_env(t_env *env)
 {
-	int	i;
-
-	i = 0;
-	while (env && env[i])
-		ft_printf("%s\n", env[i++]);
+	if (!env)
+		return ;
+	while (env)
+	{
+		ft_printf("%s=%s\n", env->name, env->value);
+		env = env->next;
+	}
 	return ;
 }
 
 void	ft_env(t_minishell *shell, char *cmd)
 {
-	//esta funcion esta mal jeje
  	int	i;
- 	int flag;
- 	char	**env;
+	int	flag;
+	t_env	*node;
+	char	**var;
+	t_env *env_tmp;
  
- 	i = 3;
- 	flag = 0;
-	if (!ft_strncmp(cmd, "env", ft_strlen(cmd)))
+	//Saltamos la de env
+ 	i = 0;
+	flag = 0;
+	var = ft_split(cmd, ' ');
+	if (!var)
+		return ;
+	//Input es env unicamente
+	if (!ft_strncmp(var[i], "env", ft_strlen(var[i])) && !var[++i])
 		return (ft_print_env(shell->env));
- 	env = shell->env;
  	// Falta mirar si los caracteres son validos para nombre de variable
- 	while (cmd[i])
+	env_tmp = ft_strdup_env(shell->env);
+ 	while (var[i])
  	{
- 		if (cmd[i] == '=')
+ 		if (ft_strchr(var[i], '='))
  		{
- 			//ft_printf("Entra\n");
- 			//usare misma funcion cuando haga export, 1 para var temporal (en este caso), 0 para global
- 			ft_add_to_env(&shell, cmd + 4, 1);
- 			flag = 1;
- 			break ;
- 			//lo añade y ademas imprime el env
- 			//ademas no se añade al export porque es variable temporal
- 			//solo se añade para este readline, luego tiene que volver a antes !!! amai
+			if (!ft_check_duplicated(var[i], &env_tmp))
+			{
+				node = ft_create_node(ft_get_name(var[i]), ft_get_value(var[i]));
+				ft_connect_node(&env_tmp, node);
+			}
+			flag = 1;
+			//Dos opciones:
+			//		1. La declaracion de la variable o cambio de valor va antes de env
+			//			En este caso declaramos la variable en primera linea
+			//		2. La declaracion de la variable o cambio de valor va despues de env
+			//			En este caso declaramos la variable en ultima line
+			//En ambos casos son variables temporales por lo que las metemos en env tmp
  		}
  		i++;
  	}
- 	if (flag)
+	if (!flag)
 	{
- 		env = shell->env_temporal;
-		ft_print_env(env);
+		ft_printf("Wrong varibale declaration format\n");
+		return ;
 	}
+	ft_print_env(env_tmp);
+	//Tendre que acabar el programa
 	return ;
  }
-
+/*
 void	ft_print_export(char	**export)
 {
 	int	p;
@@ -301,13 +315,11 @@ void	ft_export(t_minishell *shell, char *cmd)
 		}
 		i++;
 	}
-	/*
 	if (shell->export)
 	{
 		ft_free_array(shell->export);
 		shell->export = NULL;
 	}
-	*/
 	if (!cmd[i])
 		ft_add_to_export(cmd + 7, &shell);
 	else
@@ -317,7 +329,7 @@ void	ft_export(t_minishell *shell, char *cmd)
 	ft_print_export(shell->export);
 	return ;
 }
-
+*/
 
 void	ft_echo(char *cmd)
 {
@@ -330,7 +342,7 @@ void	ft_echo(char *cmd)
 		ft_printf("%s\n", temp + 1);
 	return ;
 }
-
+/*
 void	ft_clear_line(t_minishell **shell, int i)
 {
 	char	**env;
@@ -362,7 +374,8 @@ void	ft_clear_line(t_minishell **shell, int i)
 	(*shell)->export = ft_create_export(ft_strdup_env((*shell)->env));
 	return ;
 }
-
+	*/
+/*
 void	ft_unset(t_minishell *shell, char *cmd)
 {
 	int	i;
@@ -387,12 +400,12 @@ void	ft_unset(t_minishell *shell, char *cmd)
 	}
 	return ;
 }
-
+*/
 void	ft_exec_build(t_minishell *shell, char *cmd)
 {
 	if (ft_strncmp(cmd, "echo", 4) == 0)
 		ft_echo(cmd);
-	if (ft_strncmp(cmd, "cd", 2) == 0)
+	/*if (ft_strncmp(cmd, "cd", 2) == 0)
 	{
 		ft_cd(shell, cmd);
 		ft_pwd(shell);
@@ -402,7 +415,7 @@ void	ft_exec_build(t_minishell *shell, char *cmd)
 	if (ft_strncmp(cmd, "export", 6) == 0)
 		ft_export(shell, cmd);
 	if (ft_strncmp(cmd, "unset", 5) == 0)
-		ft_unset(shell, cmd + 6);
+		ft_unset(shell, cmd + 6);*/
 	if (ft_strncmp(cmd, "env", 3) == 0)
 		ft_env(shell, cmd);
 	if (ft_strncmp(cmd, "exit", 4) == 0)
@@ -414,12 +427,13 @@ void	ft_exec_build(t_minishell *shell, char *cmd)
 	//ft_free_minishell(&shell);
 	//exit(0);
 }
-
-void	ft_pre_exec_command(t_pipex *pipex, char **env, t_token *cmd, t_minishell *shell)
+/*
+void	ft_pre_exec_command(t_pipex *pipex, t_token *cmd, t_minishell *shell)
 {
 	char	*temp;
 	char	*path_command;
 	char	**command;
+	char **env;
 
 	if (cmd->type == EXEC)
 	{
@@ -440,14 +454,17 @@ void	ft_pre_exec_command(t_pipex *pipex, char **env, t_token *cmd, t_minishell *
 		//ft_printf("ft_pre_exec_command: %p\n", pipex->path);
 		ft_safe_free((void **)&pipex->path);
 	}
+	env = ft_create_array_env(shell->env);
 	ft_free_minishell(&shell);
 	execve(path_command, command, env);
 }
-
+*/
 void	ft_exec(t_minishell *shell, t_pipex *pipex, t_token *save)
 {
+	(void)pipex;
 	if (save->type == BUILTIN)
 		ft_exec_build(shell, save->str);
+	/*
 	if (save->type == COMMAND || save->type == EXEC)
 	{
 		if (pipex->docs_in)
@@ -474,21 +491,21 @@ void	ft_exec(t_minishell *shell, t_pipex *pipex, t_token *save)
 			dup2(pipex->pipe[1][1], 1);
 			close(pipex->pipe[1][1]);
 		}
-		char **env = ft_strdup_env(shell->env);
-		ft_pre_exec_command(pipex, env, save, shell);
+		ft_pre_exec_command(pipex, save, shell);
 	}
+		*/
 }
 
-char	*ft_find_path(char **env)
+char	*ft_find_path(t_env **env)
 {
-	int	p;
+	t_env *tmp;
 
-	p = 0;
-	while (env[p])
+	tmp = *env;
+	while (tmp)
 	{
-		if (ft_strncmp(env[p], "PATH=/", 6) == 0)
-			return (env[p] + 6);
-		p++;
+		if (!ft_strncmp(tmp->name, "PATH", 4))
+			return (tmp->value);
+		tmp = tmp->next;
 	}
 	return (NULL);
 }
@@ -502,7 +519,7 @@ static int	ft_good_path(char *path, t_pipex **pipex, char **split, int p)
 	return (1);
 }
 
-int	ft_path(char **env, t_pipex **pipex, char *cmd)
+int	ft_path(t_env **env, t_pipex **pipex, char *cmd)
 {
 	char	**split;
 	char	*temp;
@@ -638,7 +655,7 @@ int	ft_executor(t_minishell *shell)
 				{
 					ft_manage_child_signals();
 					pipex->command = ft_split(save->str, ' ');
-					if (ft_path(shell->env, &pipex, pipex->command[0]) == 0)
+					if (ft_path(&shell->env, &pipex, pipex->command[0]) == 0)
 						return (-1);
 				}
 			}

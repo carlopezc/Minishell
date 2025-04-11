@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:15:05 by carlopez          #+#    #+#             */
-/*   Updated: 2025/04/10 21:39:59 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/11 18:49:37 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,26 @@
 
 char	*token_type_to_str(t_token_type type);
 void	ft_print_array(char **arr);
+
+void	ft_free_env(t_env **env)
+{
+	t_env	*tmp;
+	t_env	*next;
+
+	if (!env)
+		return ;
+	tmp = *env;
+	while (tmp)
+	{
+		next = tmp->next;
+		ft_safe_free((void **)&tmp->name);
+		ft_safe_free((void **)&tmp->value);
+		free(tmp);
+		tmp = next;
+	}
+	*env = NULL;
+	return ;
+}
 
 void	ft_free_minishell(t_minishell **minishell)
 {
@@ -25,20 +45,10 @@ void	ft_free_minishell(t_minishell **minishell)
 		(*minishell)->tokens = NULL;
 	}
 	if ((*minishell)->env)
-	{
-		ft_free_array((*minishell)->env);
-		(*minishell)->env = NULL;
-	}
-	if ((*minishell)->env_temporal)
-	{
-		ft_free_array((*minishell)->env_temporal);
-		(*minishell)->env_temporal = NULL;
-	}
+		ft_free_env(&(*minishell)->env);
+	/*
 	if ((*minishell)->export)
-	{
-		ft_free_array((*minishell)->export);
-		(*minishell)->export = NULL;
-	}
+		ft_free_env((*minishell)->export);*/
 	if ((*minishell)->s_input)
 	{
 		ft_free_array((*minishell)->s_input);
@@ -88,8 +98,6 @@ int		ft_main_loop(t_minishell **minishell)
 {
 	char	*input;
 
-	//para parar el bucle señales o exit
-	
 	while (1)
 	{
 		input = readline("minishell> ");
@@ -102,7 +110,7 @@ int		ft_main_loop(t_minishell **minishell)
 		{
 			if (input)
 				free(input);
-			return (ft_printf("Error in process input \n"), -1);
+			return (ft_free_minishell(minishell), ft_printf("Error in process input \n"), -1);
 		}
 		ft_executor(*minishell);
 		if (input)

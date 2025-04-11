@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/04/09 21:41:36 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/04/11 19:18:25 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ void	ft_add_node_back(t_token **lst, t_token *new)
 	return ;
 }
 
-t_token	*ft_create_node(char *str, t_token_type type)
+t_token	*ft_create_token(char *str, t_token_type type)
 {
 	t_token	*token;
 
@@ -97,23 +97,23 @@ void	ft_free_tokens(t_minishell **minishell)
 	return ;
 }
 
-void	ft_expand(char **input, char **env)
+void	ft_expand(char **input, t_env *env)
 {
-	int 	i;
 	char	*name_var;
 	char	*final_var;
+	t_env	*tmp;
 
-	i = 0;
-	if (!input || !*input || !env || !*env)
+	if (!input || !*input || !env)
 		return ;
 	name_var = ft_substr(*input, 1, ft_strlen(*input));
 	if (!name_var)
 		return ;
-	while (env[i])
+	tmp = env;
+	while (tmp)
 	{
-		if (!ft_strncmp(name_var, env[i], ft_strlen(name_var)) && *(env[i] + ft_strlen(name_var)) == '=')
+		if (!ft_strncmp(name_var, tmp->name, ft_strlen(tmp->name) && *(*input + ft_strlen(tmp->name)) == '='))
 		{
-			final_var = ft_substr(env[i], ft_strlen(name_var) + 1, ft_strlen(env[i]) - ft_strlen(name_var) - 1);
+			final_var = tmp->value;
 			if (!final_var)
 				return (free(name_var));
 			free(name_var);
@@ -122,7 +122,7 @@ void	ft_expand(char **input, char **env)
 			free(final_var);
 			return ;
 		}
-		i++;
+		tmp = tmp->next;
 	}
 	*input = NULL;
 	free(name_var);
@@ -211,15 +211,18 @@ int	ft_is_builtin(char *input, char *next)
 		return (1);
 	else if (!ft_strncmp(input, "pwd", ft_strlen(input)))
 	{
-		//si pasa esto habria que meter un exit, o no se si lo gestionamos aqui o en el execve
+		//si pasa esto habria que meter un exit, o no se si lo gestionamos aqui o en el execve o builtin
 		if (next)
 			ft_printf("pwd: too many arguments\n");
 		return (1);
 	}
+	/*
 	else if (!ft_strncmp(input, "export", ft_strlen(input)))
 		return (1);
+	
 	else if (!ft_strncmp(input, "unset", ft_strlen(input)))
 		return (1);
+		*/
 	else if (!ft_strncmp(input, "env", ft_strlen(input)))
 		return (1);
 	else if (!ft_strncmp(input, "exit", ft_strlen(input)))
@@ -275,7 +278,7 @@ int	ft_group_command(t_minishell **minishell, int *i)
 	type = NOT_SET;
 	if (!ft_define_parts(minishell, &input, &type, i))
 		return (0);
-	token = ft_create_node(input, type);
+	token = ft_create_token(input, type);
 	if (!token)
 		return (0);
 	ft_add_node_back(&((*minishell)->tokens), token);
@@ -328,33 +331,18 @@ int	ft_arraylen(char **arr)
 	return (i);
 }
 
-char	**ft_strdup_env(char **env)
+t_env	*ft_strdup_env(t_env *env)
 {
-	int	i;
-	char	**cpy_env;
+	t_env	*cpy;
+	char **env_array;
 
-	i = 0;
-	if (!env || !*env)
+	if (!env)
 		return (NULL);
-	i = ft_arraylen(env);
-	cpy_env = (char **)malloc((i + 1) * sizeof(char *));
-	if (!cpy_env)
-		return (NULL);
-	i = 0;
-	while (env[i])
-	{
-		cpy_env[i] = ft_strdup(env[i]);
-		if (!cpy_env[i])
-		{
-			//ft_printf("Liberando cpy env en strdup env\n");
-			ft_free_array(cpy_env);
-			cpy_env = NULL;
-			return (NULL);
-		}
-		i++;
-	}
-	cpy_env[i] = NULL;
-	return (cpy_env);
+	env_array = ft_create_array_env(env);
+	cpy = ft_create_env(env_array);
+	ft_free_array(env_array);
+	env_array = NULL;
+	return (cpy);
 }
 
 char	*ft_get_name(char *str)
@@ -363,6 +351,8 @@ char	*ft_get_name(char *str)
 	char	*name;
 
 	i = 0;
+	if (!str)
+		return (NULL);
 	while (str && str[i])
 	{
 		if (str[i] == '=')
@@ -373,67 +363,53 @@ char	*ft_get_name(char *str)
 	return (name);
 }
 
-char	**ft_change_value(int j, char *str, char **env)
+char	*ft_get_value(char *str)
 {
-	//funcion pochisima a ver si funciona
-	int	i;
-	char	**cpy;
+	int 	i;
+	char	*value;
 
-	i = ft_arraylen(env);
-	cpy = (char **)malloc((i + 1) * sizeof(char *));
-	if (!cpy)
-		return (NULL);
 	i = 0;
-	while (env && env[i])
+	while (str && str[i])
 	{
-		if (i == j)
-			cpy[i] = ft_strdup(str);
-		else
+		if (str[i] == '=')
 		{
-			cpy[i] = ft_strdup(env[i]);
-			if (!cpy[i])
-			{
-				ft_free_array(cpy);
-				cpy = NULL;
-				return (NULL);
-			}
+			i++;
+			break ;
 		}
 		i++;
 	}
-	cpy[i] = NULL;
-	return (cpy);
+	value = ft_substr(str, i, ft_strlen(str) - i);
+	return (value);
 }
 
-char	**ft_check_duplicated(char *str, char **env)
+void	ft_change_value(char *str, t_env **node)
+{
+	ft_safe_free((void **)&((*node)->value));
+	(*node)->value = ft_get_value(str);
+	return ;
+}
+
+int	ft_check_duplicated(char *str, t_env **env)
 {
 	char	*name_to_add;
-	char	*name_added;
-	int	i;
-	char	**cpy;
+	t_env *tmp;
 
+	tmp = *env;
 	name_to_add = ft_get_name(str);
-	if (!name_to_add)
-		return (ft_printf("Error en malloc!!!!!!\n"), NULL);
-	i = 0;
-	while (env && env[i])
+	while (tmp)
 	{
-		name_added = ft_get_name(env[i]);
-		ft_printf("name added es %s\n", name_added);
-		if (!ft_strncmp(name_to_add, name_added, ft_strlen(name_added)))
+		if (!ft_strncmp(name_to_add, tmp->name, ft_strlen(name_to_add)))
 		{
-			cpy = ft_change_value(i, str, env);
-			ft_safe_free((void **)&name_added);
+			ft_change_value(str, &tmp);
 			ft_safe_free((void **)&name_to_add);
-			return (cpy);
+			return (1);
 		}
-		ft_safe_free((void **)&name_added);
-		i++;
+		tmp = tmp->next;
 	}
-	ft_safe_free((void **)&name_added);
 	ft_safe_free((void **)&name_to_add);
-	return (NULL);
+	return (0);
 }
-
+/*
 void	ft_add_to_env(t_minishell **minishell, char *str, int flag)
 {
 	int	i;
@@ -467,13 +443,10 @@ void	ft_add_to_env(t_minishell **minishell, char *str, int flag)
 		cpy[i++] = str;
 		cpy[i] = NULL;
 	}
-	if (flag)
-		(*minishell)->env_temporal = cpy;
-	else
-		(*minishell)->env = cpy;
+	(*minishell)->env = cpy;
 	return ;
 }
-
+*/
 char	*ft_quote_string(char *str)
 {
 	int 	i;
@@ -533,7 +506,7 @@ char	**ft_add_quotes(char **export)
 	export = NULL;
 	return (quoted_export);
 }
-
+/*
 char	**ft_create_export(char **export)
 {
 	int 	i;
@@ -565,21 +538,114 @@ char	**ft_create_export(char **export)
 	}
 	return (ft_add_quotes(export));
 }
+*/
+t_env	*ft_create_node(char *name, char *value)
+{
+	t_env *node;
 
+	if (!name)
+		return (NULL);
+	node = (t_env *)malloc(sizeof(t_env));
+	if (!node)
+		return (NULL);
+	node->name = name;
+	node->value = value;
+	node->next = NULL;
+	return (node);
+}
+
+void	ft_connect_node(t_env **env, t_env *node)
+{
+	t_env	*tmp;
+
+	if (!*env)
+	{
+		*env = node;
+		return ;
+	}
+	tmp = *env;
+	while (tmp && tmp->next)
+		tmp = tmp->next;
+	tmp->next = node;
+	return ;
+}
+
+int	ft_listlen(t_env *env)
+{
+	int 	i;
+
+	i = 0;
+	while (env)
+	{
+		i++;
+		env = env->next;
+	}
+	return (i);
+}
+char **ft_create_array_env(t_env *env)
+{
+	int	i;
+	char **env_array;
+	char *tmp;
+
+	if (!env)
+		return (NULL);
+	i = ft_listlen(env);
+	env_array = (char **)malloc((i + 1) * sizeof(char *));
+	if (!env_array)
+		return (NULL);
+	env_array[i] = NULL;
+	i = 0;
+	while (env)
+	{
+		tmp = ft_strjoin(env->name, "=");
+		env_array[i++] = ft_strjoin(tmp, env->value);
+		ft_safe_free((void **)&tmp);
+		env = env->next;
+	}
+	return (env_array);
+}
+
+t_env *ft_create_env(char	**env_array)
+{
+	t_env *env;
+	t_env *node;
+	char *name;
+	char *value;
+	int	i;
+
+	if (!env_array || !*env_array)
+		return (NULL);
+	i = 0;
+	env = NULL;
+	while (env_array[i])
+	{
+		name = ft_get_name(env_array[i]);
+		value = ft_get_value(env_array[i]);
+		node = ft_create_node(ft_strdup(name), ft_strdup(value));
+		if (!node)
+			return (ft_printf("Error creating environment node\n"), NULL);
+		ft_connect_node(&env, node);
+		i++;
+	}
+	return (env);
+}
 int	ft_init_minishell(t_minishell **minishell, char **env)
 {
 	*minishell = (t_minishell *)malloc(sizeof(t_minishell));
 	if (!(*minishell))
 		return (0);
 	(*minishell)->tokens = NULL;
-	(*minishell)->env_temporal = NULL;
-	(*minishell)->env = ft_strdup_env(env);
+	(*minishell)->env_tmp = NULL;
+	(*minishell)->env = ft_create_env(env);
 	if (!(*minishell)->env)
 		return (free(*minishell), ft_printf("Error creating environment \n"), 0);
 	//si no me pasan environment tengo que crear uno con x cosas, si ejecutan minishell con env -i ./minishell el env tiene x cosas
-	(*minishell)->export = ft_create_export(ft_strdup_env(env));
+	/*
+	(*minishell)->export = ft_create_env(env);
 	if (!(*minishell)->export)
 		return (ft_free_minishell(minishell), ft_printf("Error creating export \n"), 0);
+		*/
 	(*minishell)->s_input = NULL;
 	return (1);
 }

@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/04/11 19:18:25 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/13 20:33:12 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -216,13 +216,10 @@ int	ft_is_builtin(char *input, char *next)
 			ft_printf("pwd: too many arguments\n");
 		return (1);
 	}
-	/*
 	else if (!ft_strncmp(input, "export", ft_strlen(input)))
 		return (1);
-	
 	else if (!ft_strncmp(input, "unset", ft_strlen(input)))
 		return (1);
-		*/
 	else if (!ft_strncmp(input, "env", ft_strlen(input)))
 		return (1);
 	else if (!ft_strncmp(input, "exit", ft_strlen(input)))
@@ -378,7 +375,10 @@ char	*ft_get_value(char *str)
 		}
 		i++;
 	}
-	value = ft_substr(str, i, ft_strlen(str) - i);
+	if (i == (int)(ft_strlen(str) - 1))
+		value = ft_strdup("");
+	else
+		value = ft_substr(str, i, ft_strlen(str) - i);
 	return (value);
 }
 
@@ -392,13 +392,16 @@ void	ft_change_value(char *str, t_env **node)
 int	ft_check_duplicated(char *str, t_env **env)
 {
 	char	*name_to_add;
+	char	*value;
 	t_env *tmp;
 
 	tmp = *env;
 	name_to_add = ft_get_name(str);
+	value = ft_get_value(str);
 	while (tmp)
 	{
-		if (!ft_strncmp(name_to_add, tmp->name, ft_strlen(name_to_add)))
+		//tmp value exista, porque si es nulo y ya existe variable con ese nombre y valor, no se cambia
+		if (!ft_strncmp(name_to_add, tmp->name, ft_strlen(name_to_add)) && value)
 		{
 			ft_change_value(str, &tmp);
 			ft_safe_free((void **)&name_to_add);
@@ -409,136 +412,7 @@ int	ft_check_duplicated(char *str, t_env **env)
 	ft_safe_free((void **)&name_to_add);
 	return (0);
 }
-/*
-void	ft_add_to_env(t_minishell **minishell, char *str, int flag)
-{
-	int	i;
-	char	**cpy;
-	char	**env;
 
-	i = 0;
-	env = (*minishell)->env;
-	if (!env || !*env || !str)
-		return ;
-	i = ft_arraylen(env);
-	cpy = ft_check_duplicated(str, env);
-	//si nombres coinciden en la posicion que este crea string con valor nuevo
-	if (!cpy)
-	{
-		cpy = (char **)malloc((i + 2) * sizeof(char *));
-		if (!cpy)
-			return ;
-		i = 0;
-		while (env[i])
-		{
-			cpy[i] = ft_strdup(env[i]);
-			if (!cpy[i])
-			{
-				ft_free_array(cpy);
-				cpy = NULL;
-				return ;
-			}
-			i++;
-		}
-		cpy[i++] = str;
-		cpy[i] = NULL;
-	}
-	(*minishell)->env = cpy;
-	return ;
-}
-*/
-char	*ft_quote_string(char *str)
-{
-	int 	i;
-	int		j;
-	char	*quoted_str;
-
-	i = 0;
-	if (!str)
-		return (NULL);
-	i = ft_strlen(str);
-	quoted_str = (char *)malloc((i + 3) * sizeof(char));
-	if (!quoted_str)
-		return (NULL);
-	i = 0;
-	j = 0;
-	while (str[i] && str[i] != '=')
-		quoted_str[j++] = str[i++];
-	if (str[i] && str[i] == '=')
-		quoted_str[j++] = str[i++];
-	quoted_str[j++] = '"';
-	while (str[i])
-		quoted_str[j++] = str[i++];
-	quoted_str[j++] = '"';
-	quoted_str[j] = '\0';
-	return (quoted_str);
-}
-
-char	**ft_add_quotes(char **export)
-{
-	char	**quoted_export;
-	int		j;
-
-	j = 0;
-	if (!export || !*export)
-		return (NULL);
-	j = ft_arraylen(export);
-	quoted_export = (char **)malloc((j + 1) * sizeof(char *));
-	if (!quoted_export)
-		return (NULL);
-	j = 0;
-	while (export[j])
-	{
-		quoted_export[j] = ft_quote_string(export[j]);
-		free(export[j]);
-		export[j] = NULL;
-		if (!quoted_export[j])
-		{
-			ft_free_array(quoted_export);
-			quoted_export = NULL;
-			export = NULL;
-			return (NULL);
-		}
-		j++;
-	}
-	quoted_export[j] = NULL;
-	ft_free_array(export);
-	export = NULL;
-	return (quoted_export);
-}
-/*
-char	**ft_create_export(char **export)
-{
-	int 	i;
-	int		j;
-	int swapped;
-	char	*tmp;
-
-	i = 0;
-	j = 0;
-	swapped = 1;
-	if (!export || !*export)
-		return (NULL); //Caso especial que ha dicho luqui no se que habra que hacer
-	j = ft_arraylen(export);
-	while (swapped)
-	{
-		swapped = 0;
-		i = 0;
-		while (i < j - 1)
-		{
-			if (ft_strncmp(export[i], export[i + 1], ft_strlen(export[i])) > 0)
-			{
-				tmp = export[i];
-				export[i] = export[i + 1];
-				export[i + 1] = tmp;
-				swapped = 1;
-			}
-			i++;
-		}
-	}
-	return (ft_add_quotes(export));
-}
-*/
 t_env	*ft_create_node(char *name, char *value)
 {
 	t_env *node;
@@ -549,7 +423,10 @@ t_env	*ft_create_node(char *name, char *value)
 	if (!node)
 		return (NULL);
 	node->name = name;
-	node->value = value;
+	if (!value)
+		node->value = NULL;
+	else
+		node->value = value;
 	node->next = NULL;
 	return (node);
 }
@@ -641,11 +518,10 @@ int	ft_init_minishell(t_minishell **minishell, char **env)
 	if (!(*minishell)->env)
 		return (free(*minishell), ft_printf("Error creating environment \n"), 0);
 	//si no me pasan environment tengo que crear uno con x cosas, si ejecutan minishell con env -i ./minishell el env tiene x cosas
-	/*
 	(*minishell)->export = ft_create_env(env);
 	if (!(*minishell)->export)
 		return (ft_free_minishell(minishell), ft_printf("Error creating export \n"), 0);
-		*/
+	(*minishell)->undefined_var = NULL;
 	(*minishell)->s_input = NULL;
 	return (1);
 }

@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/04/11 18:59:11 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/13 20:34:54 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -213,7 +213,6 @@ void	ft_env(t_minishell *shell, char *cmd)
 	char	**var;
 	t_env *env_tmp;
  
-	//Saltamos la de env
  	i = 0;
 	flag = 0;
 	var = ft_split(cmd, ' ');
@@ -234,6 +233,7 @@ void	ft_env(t_minishell *shell, char *cmd)
 				ft_connect_node(&env_tmp, node);
 			}
 			flag = 1;
+			
 			//Dos opciones:
 			//		1. La declaracion de la variable o cambio de valor va antes de env
 			//			En este caso declaramos la variable en primera linea
@@ -241,32 +241,35 @@ void	ft_env(t_minishell *shell, char *cmd)
 			//			En este caso declaramos la variable en ultima line
 			//En ambos casos son variables temporales por lo que las metemos en env tmp
  		}
+		if (!flag)
+		{
+			//hay que acabar el programa
+			ft_printf("Wrong varibale declaration format\n");
+			return ;
+		}
+		flag = 0;
  		i++;
  	}
-	if (!flag)
-	{
-		ft_printf("Wrong varibale declaration format\n");
-		return ;
-	}
 	ft_print_env(env_tmp);
-	//Tendre que acabar el programa
 	return ;
  }
-/*
-void	ft_print_export(char	**export)
-{
-	int	p;
 
-	p = 0;
-	while (export[p])
+void	ft_print_export(t_env *export)
+{
+	t_env *tmp;
+
+	tmp = export;
+	while (tmp)
 	{
-		ft_printf("declare -x ");
-		ft_printf("%s\n", export[p]);
-		p++;
+		if (!tmp->value)
+			ft_printf("declare -x %s\n", tmp->name);
+		else
+			ft_printf("declare -x %s=\"%s\"\n", tmp->name, tmp->value);
+		tmp = tmp->next;
 	}
 	return ;
 }
-
+/*
 void	ft_add_to_export(char *cmd, t_minishell **shell)
 {
 	char	**export;
@@ -298,38 +301,132 @@ void	ft_add_to_export(char *cmd, t_minishell **shell)
 	(*shell)->export = cpy;
 	return ;
 }
+*/
+void	ft_merge_lists(t_minishell **shell, t_env *first, t_env *second)
+{
+	t_env *export;
+	t_env	*tmp;
+
+	export = ft_strdup_env(first);
+	if (!export)
+		return ;
+	tmp = export;
+	while (tmp->next)
+		tmp = tmp->next;
+	tmp->next = ft_strdup_env(second);
+	(*shell)->export = export;
+	return ;
+}
+
+void	ft_swap_list(t_env *a, t_env *b)
+{
+	char	*tmp_name = a->name;
+	char	*tmp_value = a->value;
+
+	a->name = b->name;
+	a->value = b->value;
+
+	b->name = tmp_name;
+	b->value = tmp_value;
+	return ;
+}
+
+size_t	ft_max_strlen(char *s1, char *s2)
+{
+	size_t	len1;
+	size_t	len2;
+
+	len1 = ft_strlen(s1);
+	len2 = ft_strlen(s2);
+
+	if (len1 > len2)
+		return (len1);
+	else
+		return (len2);
+}
+
+void	ft_sort_list(t_env *head)
+{
+	t_env	*ptr;
+	t_env	*lptr;
+	int		swapped;
+
+	if (!head)
+		return ;
+
+	swapped = 1;
+	lptr = NULL;
+
+	while (swapped)
+	{
+		swapped = 0;
+		ptr = head;
+
+		while (ptr->next != lptr)
+		{
+			if (ft_strncmp(ptr->name, ptr->next->name, ft_max_strlen(ptr->name, ptr->next->name) + 1) > 0)
+			{
+				ft_swap_list(ptr, ptr->next);
+				swapped = 1;
+			}
+			ptr = ptr->next;
+		}
+		lptr = ptr;
+	}
+}
 
 void	ft_export(t_minishell *shell, char *cmd)
 {
 	int	i;
+	int flag;
+	char **var;
+	t_env *node;
 
-	i = 6;
-	if (!ft_strncmp(cmd, "export", ft_strlen(cmd)))
-		return (ft_print_export(shell->export));
-	while (cmd[i])
+	var = ft_split(cmd, ' ');
+	if (!var)
+		return ;
+	i = 0;
+	flag = 0;
+	if (!ft_strncmp(var[i], "export", ft_strlen(var[i])) && !var[++i])
 	{
-		if (cmd[i] == '=')
+		ft_sort_list(shell->export);
+		//export va a ser igual a copia de env + imprimir variables sin valor
+		ft_print_export(shell->export);
+		return ;
+	}
+	//tienen que diferenciarse export hola a export hola=, lo que añdira hola o hola=""
+	while (var[i])
+	{
+		if (ft_strchr(var[i], '='))
 		{
-			ft_add_to_env(&shell, cmd + 7, 0);
-			break ;
+			if (!ft_check_duplicated(var[i], &shell->env))
+			{
+				node = ft_create_node(ft_get_name(var[i]), ft_get_value(var[i]));
+				ft_connect_node(&shell->env, node);
+			}
+			ft_printf("Pasa por flag 1\n");
+			flag = 1;
 		}
+		if (!flag)
+		{
+			ft_printf("Pasa por flag 0\n");
+			if (!ft_check_duplicated(var[i], &shell->undefined_var) && !ft_check_duplicated(var[i], &shell->export))
+			{
+				node = ft_create_node(ft_get_name(var[i]), NULL);
+				ft_connect_node(&shell->undefined_var, node);
+				ft_printf("Node creado es %s = %s\n", shell->undefined_var->name, shell->undefined_var->value);
+			}
+		}
+		flag = 0;
 		i++;
 	}
-	if (shell->export)
-	{
-		ft_free_array(shell->export);
-		shell->export = NULL;
-	}
-	if (!cmd[i])
-		ft_add_to_export(cmd + 7, &shell);
-	else
-		shell->export = ft_create_export(ft_strdup_env(shell->env));
-	//LAS VARIABLES SIN VALOR ME LAS BORRA PORQUE COJO DE REFERENCIA EL ENV Y AHI NO ESTAN
-	//si hay arg no deberia imprimir solo para probar
+	//uno ambas listas y ya ordenadas igual
+	ft_merge_lists(&shell, shell->env, shell->undefined_var);
+	ft_sort_list(shell->export);
+	//export va a ser igual a copia de env + imprimir variables sin valor
 	ft_print_export(shell->export);
 	return ;
 }
-*/
 
 void	ft_echo(char *cmd)
 {
@@ -412,8 +509,10 @@ void	ft_exec_build(t_minishell *shell, char *cmd)
 	}
 	if (ft_strncmp(cmd, "pwd", 3) == 0)
 		ft_pwd(shell);
+	*/
 	if (ft_strncmp(cmd, "export", 6) == 0)
 		ft_export(shell, cmd);
+	/*
 	if (ft_strncmp(cmd, "unset", 5) == 0)
 		ft_unset(shell, cmd + 6);*/
 	if (ft_strncmp(cmd, "env", 3) == 0)
@@ -607,22 +706,9 @@ t_token *ft_redir(t_token *save, t_token_type type, t_pipex *pipex)
 
 void	ft_init_pipex(t_pipex **pipex)
 {
-	int	i;
-	int	j;
-
-	i = 0;
-	j = 0;
 	(*pipex)->childs = 0;
 	(*pipex)->docs_in = NULL;
 	(*pipex)->docs_out = NULL;
-	while ((*pipex)->pipe[i])
-	{
-		while ((*pipex)->pipe[i][j])
-			(*pipex)->pipe[i][j++] = 0;
-		i++;
-		j = 0;
-	}
-	(*pipex)->pid = 0;
 	(*pipex)->command = NULL;
 	(*pipex)->path = NULL;
 	return ;
@@ -635,11 +721,7 @@ int	ft_executor(t_minishell *shell)
 	t_pipex	*pipex = (t_pipex *)malloc(sizeof(t_pipex));
 	if (!pipex)
 		return (-1);
-	//ft_init_pipex(&pipex);
-	pipex->childs = 0;
-	pipex->docs_in = NULL;
-	pipex->docs_out = NULL;
-	pipex->path = NULL;
+	ft_init_pipex(&pipex);
 	save = shell->tokens;
 	while (save)
 	{

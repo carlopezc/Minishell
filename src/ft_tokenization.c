@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/04/13 20:33:12 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/13 21:22:52 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -375,8 +375,10 @@ char	*ft_get_value(char *str)
 		}
 		i++;
 	}
-	if (i == (int)(ft_strlen(str) - 1))
-		value = ft_strdup("");
+	if (str[i - 1] == '=' && !str[i])
+		value = "";
+	else if (!str[i])
+		value = NULL;
 	else
 		value = ft_substr(str, i, ft_strlen(str) - i);
 	return (value);
@@ -475,9 +477,14 @@ char **ft_create_array_env(t_env *env)
 	i = 0;
 	while (env)
 	{
-		tmp = ft_strjoin(env->name, "=");
-		env_array[i++] = ft_strjoin(tmp, env->value);
-		ft_safe_free((void **)&tmp);
+		if (env->name && env->value)
+		{
+			tmp = ft_strjoin(env->name, "=");
+			env_array[i++] = ft_strjoin(tmp, env->value);
+			ft_safe_free((void **)&tmp);
+		}
+		else
+			env_array[i++] = env->name;
 		env = env->next;
 	}
 	return (env_array);

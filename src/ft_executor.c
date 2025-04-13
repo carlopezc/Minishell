@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/04/13 20:34:54 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/13 21:08:10 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -261,7 +261,7 @@ void	ft_print_export(t_env *export)
 	tmp = export;
 	while (tmp)
 	{
-		if (!tmp->value)
+		if (tmp->value == NULL)
 			ft_printf("declare -x %s\n", tmp->name);
 		else
 			ft_printf("declare -x %s=\"%s\"\n", tmp->name, tmp->value);
@@ -269,39 +269,7 @@ void	ft_print_export(t_env *export)
 	}
 	return ;
 }
-/*
-void	ft_add_to_export(char *cmd, t_minishell **shell)
-{
-	char	**export;
-	char	**cpy;
-	int	i;
 
-	export = (*shell)->export;
-	if (!cmd || !export || !*export)
-		return ;
-	i = ft_arraylen(export);
-	cpy = (char **)malloc((i + 2) * sizeof(char *));
-	if (!cpy)
-		return ;
-	i = 0;
-	while (export[i])
-	{
-		cpy[i] = ft_strdup(export[i]);
-		if (!cpy[i])
-		{
-			ft_free_array(cpy);
-			cpy = NULL;
-			return ;
-		}
-		i++;
-	}
-	cpy[i++] = cmd;
-	cpy[i] = NULL;
-	ft_free_array((*shell)->export);
-	(*shell)->export = cpy;
-	return ;
-}
-*/
 void	ft_merge_lists(t_minishell **shell, t_env *first, t_env *second)
 {
 	t_env *export;
@@ -353,15 +321,12 @@ void	ft_sort_list(t_env *head)
 
 	if (!head)
 		return ;
-
 	swapped = 1;
 	lptr = NULL;
-
 	while (swapped)
 	{
 		swapped = 0;
 		ptr = head;
-
 		while (ptr->next != lptr)
 		{
 			if (ft_strncmp(ptr->name, ptr->next->name, ft_max_strlen(ptr->name, ptr->next->name) + 1) > 0)
@@ -388,33 +353,27 @@ void	ft_export(t_minishell *shell, char *cmd)
 	i = 0;
 	flag = 0;
 	if (!ft_strncmp(var[i], "export", ft_strlen(var[i])) && !var[++i])
-	{
-		ft_sort_list(shell->export);
-		//export va a ser igual a copia de env + imprimir variables sin valor
-		ft_print_export(shell->export);
-		return ;
-	}
+		return (ft_sort_list(shell->export), ft_print_export(shell->export));
 	//tienen que diferenciarse export hola a export hola=, lo que añdira hola o hola=""
 	while (var[i])
 	{
 		if (ft_strchr(var[i], '='))
 		{
-			if (!ft_check_duplicated(var[i], &shell->env))
+			if (!ft_check_duplicated(var[i], &shell->env) && !ft_check_duplicated(var[i], &shell->export))
 			{
 				node = ft_create_node(ft_get_name(var[i]), ft_get_value(var[i]));
 				ft_connect_node(&shell->env, node);
+				ft_printf("Pasa por flag 1 y node value es %s\n", node->value);
 			}
-			ft_printf("Pasa por flag 1\n");
 			flag = 1;
 		}
 		if (!flag)
-		{
-			ft_printf("Pasa por flag 0\n");
-			if (!ft_check_duplicated(var[i], &shell->undefined_var) && !ft_check_duplicated(var[i], &shell->export))
+		{	
+			if (!ft_check_duplicated(var[i], &shell->env) && !ft_check_duplicated(var[i], &shell->export))
 			{
 				node = ft_create_node(ft_get_name(var[i]), NULL);
 				ft_connect_node(&shell->undefined_var, node);
-				ft_printf("Node creado es %s = %s\n", shell->undefined_var->name, shell->undefined_var->value);
+				ft_printf("Pasa por flag 0 y node value es %s\n", node->value);
 			}
 		}
 		flag = 0;

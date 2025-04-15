@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/04/15 13:11:57 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/15 20:23:55 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,7 @@ void	ft_expand(char **input, t_env *env)
 	tmp = env;
 	while (tmp)
 	{
-		if (!ft_strncmp(name_var, tmp->name, ft_strlen(tmp->name) && *(*input + ft_strlen(tmp->name)) == '='))
+		if (!ft_strncmp(name_var, tmp->name, ft_strlen(ft_choose_larger(tmp->name, name_var)) && *(*input + ft_strlen(tmp->name)) == '='))
 		{
 			final_var = tmp->value;
 			if (!final_var)
@@ -185,17 +185,17 @@ char	*ft_group_input(t_minishell *minishell, int *i)
 
 t_token_type	ft_is_operator(char *input)
 {
- 	if (!ft_strncmp(input, "||", 2))
+ 	if (!ft_strncmp(input, "||", 3))
 		return (OR);
-	else if (!ft_strncmp(input, "<<", 2))
+	else if (!ft_strncmp(input, "<<", 3))
 		return (APPEND);
-	else if (!ft_strncmp(input, ">>", 2))
+	else if (!ft_strncmp(input, ">>", 3))
 		return (HEREDOC);
-	else if (!ft_strncmp(input, ">", 1))
+	else if (!ft_strncmp(input, ">", 2))
 		return (REDIR_OUT);
-	else if (!ft_strncmp(input, "<", 1))
+	else if (!ft_strncmp(input, "<", 2))
 		return (REDIR_IN);
-	else if (!ft_strncmp(input, "|", 1))
+	else if (!ft_strncmp(input, "|", 2))
 		return (PIPE);
 	else if (!ft_strncmp(input, "&&", 2))
 		return (AND);
@@ -205,24 +205,24 @@ t_token_type	ft_is_operator(char *input)
 
 int	ft_is_builtin(char *input, char *next)
 {
-	if (!ft_strncmp(input, "echo", ft_strlen(input)))
+	if (!ft_strncmp(input, "echo", 5))
 		return (1);
-	else if (!ft_strncmp(input, "cd", ft_strlen(input)))
+	else if (!ft_strncmp(input, "cd", 3))
 		return (1);
-	else if (!ft_strncmp(input, "pwd", ft_strlen(input)))
+	else if (!ft_strncmp(input, "pwd", 4))
 	{
 		//si pasa esto habria que meter un exit, o no se si lo gestionamos aqui o en el execve o builtin
 		if (next)
 			ft_printf("pwd: too many arguments\n");
 		return (1);
 	}
-	else if (!ft_strncmp(input, "export", ft_strlen(input)))
+	else if (!ft_strncmp(input, "export", 7))
 		return (1);
-	else if (!ft_strncmp(input, "unset", ft_strlen(input)))
+	else if (!ft_strncmp(input, "unset", 6))
 		return (1);
-	else if (!ft_strncmp(input, "env", ft_strlen(input)))
+	else if (!ft_strncmp(input, "env", 4))
 		return (1);
-	else if (!ft_strncmp(input, "exit", ft_strlen(input)))
+	else if (!ft_strncmp(input, "exit", 5))
 		return (1);
 	else
 		return (0);
@@ -418,9 +418,9 @@ void	ft_free_node(t_env *node, t_env **env)
 	while (tmp)
 	{
 		//ft_printf("Mi siguiente: %s, el node name %s\n", (tmp->next)->name, node->name);
-		if (tmp->next && !ft_strncmp((tmp->next)->name, node->name, ft_strlen((tmp->next)->name)))
+		if (tmp->next && !ft_strncmp((tmp->next)->name, node->name, ft_strlen(ft_choose_larger((tmp->next)->name, node->name))))
 			prev = tmp;
-		if (!ft_strncmp(tmp->name, node->name, ft_strlen(tmp->name)))
+		if (!ft_strncmp(tmp->name, node->name, ft_strlen(ft_choose_larger(tmp->name, node->name))))
 		{
 			if (prev)
 				prev->next = tmp->next;
@@ -447,7 +447,7 @@ int	ft_check_duplicated(char *str, t_env **env, t_env **undefined)
 	while (tmp)
 	{
 		//tmp value exista, porque si es nulo y ya existe variable con ese nombre y valor, no se cambia
-		if (!ft_strncmp(name_to_add, tmp->name, ft_strlen(name_to_add)))
+		if (!ft_strncmp(name_to_add, tmp->name, ft_strlen(ft_choose_larger(name_to_add, tmp->name))))
 		{
 			if (!tmp->value)
 			{
@@ -562,12 +562,13 @@ t_env *ft_create_env(char	**env_array)
 	env = NULL;
 	while (env_array[i])
 	{
-		name = ft_get_name(env_array[i]);
-		value = ft_get_value(env_array[i]);
-		node = ft_create_node(ft_strdup(name), ft_strdup(value));
-		if (!node)
-			return (ft_printf("Error creating environment node\n"), NULL);
-		ft_connect_node(&env, node);
+		//Esta variable: "_=/usr/bin/env" si esta en el env de bash pero no en el export, no se si deberia imprimirla o no
+			name = ft_get_name(env_array[i]);
+			value = ft_get_value(env_array[i]);
+			node = ft_create_node(ft_strdup(name), ft_strdup(value));
+			if (!node)
+				return (ft_printf("Error creating environment node\n"), NULL);
+			ft_connect_node(&env, node);
 		i++;
 	}
 	return (env);

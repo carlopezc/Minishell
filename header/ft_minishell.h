@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 14:59:32 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/04/15 12:19:48 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/15 17:56:34 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,5 +95,6 @@ void	ft_connect_node(t_env **env, t_env *node);
 int	ft_listlen(t_env *env);
 void	ft_free_env(t_env **env);
 void	ft_print_export(t_env *export);
+char *ft_choose_larger(char *str, char *str2);
 	
 #endif

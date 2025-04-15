@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/04/13 21:08:10 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/15 13:10:32 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -227,7 +227,7 @@ void	ft_env(t_minishell *shell, char *cmd)
  	{
  		if (ft_strchr(var[i], '='))
  		{
-			if (!ft_check_duplicated(var[i], &env_tmp))
+			if (!ft_check_duplicated(var[i], &env_tmp, NULL))
 			{
 				node = ft_create_node(ft_get_name(var[i]), ft_get_value(var[i]));
 				ft_connect_node(&env_tmp, node);
@@ -261,8 +261,10 @@ void	ft_print_export(t_env *export)
 	tmp = export;
 	while (tmp)
 	{
-		if (tmp->value == NULL)
+		if (!tmp->value)
 			ft_printf("declare -x %s\n", tmp->name);
+		else if (tmp->value[0] == '\0')
+			ft_printf("declare -x %s=\"\"\n", tmp->name);
 		else
 			ft_printf("declare -x %s=\"%s\"\n", tmp->name, tmp->value);
 		tmp = tmp->next;
@@ -275,13 +277,21 @@ void	ft_merge_lists(t_minishell **shell, t_env *first, t_env *second)
 	t_env *export;
 	t_env	*tmp;
 
+	if ((*shell)->export)
+		ft_free_env(&(*shell)->export);
+	if (!second)
+	{
+		(*shell)->export = ft_strdup_env(first);
+		return ;
+	}
 	export = ft_strdup_env(first);
 	if (!export)
 		return ;
 	tmp = export;
 	while (tmp->next)
 		tmp = tmp->next;
-	tmp->next = ft_strdup_env(second);
+	if (second)
+		tmp->next = ft_strdup_env(second);
 	(*shell)->export = export;
 	return ;
 }
@@ -359,30 +369,26 @@ void	ft_export(t_minishell *shell, char *cmd)
 	{
 		if (ft_strchr(var[i], '='))
 		{
-			if (!ft_check_duplicated(var[i], &shell->env) && !ft_check_duplicated(var[i], &shell->export))
+			if (!ft_check_duplicated(var[i], &shell->export, &shell->undefined_var))
 			{
 				node = ft_create_node(ft_get_name(var[i]), ft_get_value(var[i]));
 				ft_connect_node(&shell->env, node);
-				ft_printf("Pasa por flag 1 y node value es %s\n", node->value);
+				flag = 1;
 			}
-			flag = 1;
 		}
 		if (!flag)
 		{	
-			if (!ft_check_duplicated(var[i], &shell->env) && !ft_check_duplicated(var[i], &shell->export))
+			if (!ft_check_duplicated(var[i], &shell->env, &shell->undefined_var))
 			{
-				node = ft_create_node(ft_get_name(var[i]), NULL);
+				node = ft_create_node(ft_get_name(var[i]), ft_get_value(var[i]));
 				ft_connect_node(&shell->undefined_var, node);
-				ft_printf("Pasa por flag 0 y node value es %s\n", node->value);
 			}
 		}
 		flag = 0;
 		i++;
 	}
-	//uno ambas listas y ya ordenadas igual
 	ft_merge_lists(&shell, shell->env, shell->undefined_var);
 	ft_sort_list(shell->export);
-	//export va a ser igual a copia de env + imprimir variables sin valor
 	ft_print_export(shell->export);
 	return ;
 }

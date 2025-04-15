@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 14:59:32 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/04/13 18:08:40 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/15 12:19:48 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,8 +89,11 @@ void	ft_manage_child_signals();
 void	ft_print_env(t_env *env);
 char **ft_create_array_env(t_env *env);
 t_env *ft_create_env(char	**env_array);
-int	ft_check_duplicated(char *str, t_env **env);
+int	ft_check_duplicated(char *str, t_env **env, t_env **undefined);
 t_env	*ft_create_node(char *name, char *value);
 void	ft_connect_node(t_env **env, t_env *node);
+int	ft_listlen(t_env *env);
+void	ft_free_env(t_env **env);
+void	ft_print_export(t_env *export);
 	
 #endif

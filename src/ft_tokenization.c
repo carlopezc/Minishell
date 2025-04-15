@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/04/13 21:22:52 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/15 13:11:57 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -331,14 +331,21 @@ int	ft_arraylen(char **arr)
 t_env	*ft_strdup_env(t_env *env)
 {
 	t_env	*cpy;
-	char **env_array;
+	t_env *node;
+	t_env	*tmp;
 
 	if (!env)
 		return (NULL);
-	env_array = ft_create_array_env(env);
-	cpy = ft_create_env(env_array);
-	ft_free_array(env_array);
-	env_array = NULL;
+	cpy = NULL;
+	tmp = env;
+	while (tmp)
+	{
+		node = ft_create_node(ft_strdup(tmp->name), ft_strdup(tmp->value));
+		if (!node)
+			return (ft_free_env(&cpy), NULL);
+		ft_connect_node(&cpy, node);
+		tmp = tmp->next;
+	}
 	return (cpy);
 }
 
@@ -376,7 +383,7 @@ char	*ft_get_value(char *str)
 		i++;
 	}
 	if (str[i - 1] == '=' && !str[i])
-		value = "";
+		value = ft_strdup("");
 	else if (!str[i])
 		value = NULL;
 	else
@@ -391,7 +398,44 @@ void	ft_change_value(char *str, t_env **node)
 	return ;
 }
 
-int	ft_check_duplicated(char *str, t_env **env)
+void	ft_free_node(t_env *node, t_env **env)
+{
+	t_env *tmp;
+	t_env *prev;
+
+	tmp = *env;
+	prev = NULL;
+	if (!node)
+		return ;
+	if (tmp == *env && tmp->next == NULL)
+	{
+		ft_safe_free((void **)&tmp->name);
+		ft_safe_free((void **)&tmp->value);
+		ft_safe_free((void **)&tmp);
+		*env = NULL;
+		return ;
+	}
+	while (tmp)
+	{
+		//ft_printf("Mi siguiente: %s, el node name %s\n", (tmp->next)->name, node->name);
+		if (tmp->next && !ft_strncmp((tmp->next)->name, node->name, ft_strlen((tmp->next)->name)))
+			prev = tmp;
+		if (!ft_strncmp(tmp->name, node->name, ft_strlen(tmp->name)))
+		{
+			if (prev)
+				prev->next = tmp->next;
+			ft_safe_free((void **)&tmp->name);
+			ft_safe_free((void **)&tmp->value);
+			tmp->next = NULL;
+			ft_safe_free((void **)&tmp);
+			return ;
+		}
+		tmp = tmp->next;
+	}
+	return ;
+}
+
+int	ft_check_duplicated(char *str, t_env **env, t_env **undefined)
 {
 	char	*name_to_add;
 	char	*value;
@@ -403,12 +447,26 @@ int	ft_check_duplicated(char *str, t_env **env)
 	while (tmp)
 	{
 		//tmp value exista, porque si es nulo y ya existe variable con ese nombre y valor, no se cambia
-		if (!ft_strncmp(name_to_add, tmp->name, ft_strlen(name_to_add)) && value)
+		if (!ft_strncmp(name_to_add, tmp->name, ft_strlen(name_to_add)))
 		{
-			ft_change_value(str, &tmp);
+			if (!tmp->value)
+			{
+				ft_free_node(tmp, undefined);
+				return (0);
+			}
+			if (value)
+				ft_change_value(str, &tmp);
 			ft_safe_free((void **)&name_to_add);
 			return (1);
 		}
+		/*
+		else if (!ft_strncmp(name_to_add, tmp->name, ft_strlen(name_to_add)) && !value)
+		{
+			//free ese token paso env tb
+			//conectar los de antes y despues
+			//añadir el token en el env
+		}
+			*/
 		tmp = tmp->next;
 	}
 	ft_safe_free((void **)&name_to_add);
@@ -532,3 +590,12 @@ int	ft_init_minishell(t_minishell **minishell, char **env)
 	(*minishell)->s_input = NULL;
 	return (1);
 }
+
+//declare x hello
+//declare x hi=
+//declare x carlota=maja
+
+//si hago hi=carlota se tiene que cambiar en env y export (ESTO BIEN!!!)
+//si hago hello=lucas se tiene que cambiar en export y añadir a env (NO CAMBIA NADA)
+//si hago carlota no se tiene que cambiar, si ya tiene valor no se cambia (LO HACE MAL, CREA OTRA VARIABLE SIN VALOR CARLOTA)
+//si hago carlota= si se tiene que cambiar a hello="" y en env se cambia tambien a hello= (ESTO BIEN!!!)

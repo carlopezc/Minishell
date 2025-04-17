@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/04/17 09:53:46 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/17 10:03:50 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,7 @@ void	ft_expand(char **input, t_env *env)
 	tmp = env;
 	while (tmp)
 	{
-		if (!ft_strncmp(name_var, tmp->name, ft_strlen(ft_choose_larger(tmp->name, name_var)) && *(*input + ft_strlen(tmp->name)) == '='))
+		if (!ft_strncmp(name_var, tmp->name, ft_max_strlen(tmp->name, name_var)) && *(*input + ft_strlen(tmp->name)) == '=')
 		{
 			final_var = tmp->value;
 			if (!final_var)
@@ -418,9 +418,9 @@ void	ft_free_node(t_env *node, t_env **env)
 	while (tmp)
 	{
 		//ft_printf("Mi siguiente: %s, el node name %s\n", (tmp->next)->name, node->name);
-		if (tmp->next && !ft_strncmp((tmp->next)->name, node->name, ft_strlen(ft_choose_larger((tmp->next)->name, node->name))))
+		if (tmp->next && !ft_strncmp((tmp->next)->name, node->name, ft_max_strlen((tmp->next)->name, node->name)))
 			prev = tmp;
-		if (!ft_strncmp(tmp->name, node->name, ft_strlen(ft_choose_larger(tmp->name, node->name))))
+		if (!ft_strncmp(tmp->name, node->name, ft_max_strlen(tmp->name, node->name)))
 		{
 			if (prev)
 				prev->next = tmp->next;
@@ -447,7 +447,7 @@ int	ft_check_duplicated(char *str, t_env **env, t_env **undefined)
 	while (tmp)
 	{
 		//tmp value exista, porque si es nulo y ya existe variable con ese nombre y valor, no se cambia
-		if (!ft_strncmp(name_to_add, tmp->name, ft_strlen(ft_choose_larger(name_to_add, tmp->name))))
+		if (!ft_strncmp(name_to_add, tmp->name, ft_max_strlen(name_to_add, tmp->name)))
 		{
 			if (!tmp->value)
 			{

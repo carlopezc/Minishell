@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/04/17 09:30:03 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/17 09:58:43 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -219,7 +219,7 @@ void	ft_env(t_minishell *shell, char *cmd)
 	if (!var)
 		return ;
 	//Input es env unicamente
-	if (!ft_strncmp(var[i], "env", ft_strlen(ft_choose_larger(var[i], "env"))) && !var[++i])
+	if (!ft_strncmp(var[i], "env", ft_max_strlen(var[i], "env")) && !var[++i])
 		return (ft_print_env(shell->env));
  	// Falta mirar si los caracteres son validos para nombre de variable
 	env_tmp = ft_strdup_env(shell->env);
@@ -312,7 +312,7 @@ void	ft_swap_list(t_env *a, t_env *b)
 	b->value = tmp_value;
 	return ;
 }
-/*
+
 size_t	ft_max_strlen(char *s1, char *s2)
 {
 	size_t	len1;
@@ -326,7 +326,7 @@ size_t	ft_max_strlen(char *s1, char *s2)
 	else
 		return (len2);
 }
-*/
+
 void	ft_sort_list(t_env *head)
 {
 	t_env	*ptr;
@@ -343,7 +343,7 @@ void	ft_sort_list(t_env *head)
 		ptr = head;
 		while (ptr->next != lptr)
 		{
-			if (ft_strncmp(ptr->name, ptr->next->name, ft_strlen(ft_choose_larger(ptr->name ,ptr->next->name))) > 0)
+			if (ft_strncmp(ptr->name, ptr->next->name, ft_max_strlen(ptr->name ,ptr->next->name)) > 0)
 			{
 				ft_swap_list(ptr, ptr->next);
 				swapped = 1;
@@ -352,13 +352,6 @@ void	ft_sort_list(t_env *head)
 		}
 		lptr = ptr;
 	}
-}
-
-char *ft_choose_larger(char *str, char *str2)
-{
-	if (ft_strlen(str) < ft_strlen(str2))
-		return (str2);
-	return (str);
 }
 
 void	ft_export(t_minishell *shell, char *cmd)
@@ -373,7 +366,7 @@ void	ft_export(t_minishell *shell, char *cmd)
 		return ;
 	i = 0;
 	flag = 0;
-	if (!ft_strncmp(var[i], "export", ft_strlen(ft_choose_larger(var[i], "export"))) && !var[++i])
+	if (!ft_strncmp(var[i], "export", ft_max_strlen(var[i], "export")) && !var[++i])
 		return (ft_sort_list(shell->export), ft_print_export(shell->export));
 	//tienen que diferenciarse export hola a export hola=, lo que añdira hola o hola=""
 	while (var[i])

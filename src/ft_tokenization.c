@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/04/17 20:43:20 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/17 20:44:54 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -563,6 +563,7 @@ t_env *ft_create_env(char	**env_array)
 	while (env_array[i])
 	{
 		//Esta variable: "_=/usr/bin/env" si esta en el env de bash pero no en el export, no se si deberia imprimirla o no
+		//pero no la estoy imprimiendo
 			name = ft_get_name(env_array[i]);
 			if (!ft_strncmp(name, "SHLVL", ft_max_strlen(name, "SHLVL")))
 				value = ft_itoa(ft_atoi(ft_get_value(env_array[i])) + 1);

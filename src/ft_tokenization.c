@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/04/15 20:23:55 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/17 09:53:46 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -573,6 +573,46 @@ t_env *ft_create_env(char	**env_array)
 	}
 	return (env);
 }
+
+void ft_empty_export(t_minishell **shell)
+{
+	t_env *node;
+
+	node = ft_create_node(ft_strdup("OLDPWD"), NULL);
+	if (!node)
+		return ;
+	ft_connect_node(&(*shell)->undefined_var, node);
+	ft_merge_lists(shell, (*shell)->env, (*shell)->undefined_var);
+	return ;
+}
+t_env *ft_empty_env(void)
+{
+	t_env *env;
+	t_env *node;
+	char *cwd;
+
+	env = NULL;
+	//Nivel de la shell
+	node = ft_create_node(ft_strdup("SHLVL"), ft_strdup("1"));
+	if (!node)
+		return (NULL);
+	ft_connect_node(&env, node);
+	//Sirve para obtener el path absoluto del directorio actual en el que se esta ejeutando el proceso
+	cwd = getcwd(NULL, 0);
+	node = ft_create_node(ft_strdup("PWD"), ft_strdup(cwd));
+	if (!node)
+		return (ft_safe_free((void **)&cwd), NULL);
+	ft_safe_free((void **)&cwd);
+	ft_connect_node(&env, node);
+	//Guarda ultimo comando o su ruta, cada vez que ejecutamos un comando habria que actualizarla
+	//Podriamos antes de hacer el execve guardar la ruta del comandoen la var _
+	node = ft_create_node(ft_strdup("_"), ft_strdup("./minishell"));
+	if (!node)
+		return (NULL);
+	ft_connect_node(&env, node);
+	return (env);
+}
+
 int	ft_init_minishell(t_minishell **minishell, char **env)
 {
 	*minishell = (t_minishell *)malloc(sizeof(t_minishell));
@@ -580,18 +620,25 @@ int	ft_init_minishell(t_minishell **minishell, char **env)
 		return (0);
 	(*minishell)->tokens = NULL;
 	(*minishell)->env_tmp = NULL;
-	(*minishell)->env = ft_create_env(env);
-	if (!(*minishell)->env)
-		return (free(*minishell), ft_printf("Error creating environment \n"), 0);
-	//si no me pasan environment tengo que crear uno con x cosas, si ejecutan minishell con env -i ./minishell el env tiene x cosas
-	(*minishell)->export = ft_create_env(env);
+	(*minishell)->undefined_var = NULL;
+	(*minishell)->export = NULL;
+	if (env && *env)
+	{
+		(*minishell)->env = ft_create_env(env);
+		if (!(*minishell)->env)
+			return (free(*minishell), ft_printf("Error creating environment \n"), 0);
+		(*minishell)->export = ft_create_env(env);
+	}
+	else
+	{
+		(*minishell)->env = ft_empty_env();
+		ft_empty_export(minishell);
+	}
 	if (!(*minishell)->export)
 		return (ft_free_minishell(minishell), ft_printf("Error creating export \n"), 0);
-	(*minishell)->undefined_var = NULL;
 	(*minishell)->s_input = NULL;
 	return (1);
 }
-
 //declare x hello
 //declare x hi=
 //declare x carlota=maja

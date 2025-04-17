@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/04/15 20:38:05 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/17 09:30:03 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -373,7 +373,7 @@ void	ft_export(t_minishell *shell, char *cmd)
 		return ;
 	i = 0;
 	flag = 0;
-	if (!ft_strncmp(var[i], "export", ft_strlen(/*ft_choose_larger(*/var[i]/*, "export")*/)) && !var[++i])
+	if (!ft_strncmp(var[i], "export", ft_strlen(ft_choose_larger(var[i], "export"))) && !var[++i])
 		return (ft_sort_list(shell->export), ft_print_export(shell->export));
 	//tienen que diferenciarse export hola a export hola=, lo que añdira hola o hola=""
 	while (var[i])

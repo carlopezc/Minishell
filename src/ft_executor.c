@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/04/19 17:02:32 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/19 17:42:00 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,13 +144,13 @@ void	ft_cd(t_minishell *shell, char *cmd)
 	if (!ft_strncmp(cmd, "cd", 3))
 	{
 		//avanza hasta que encuentra el pwd
-		while (pwd && pwd->next && ft_strncmp((pwd->next)->name, "PWD", 3))
+		while (pwd && pwd->next && ft_strncmp((pwd->next)->name, "PWD", ft_max_strlen("PWD", (pwd->next)->name)))
 			pwd = pwd->next;
 		if (!pwd || !pwd->next)
 			return ;
 		//busca el home
 		home = shell->env;
-		while (/*(u_cpy == p_cpy) ||*/ home && ft_strncmp(home->name, "HOME", 4))
+		while (/*(u_cpy == p_cpy) ||*/ home && ft_strncmp(home->name, "HOME", ft_max_strlen("HOME", home->name)))
 			home = home->next;
 		if (!home)
 			return ;
@@ -161,7 +161,7 @@ void	ft_cd(t_minishell *shell, char *cmd)
 	if (*(cmd + 3) == '/')
 	{
 		pwd = shell->env;
-		while (pwd && pwd->next && ft_strncmp((pwd->next)->name, "PWD", 3))
+		while (pwd && pwd->next && ft_strncmp((pwd->next)->name, "PWD", ft_max_strlen("PWD", (pwd->next)->name)))
 			pwd = pwd->next;
 		if (!pwd)
 			return ;
@@ -189,7 +189,7 @@ void	ft_cd(t_minishell *shell, char *cmd)
 	if (temp)
 	{
 		pwd = shell->env;
-		while (pwd && pwd->next && ft_strncmp((pwd->next)->name, "PWD", 3))
+		while (pwd && pwd->next && ft_strncmp((pwd->next)->name, "PWD", ft_max_strlen("PWD", (pwd->next)->name)))
 			pwd = pwd->next;
 		if (!pwd)
 			return ;
@@ -494,6 +494,8 @@ void	ft_exec_build(t_minishell *shell, char *cmd)
 	{
 		ft_cd(shell, cmd);
 		ft_pwd(shell);
+		ft_merge_lists(&shell, shell->env, shell->undefined_var);
+		ft_sort_list(shell->export);
 	}
 	if (ft_strncmp(cmd, "pwd", 3) == 0)
 		ft_pwd(shell);

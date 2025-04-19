@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/04/19 11:51:45 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/19 17:02:32 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ void	ft_errase_pwd(t_minishell *shell)
 		env = env->next;
 	if (!env)
 		return ;
-	c = ft_strlen(env->value - 1);
+	c = ft_strlen(env->value) - 1;
 	while (env->value[c] != '/')
 		env->value[c--] = '\0';
 	if (env->value[c] != '=' && env->value[c -1] != '=')
@@ -393,7 +393,6 @@ void	ft_export(t_minishell *shell, char *cmd)
 	flag = 0;
 	if (!ft_strncmp(var[i], "export", ft_max_strlen(var[i], "export")) && !var[++i])
 		return (ft_sort_list(shell->export), ft_print_export(shell->export));
-	//tienen que diferenciarse export hola a export hola=, lo que añdira hola o hola=""
 	while (var[i])
 	{
 		if (ft_strchr(var[i], '='))
@@ -436,7 +435,7 @@ void	ft_echo(char *cmd)
 
 void	ft_remove_var(t_minishell **shell, t_env *node, t_env **list)
 {
-	//tengo que poner env o undefined, que me pasen la direccion de memoria y ya
+
 	t_env *tmp;
 
 	tmp = *list;
@@ -513,7 +512,7 @@ void	ft_exec_build(t_minishell *shell, char *cmd)
 	//ft_free_minishell(&shell);
 	//exit(0);
 }
-/*
+
 void	ft_pre_exec_command(t_pipex *pipex, t_token *cmd, t_minishell *shell)
 {
 	char	*temp;
@@ -544,13 +543,11 @@ void	ft_pre_exec_command(t_pipex *pipex, t_token *cmd, t_minishell *shell)
 	ft_free_minishell(&shell);
 	execve(path_command, command, env);
 }
-*/
+
 void	ft_exec(t_minishell *shell, t_pipex *pipex, t_token *save)
 {
-	(void)pipex;
 	if (save->type == BUILTIN)
 		ft_exec_build(shell, save->str);
-	/*
 	if (save->type == COMMAND || save->type == EXEC)
 	{
 		if (pipex->docs_in)
@@ -579,7 +576,6 @@ void	ft_exec(t_minishell *shell, t_pipex *pipex, t_token *save)
 		}
 		ft_pre_exec_command(pipex, save, shell);
 	}
-		*/
 }
 
 char	*ft_find_path(t_env **env)

@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/04/17 09:58:43 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/19 09:07:20 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -408,68 +408,63 @@ void	ft_echo(char *cmd)
 		ft_printf("%s\n", temp + 1);
 	return ;
 }
-/*
-void	ft_clear_line(t_minishell **shell, int i)
+
+void	ft_remove_var(t_minishell **shell, t_env *node, t_env **list)
 {
-	char	**env;
-	int	j;
-	int	x;
-	char	**cpy;
+	//tengo que poner env o undefined, que me pasen la direccion de memoria y ya
+	t_env *tmp;
 
-	env = ft_strdup_env((*shell)->env);
-	j = ft_arraylen(env);
-	cpy = (char **)malloc(j * sizeof(char *));
-	if (!cpy)
-		return ;
-	j = 0;
-	x = 0;
-	while (env && env[j])
+	tmp = *list;
+	while (tmp)
 	{
-		if (i == j)
+		if (tmp == node)
 		{
-			free(env[j]);
-			j++;
+			ft_free_node(node, list);
+			break ;
 		}
-		cpy[x++] = env[j++];
-
+		tmp = tmp->next;
 	}
-	cpy[x] = NULL;
-	//ft_free_array((*shell)->env);
-	//ft_free_array((*shell)->export);
-	(*shell)->env = cpy;
-	(*shell)->export = ft_create_export(ft_strdup_env((*shell)->env));
+	ft_merge_lists(shell, (*shell)->env, (*shell)->undefined_var);
+	ft_sort_list((*shell)->export);
 	return ;
 }
-	*/
-/*
+
+int	ft_check_in(t_minishell *shell, t_env **list, char *var)
+{
+	t_env *tmp;
+
+	tmp = *list;
+	while (tmp)
+	{
+		if (!ft_strncmp(var, tmp->name, ft_max_strlen(var, tmp->name)))
+		{
+			ft_remove_var(&shell, tmp, list);
+			return (1);
+		}
+		tmp = tmp->next;
+	}
+	return (0);
+}
+
 void	ft_unset(t_minishell *shell, char *cmd)
 {
 	int	i;
-	char	*name;
+	char **vars;
 
 	i = 0;
-	ft_printf("entra a unset\n");
-	while (shell->env && shell->env[i])
+	vars = ft_split(cmd, ' ');
+	while (vars && vars[i])
 	{
-		name = ft_get_name(shell->env[i]);
-		ft_printf("name vale %s\n", name);
-		ft_printf("name vale %s\n", name);
-		if (!ft_strncmp(cmd, name, ft_strlen(name)))
-		{
-			ft_clear_line(&shell, i);
-			ft_print_env(shell->env);
-			free(name);
-			return ;
-		}
-		free(name);
+		if (!ft_check_in(shell, &shell->env, vars[i]))
+			ft_check_in(shell, &shell->undefined_var, vars[i]);
 		i++;
 	}
 	return ;
 }
-*/
+
 void	ft_exec_build(t_minishell *shell, char *cmd)
 {
-	if (ft_strncmp(cmd, "echo", 4) == 0)
+	if (!ft_strncmp(cmd, "echo", ft_strlen("echo")))
 		ft_echo(cmd);
 	/*if (ft_strncmp(cmd, "cd", 2) == 0)
 	{
@@ -479,14 +474,13 @@ void	ft_exec_build(t_minishell *shell, char *cmd)
 	if (ft_strncmp(cmd, "pwd", 3) == 0)
 		ft_pwd(shell);
 	*/
-	if (ft_strncmp(cmd, "export", 6) == 0)
+	if (!ft_strncmp(cmd, "export", ft_strlen("export")))
 		ft_export(shell, cmd);
-	/*
-	if (ft_strncmp(cmd, "unset", 5) == 0)
-		ft_unset(shell, cmd + 6);*/
-	if (ft_strncmp(cmd, "env", 3) == 0)
+	if (!ft_strncmp(cmd, "unset", ft_strlen("unset")))
+		ft_unset(shell, cmd + 6);
+	if (!ft_strncmp(cmd, "env", ft_strlen("env")))
 		ft_env(shell, cmd);
-	if (ft_strncmp(cmd, "exit", 4) == 0)
+	if (!ft_strncmp(cmd, "exit", ft_strlen("exit")))
 	{
 		ft_free_minishell(&shell);
 		exit(0) ;

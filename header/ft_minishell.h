@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 14:59:32 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/04/17 10:04:57 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/17 22:26:06 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,5 +98,6 @@ void	ft_print_export(t_env *export);
 char *ft_choose_larger(char *str, char *str2);
 void	ft_merge_lists(t_minishell **shell, t_env *first, t_env *second);
 size_t	ft_max_strlen(char *s1, char *s2);
+void	ft_free_node(t_env *node, t_env **list);
 	
 #endif

@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/04/17 20:44:54 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/17 22:25:34 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -398,21 +398,21 @@ void	ft_change_value(char *str, t_env **node)
 	return ;
 }
 
-void	ft_free_node(t_env *node, t_env **env)
+void	ft_free_node(t_env *node, t_env **list)
 {
 	t_env *tmp;
 	t_env *prev;
 
-	tmp = *env;
+	tmp = *list;
 	prev = NULL;
 	if (!node)
 		return ;
-	if (tmp == *env && tmp->next == NULL)
+	if (tmp == *list && tmp->next == NULL)
 	{
 		ft_safe_free((void **)&tmp->name);
 		ft_safe_free((void **)&tmp->value);
 		ft_safe_free((void **)&tmp);
-		*env = NULL;
+		*list = NULL;
 		return ;
 	}
 	while (tmp)

@@ -6,14 +6,14 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:15:05 by carlopez          #+#    #+#             */
-/*   Updated: 2025/04/14 16:07:03 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/20 20:52:49 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 # include "../header/ft_minishell.h"
 
 char	*token_type_to_str(t_token_type type);
-void	ft_print_array(char **arr);
+
 
 void	ft_free_env(t_env **env)
 {

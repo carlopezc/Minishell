@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/04/19 17:42:00 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/21 12:57:15 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -246,7 +246,7 @@ void	ft_env(t_minishell *shell, char *cmd)
 	//Input es env unicamente
 	if (!ft_strncmp(var[i], "env", ft_max_strlen(var[i], "env")) && !var[++i])
 		return (ft_print_env(shell->env));
- 	// Falta mirar si los caracteres son validos para nombre de variable
+	//En BASH al declarar variables temporales (con env) puedo nombrar las variables como quiera
 	env_tmp = ft_strdup_env(shell->env);
  	while (var[i])
  	{
@@ -379,6 +379,21 @@ void	ft_sort_list(t_env *head)
 	}
 }
 
+int	ft_check_name(char *var)
+{
+	int	i;
+
+	i = 0;
+	if (!ft_isalpha(var[i]) && (var[i] != '_'))
+		return (ft_printf("Non valid name\n"), 0);
+	while (var[++i] && var[i] != '=')
+	{
+		if (!ft_isalnum(var[i]) && (var[i] != '_'))
+			return (ft_printf("Non valid name\n"), 0);
+	}
+	return (1);
+}
+
 void	ft_export(t_minishell *shell, char *cmd)
 {
 	int	i;
@@ -391,10 +406,16 @@ void	ft_export(t_minishell *shell, char *cmd)
 		return ;
 	i = 0;
 	flag = 0;
+ 	// NOMBRES VÁLIDOS:
+	// Tiene que comenzar con caracter o con guion bajo
+	// En el resto del nombre puede contener caracteres guiones bajos y números NADA MAS
+	// Para el valor no hay restricciones, cualquier simbolo, emoji, caracter etc, cuidado con caracteres especiales escaparlos, o entre comillas simples
 	if (!ft_strncmp(var[i], "export", ft_max_strlen(var[i], "export")) && !var[++i])
 		return (ft_sort_list(shell->export), ft_print_export(shell->export));
 	while (var[i])
 	{
+		if (!ft_check_name(var[i]))
+			return ;
 		if (ft_strchr(var[i], '='))
 		{
 			if (!ft_check_duplicated(var[i], &shell->export, &shell->undefined_var))
@@ -543,6 +564,9 @@ void	ft_pre_exec_command(t_pipex *pipex, t_token *cmd, t_minishell *shell)
 	}
 	env = ft_create_array_env(shell->env);
 	ft_free_minishell(&shell);
+	ft_printf("Pre exec command: \n");
+	ft_printf("Ruta buena : %s\n", getcwd(NULL, 0));
+	ft_print_array(env);
 	execve(path_command, command, env);
 }
 
@@ -587,7 +611,7 @@ char	*ft_find_path(t_env **env)
 	tmp = *env;
 	while (tmp)
 	{
-		if (!ft_strncmp(tmp->name, "PATH", 4))
+		if (!ft_strncmp(tmp->name, "PATH", ft_max_strlen(tmp->name, "PATH")))
 			return (tmp->value);
 		tmp = tmp->next;
 	}
@@ -759,4 +783,3 @@ int	ft_executor(t_minishell *shell)
 	}
 	return (0);
 }
-//Me falta el unset, el env -i y hay una variable que en el env sale y en el export no, en el original, una que es como _no se que

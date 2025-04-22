@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_executor.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
+/*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/04/08 17:06:54 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/04/22 12:58:52 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,20 @@
 #include <fcntl.h>
 #include <sys/wait.h>
 
+void	ft_safe_free(void **p)
+{
+	if (p && *p)
+	{
+		free(*p);
+		*p  = NULL;
+	}
+	return ;
+}
+
 void	ft_arrange_fd(t_pipex *pipex)
 {
+	if (!pipex)
+		return ;
 	if (pipex->pipe[0][0] != 0)
 	{
 		close(pipex->pipe[0][0]);
@@ -31,20 +43,22 @@ void	ft_arrange_fd(t_pipex *pipex)
 		pipex->pipe[1][1] = 0;
 	}
 	if (pipex->docs_in)
-		free(pipex->docs_in);
+		ft_safe_free((void **)&pipex->docs_in);
 	if (pipex->docs_out)
-		free(pipex->docs_out);
+		ft_safe_free((void **)&pipex->docs_out);
 }
-
+/*
 static char	**ft_free_exec_cmd(t_pipex **pipex)
 {
 	char	**return_v;
 
 	if ((*pipex)->path)
-		free((*pipex)->path);
+	{
+		//ft_printf("ft_free_exec_cmd: %p\n", (*pipex)->path);
+		ft_safe_free((void **)&(*pipex)->path);
+	}
 	return_v = (*pipex)->command;
-	free(*pipex);
-	*pipex = NULL;
+	ft_safe_free((void **)pipex);
 	return (return_v);
 }
 
@@ -56,11 +70,12 @@ void	ft_exec_command(t_pipex *pipex, char **env)
 
 	temp = ft_strjoin("/", pipex->command[0]);
 	path_command = ft_strjoin(pipex->path, temp);
-	free(temp);
+	//ft_printf("ft_exec_command: %p\n", temp);
+	ft_safe_free((void **)&temp);
 	command = ft_free_exec_cmd(&pipex);
 	execve(path_command, command, env);
 }
-
+*/
 int	ft_check_cd(char *file, char *pwd)
 {
 	char	*temp;
@@ -68,75 +83,102 @@ int	ft_check_cd(char *file, char *pwd)
 
 	temp = ft_strjoin(pwd, "/");
 	final = ft_strjoin(temp, file);
-	free(temp);
+	ft_safe_free((void **)&temp);
 	if (access(final, F_OK) != 0)
-		return (free(final), 0);
+		return (ft_safe_free((void **)&final), 0);
 	else
-		return (free(final), 1);
+		return (ft_safe_free((void **)&final), 1);
 }
 
 void	ft_errase_pwd(t_minishell *shell)
 {
-	int	p;
 	int	c;
+	t_env *env;
 
-	p = 0;
-	while (shell->env[p] && ft_strncmp(shell->env[p], "PWD=", 4) != 0)
-		p++;
-	if (!shell->env[p])
+	env = shell->env;
+	while (env && ft_strncmp(env->name, "PWD", 3))
+		env = env->next;
+	if (!env)
 		return ;
-	c = ft_strlen(shell->env[p]) - 1;
-	while (shell->env[p][c] != '/')
-		shell->env[p][c--] = '\0';
-	if (shell->env[p][c] != '=' && shell->env[p][c -1] != '=')
-		shell->env[p][c] = '\0';
+	c = ft_strlen(env->value) - 1;
+	while (env->value[c] != '/')
+		env->value[c--] = '\0';
+	if (env->value[c] != '=' && env->value[c -1] != '=')
+		env->value[c] = '\0';
 }
 
+void	ft_add_node(t_env **list, t_env *prev, t_env *node)
+{
+	t_env *tmp;
+	t_env *next;
+
+	next = NULL;
+	tmp = *list;
+	if (!tmp)
+		return ;
+	while (tmp)
+	{
+		if (tmp == prev)
+		{
+			next = (tmp->next)->next;
+			ft_free_node(tmp->next, list);
+			prev->next = node;
+			node->next = next;
+		}
+		tmp = tmp->next;
+	}
+	return ;
+}
 void	ft_cd(t_minishell *shell, char *cmd)
 {
 	char	*temp;
 	char	*join;
-	int	p;
-	int	u;
 
+	t_env	*pwd;
+	t_env 	*home;
+	t_env *node;
 
-	p = 0;
-	if (ft_strncmp(cmd, "cd", 3) == 0)
+	node = NULL;
+	home = NULL;
+	pwd = shell->env;
+	if (!ft_strncmp(cmd, "cd", 3))
 	{
-		while (shell->env[p] && ft_strncmp(shell->env[p], "PWD=", 4) != 0)
-			p++;
-		if (!shell->env[p])
+		//avanza hasta que encuentra el pwd
+		while (pwd && pwd->next && ft_strncmp((pwd->next)->name, "PWD", ft_max_strlen("PWD", (pwd->next)->name)))
+			pwd = pwd->next;
+		if (!pwd || !pwd->next)
 			return ;
-		free(shell->env[p]);
-		shell->env[p] = NULL;
-		u = 0;
-		while ((u == p) || (shell->env[u] && ft_strncmp(shell->env[u], "HOME=", 5) != 0))
-			u++;
-		if (!shell->env[u])
+		//busca el home
+		home = shell->env;
+		while (/*(u_cpy == p_cpy) ||*/ home && ft_strncmp(home->name, "HOME", ft_max_strlen("HOME", home->name)))
+			home = home->next;
+		if (!home)
 			return ;
-		shell->env[p] = ft_strjoin("PWD=", shell->env[u] + 5);
+		node = ft_create_node(ft_strdup("PWD"), ft_strdup(home->value));
+		ft_add_node(&shell->env, pwd, node);
 		return ;
 	}
-	if (cmd[3] == '/')
+	if (*(cmd + 3) == '/')
 	{
-		while (shell->env[p] && ft_strncmp(shell->env[p], "PWD=", 4) != 0)
-			p++;
-		if (!shell->env[p])
+		pwd = shell->env;
+		while (pwd && pwd->next && ft_strncmp((pwd->next)->name, "PWD", ft_max_strlen("PWD", (pwd->next)->name)))
+			pwd = pwd->next;
+		if (!pwd)
 			return ;
 		if (access(cmd + 3, F_OK) == 0)
 		{
-			free(shell->env[p]);
-			shell->env[p] = ft_strjoin("PWD=", cmd + 3);
+			node = ft_create_node(ft_strdup("PWD"), ft_strdup(cmd + 3));
+			ft_add_node(&shell->env, pwd, node);
 			return ;
 		}
 		else
 			return ;
 	}
-	if (ft_strncmp(ft_strchr(cmd, ' ') + 1, "..", 2) == 0)
+	if (!ft_strncmp(ft_strchr(cmd, ' ') + 1, "..", 2))
 	{
 		ft_errase_pwd(shell);
 		temp = ft_strchr(cmd, '/');
-		while (temp && ft_strncmp(temp + 1, "..", 2) == 0)
+		while (temp && !ft_strncmp(temp + 1, "..", 2))
 		{
 			ft_errase_pwd(shell);
 			temp = ft_strchr(temp + 1, '/');
@@ -146,19 +188,16 @@ void	ft_cd(t_minishell *shell, char *cmd)
 		temp = ft_strchr(cmd, ' ');
 	if (temp)
 	{
-		p = 0;
-		while (shell->env[p] && ft_strncmp(shell->env[p], "PWD=", 4) != 0)
-			p++;
-		if (!shell->env[p])
+		pwd = shell->env;
+		while (pwd && pwd->next && ft_strncmp((pwd->next)->name, "PWD", ft_max_strlen("PWD", (pwd->next)->name)))
+			pwd = pwd->next;
+		if (!pwd)
 			return ;
-		if (ft_check_cd(temp + 1, shell->env[p] + 4) == 0)
+		if (!ft_check_cd(temp + 1, (pwd->next)->value))
 			return ;
-		join = ft_strjoin(shell->env[p] + 4, "/");
-		free(shell->env[p]);
-		shell->env[p] = ft_strjoin(join, temp + 1);
-		temp = shell->env[p];
-		shell->env[p] = ft_strjoin("PWD=", temp);
-		free(temp);
+		join = ft_strjoin((pwd->next)->value, "/");
+		node = ft_create_node(ft_strdup("PWD"), ft_strjoin(join, temp + 1));
+		ft_add_node(&shell->env, pwd, node);
 	}
 	//shell->env[p] = ft_strdup(shell->env[p]);
 	//free(shell->env[p]);
@@ -168,44 +207,240 @@ void	ft_cd(t_minishell *shell, char *cmd)
 
 void	ft_pwd(t_minishell *shell)
 {
-	int	p;
+	t_env *env;
 
-	p = 0;
-	while (shell->env[p] && ft_strncmp(shell->env[p], "PWD=", 4) != 0)
-		p++;
-	if (!shell->env[p])
+	env = shell->env;
+	while (env && ft_strncmp(env->name, "PWD", 3))
+		env = env->next;
+	if (!env)
 		ft_printf("te cagas\n");
-	ft_printf("%s\n", ft_strchr(shell->env[p], '/'));
+	ft_printf("%s\n", ft_strchr(env->value, '/'));
 	return ;
 }
 
-void	ft_env(t_minishell *shell)
+void	ft_print_env(t_env *env)
 {
-	int	p;
-
-	p = 0;
-	while (shell->env[p])
+	if (!env)
+		return ;
+	while (env)
 	{
-		ft_printf("%s\n", shell->env[p]);
-		p++;
+		ft_printf("%s=%s\n", env->name, env->value);
+		env = env->next;
 	}
 	return ;
 }
 
-void	ft_export(t_minishell *shell)
+void	ft_env(t_minishell *shell, char *cmd)
 {
-	int	p;
+ 	int	i;
+	int	flag;
+	t_env	*node;
+	char	**var;
+	t_env *env_tmp;
+ 
+ 	i = 0;
+	flag = 0;
+	var = ft_split(cmd, ' ');
+	if (!var)
+		return ;
+	//Input es env unicamente
+	if (!ft_strncmp(var[i], "env", ft_max_strlen(var[i], "env")) && !var[++i])
+		return (ft_print_env(shell->env));
+	//En BASH al declarar variables temporales (con env) puedo nombrar las variables como quiera
+	env_tmp = ft_strdup_env(shell->env);
+ 	while (var[i])
+ 	{
+ 		if (ft_strchr(var[i], '='))
+ 		{
+			if (!ft_check_duplicated(var[i], &env_tmp, NULL))
+			{
+				node = ft_create_node(ft_get_name(var[i]), ft_get_value(var[i]));
+				ft_connect_node(&env_tmp, node);
+			}
+			flag = 1;
+			
+			//Dos opciones:
+			//		1. La declaracion de la variable o cambio de valor va antes de env
+			//			En este caso declaramos la variable en primera linea
+			//		2. La declaracion de la variable o cambio de valor va despues de env
+			//			En este caso declaramos la variable en ultima line
+			//En ambos casos son variables temporales por lo que las metemos en env tmp
+ 		}
+		if (!flag)
+		{
+			//hay que acabar el programa
+			ft_printf("Wrong varibale declaration format\n");
+			return ;
+		}
+		flag = 0;
+ 		i++;
+ 	}
+	ft_print_env(env_tmp);
+	return ;
+ }
 
-	p = 0;
-	while (shell->export[p])
+void	ft_print_export(t_env *export)
+{
+	t_env *tmp;
+
+	tmp = export;
+	while (tmp)
 	{
-		ft_printf("declare -x ");
-		ft_printf("%s\n", shell->export[p]);
-		p++;
+		if (!tmp->value)
+			ft_printf("declare -x %s\n", tmp->name);
+		else if (tmp->value[0] == '\0')
+			ft_printf("declare -x %s=\"\"\n", tmp->name);
+		else
+		{
+			//Super chorra hay que cambairlo
+			if (!(tmp->name[0] == '_' && tmp->name[1] == '\0'))
+				ft_printf("declare -x %s=\"%s\"\n", tmp->name, tmp->value);
+		}
+		tmp = tmp->next;
 	}
 	return ;
 }
 
+void	ft_merge_lists(t_minishell **shell, t_env *first, t_env *second)
+{
+	t_env *export;
+	t_env	*tmp;
+
+	if ((*shell)->export)
+		ft_free_env(&(*shell)->export);
+	if (!second)
+	{
+		(*shell)->export = ft_strdup_env(first);
+		return ;
+	}
+	export = ft_strdup_env(first);
+	if (!export)
+		return ;
+	tmp = export;
+	while (tmp->next)
+		tmp = tmp->next;
+	if (second)
+		tmp->next = ft_strdup_env(second);
+	(*shell)->export = export;
+	return ;
+}
+
+void	ft_swap_list(t_env *a, t_env *b)
+{
+	char	*tmp_name = a->name;
+	char	*tmp_value = a->value;
+
+	a->name = b->name;
+	a->value = b->value;
+
+	b->name = tmp_name;
+	b->value = tmp_value;
+	return ;
+}
+
+size_t	ft_max_strlen(char *s1, char *s2)
+{
+	size_t	len1;
+	size_t	len2;
+
+	len1 = ft_strlen(s1);
+	len2 = ft_strlen(s2);
+
+	if (len1 > len2)
+		return (len1);
+	else
+		return (len2);
+}
+
+void	ft_sort_list(t_env *head)
+{
+	t_env	*ptr;
+	t_env	*lptr;
+	int		swapped;
+
+	if (!head)
+		return ;
+	swapped = 1;
+	lptr = NULL;
+	while (swapped)
+	{
+		swapped = 0;
+		ptr = head;
+		while (ptr->next != lptr)
+		{
+			if (ft_strncmp(ptr->name, ptr->next->name, ft_max_strlen(ptr->name ,ptr->next->name)) > 0)
+			{
+				ft_swap_list(ptr, ptr->next);
+				swapped = 1;
+			}
+			ptr = ptr->next;
+		}
+		lptr = ptr;
+	}
+}
+
+int	ft_check_name(char *var)
+{
+	int	i;
+
+	i = 0;
+	if (!ft_isalpha(var[i]) && (var[i] != '_'))
+		return (ft_printf("Non valid name\n"), 0);
+	while (var[++i] && var[i] != '=')
+	{
+		if (!ft_isalnum(var[i]) && (var[i] != '_'))
+			return (ft_printf("Non valid name\n"), 0);
+	}
+	return (1);
+}
+
+void	ft_export(t_minishell *shell, char *cmd)
+{
+	int	i;
+	int flag;
+	char **var;
+	t_env *node;
+
+	var = ft_split(cmd, ' ');
+	if (!var)
+		return ;
+	i = 0;
+	flag = 0;
+ 	// NOMBRES VÁLIDOS:
+	// Tiene que comenzar con caracter o con guion bajo
+	// En el resto del nombre puede contener caracteres guiones bajos y números NADA MAS
+	// Para el valor no hay restricciones, cualquier simbolo, emoji, caracter etc, cuidado con caracteres especiales escaparlos, o entre comillas simples
+	if (!ft_strncmp(var[i], "export", ft_max_strlen(var[i], "export")) && !var[++i])
+		return (ft_sort_list(shell->export), ft_print_export(shell->export));
+	while (var[i])
+	{
+		if (!ft_check_name(var[i]))
+			return ;
+		if (ft_strchr(var[i], '='))
+		{
+			if (!ft_check_duplicated(var[i], &shell->export, &shell->undefined_var))
+			{
+				node = ft_create_node(ft_get_name(var[i]), ft_get_value(var[i]));
+				ft_connect_node(&shell->env, node);
+				flag = 1;
+			}
+		}
+		if (!flag)
+		{	
+			if (!ft_check_duplicated(var[i], &shell->env, &shell->undefined_var))
+			{
+				node = ft_create_node(ft_get_name(var[i]), ft_get_value(var[i]));
+				ft_connect_node(&shell->undefined_var, node);
+			}
+		}
+		flag = 0;
+		i++;
+	}
+	ft_merge_lists(&shell, shell->env, shell->undefined_var);
+	ft_sort_list(shell->export);
+	ft_print_export(shell->export);
+	return ;
+}
 
 void	ft_echo(char *cmd)
 {
@@ -213,57 +448,100 @@ void	ft_echo(char *cmd)
 
 	temp = ft_strchr(cmd, ' ');
 	if (ft_strncmp(temp + 1, "-n", 2) == 0)
-	{
 		ft_printf("%s", temp + 4);
-	}
 	else
 		ft_printf("%s\n", temp + 1);
 	return ;
 }
 
+void	ft_remove_var(t_minishell **shell, t_env *node, t_env **list)
+{
+
+	t_env *tmp;
+
+	tmp = *list;
+	while (tmp)
+	{
+		if (tmp == node)
+		{
+			ft_free_node(node, list);
+			break ;
+		}
+		tmp = tmp->next;
+	}
+	ft_merge_lists(shell, (*shell)->env, (*shell)->undefined_var);
+	ft_sort_list((*shell)->export);
+	return ;
+}
+
+int	ft_check_in(t_minishell *shell, t_env **list, char *var)
+{
+	t_env *tmp;
+
+	tmp = *list;
+	while (tmp)
+	{
+		if (!ft_strncmp(var, tmp->name, ft_max_strlen(var, tmp->name)))
+		{
+			ft_remove_var(&shell, tmp, list);
+			return (1);
+		}
+		tmp = tmp->next;
+	}
+	return (0);
+}
+
+void	ft_unset(t_minishell *shell, char *cmd)
+{
+	int	i;
+	char **vars;
+
+	i = 0;
+	vars = ft_split(cmd, ' ');
+	while (vars && vars[i])
+	{
+		if (!ft_check_in(shell, &shell->env, vars[i]))
+			ft_check_in(shell, &shell->undefined_var, vars[i]);
+		i++;
+	}
+	return ;
+}
+
 void	ft_exec_build(t_minishell *shell, char *cmd)
 {
-	if (ft_strncmp(cmd, "echo", 4) == 0)
+	if (!ft_strncmp(cmd, "echo", ft_strlen("echo")))
 		ft_echo(cmd);
-	if (ft_strncmp(cmd, "cd", 2) == 0)
+	if (!ft_strncmp(cmd, "cd", ft_strlen("cd")))
 	{
 		ft_cd(shell, cmd);
 		ft_pwd(shell);
+		ft_merge_lists(&shell, shell->env, shell->undefined_var);
+		ft_sort_list(shell->export);
 	}
 	if (ft_strncmp(cmd, "pwd", 3) == 0)
 		ft_pwd(shell);
-	if (ft_strncmp(cmd, "export", 6) == 0)
-		ft_export(shell);
-	if (ft_strncmp(cmd, "unset", 5) == 0)
-		return ;
-		//ft_unset();
-	if (ft_strncmp(cmd, "env", 3) == 0)
-		ft_env(shell);
-	if (ft_strncmp(cmd, "exit", 4) == 0)
-		exit(0) ;
-		//ft_exit();
-	int	p = 0;
-	while (shell->env[p])
-		free(shell->env[p++]);
-	free(shell->env);
-	p = 0;
-	t_token *temp;
-	while (shell->tokens)
+	if (!ft_strncmp(cmd, "export", ft_strlen("export")))
+		ft_export(shell, cmd);
+	if (!ft_strncmp(cmd, "unset", ft_strlen("unset")))
+		ft_unset(shell, cmd + 6);
+	if (!ft_strncmp(cmd, "env", ft_strlen("env")))
+		ft_env(shell, cmd);
+	if (!ft_strncmp(cmd, "exit", ft_strlen("exit")))
 	{
-		free(shell->tokens->str);
-		temp = shell->tokens->next;
-		free(shell->tokens);
-		shell->tokens = temp;
+		ft_free_minishell(&shell);
+		exit(0) ;
 	}
-	free(shell);
-	exit(0);
+	return ;
+	//ft_free_minishell(&shell);
+	//exit(0);
 }
 
-void	ft_pre_exec_command(t_pipex *pipex, char **env, t_token *cmd)
+void	ft_pre_exec_command(t_pipex *pipex, t_token *cmd, t_minishell *shell)
 {
 	char	*temp;
 	char	*path_command;
 	char	**command;
+	char **env;
 
 	if (cmd->type == EXEC)
 	{
@@ -274,12 +552,21 @@ void	ft_pre_exec_command(t_pipex *pipex, char **env, t_token *cmd)
 	{
 		temp = ft_strjoin("/", pipex->command[0]);
 		path_command = ft_strjoin(pipex->path, temp);
-		free(temp);
-		ft_printf("%s\n", path_command);
+		//ft_printf("ft_pre_exec_command: %p\n", temp);
+		ft_safe_free((void **)&temp);
+		//ft_printf("%s\n", path_command);
 		command = pipex->command;
 	}
 	if (pipex->path)
-		free(pipex->path);
+	{
+		//ft_printf("ft_pre_exec_command: %p\n", pipex->path);
+		ft_safe_free((void **)&pipex->path);
+	}
+	env = ft_create_array_env(shell->env);
+	ft_free_minishell(&shell);
+//	ft_printf("Pre exec command: \n");
+//	ft_printf("Ruta buena : %s\n", getcwd(NULL, 0));
+//	ft_print_array(env);
 	execve(path_command, command, env);
 }
 
@@ -288,6 +575,8 @@ void	ft_exec(t_minishell *shell, t_pipex *pipex, t_token *save)
 	if (save->type == BUILTIN)
 	{
 		ft_exec_build(shell, save->str);
+		if (pipex->childs != 0)
+			exit (0);
 	}
 	if (save->type == COMMAND || save->type == EXEC)
 	{
@@ -298,7 +587,7 @@ void	ft_exec(t_minishell *shell, t_pipex *pipex, t_token *save)
 		}
 		else if (pipex->pipe[0][0])
 		{
-			ft_printf("lee pipe %i\n", pipex->pipe[0][0]);
+			//ft_printf("lee pipe %i\n", pipex->pipe[0][0]);
 			close(pipex->pipe[0][1]);
 			dup2(pipex->pipe[0][0], 0);
 			close(pipex->pipe[0][0]);
@@ -310,57 +599,50 @@ void	ft_exec(t_minishell *shell, t_pipex *pipex, t_token *save)
 		}
 		else if (pipex->pipe[1][1])
 		{
-			ft_printf("ecribe pipe %i\n", pipex->pipe[1][1]);
+			//ft_printf("ecribe pipe %i\n", pipex->pipe[1][1]);
 			close(pipex->pipe[1][0]);
 			dup2(pipex->pipe[1][1], 1);
 			close(pipex->pipe[1][1]);
 		}
-		char **env = shell->env;
-		t_token *temp;
-		while (shell->tokens)
-		{
-			free(shell->tokens->str);
-			temp = shell->tokens->next;
-			free(shell->tokens);
-			shell->tokens = temp;
-		}
-		free(shell);
-		ft_pre_exec_command(pipex, env, save);
+		ft_pre_exec_command(pipex, save, shell);
 	}
 }
 
-char	*ft_find_path(char **env)
+char	*ft_find_path(t_env **env)
 {
-	int	p;
+	t_env *tmp;
 
-	p = 0;
-	while (env[p])
+	tmp = *env;
+	while (tmp)
 	{
-		if (ft_strncmp(env[p], "PATH=/", 6) == 0)
-			return (env[p] + 6);
-		p++;
+		if (!ft_strncmp(tmp->name, "PATH", ft_max_strlen(tmp->name, "PATH")))
+			return (tmp->value);
+		tmp = tmp->next;
 	}
 	return (NULL);
 }
 
 static int	ft_good_path(char *path, t_pipex **pipex, char **split, int p)
 {
-	free(path);
+	(void)path;
 	(*pipex)->path = ft_strdup(split[p]);
-	return (ft_clear_split(split), 1);
+	//ft_free_array(split);
+	//split = NULL;
+	return (1);
 }
 
-int	ft_path(char **env, t_pipex **pipex, char *cmd)
+int	ft_path(t_env **env, t_pipex **pipex, char *cmd)
 {
 	char	**split;
 	char	*temp;
 	char	*path;
 	int		p;
+	int	res;
 
 	if (!env || !*env)
 		return (0);
 	if ((*pipex)->path)
-		free((*pipex)->path);
+		ft_safe_free((void **)&(*pipex)->path);
 	split = ft_split(ft_find_path(env), ':');
 	if (!split)
 		return (0);
@@ -369,14 +651,22 @@ int	ft_path(char **env, t_pipex **pipex, char *cmd)
 	{
 		temp = ft_strjoin("/", cmd);
 		path = ft_strjoin(split[p], temp);
-		free(temp);
+		ft_safe_free((void **)&temp);
 		if (access(path, X_OK) == 0)
-			return (ft_good_path(path, pipex, split, p));
-		free(path);
+		{
+			res = ft_good_path(path, pipex, split, p);
+			ft_free_array(split);
+			ft_safe_free((void **)&path);
+			split = NULL;
+			return (res);
+		}
+		ft_safe_free((void **)&path);
 		p++;
 	}
 	(*pipex)->path = NULL;
-	return (ft_clear_split(split), 0);
+	ft_free_array(split);
+	split = NULL;
+	return (0);
 }
 
 void	ft_free_pipex(t_pipex *pipex)
@@ -387,97 +677,20 @@ void	ft_free_pipex(t_pipex *pipex)
 	if (!pipex)
 		return ;
 	if (pipex->path)
-		free(pipex->path);
+		ft_safe_free((void **)&pipex->path);
 	if (pipex->command)
 	{
 		while (pipex->command[p])
 		{
-			free(pipex->command[p]);
+			ft_safe_free((void **)&pipex->command[p]);
 			p++;
 		}
-		free(pipex->command);
+		ft_safe_free((void **)&pipex->command);
 	}
 	pipex->path = NULL;
 	pipex->command = NULL;
 	//free(pipex);
 }
-/*
-int	ft_executor(t_minishell *shell)
-{
-	t_token	*tmp;
-	t_token	*save;
-	t_pipex	*pipex = (t_pipex *)malloc(sizeof(pipex));
-	pipex->docs[0] = 0;
-	pipex->docs[1] = 0;
-	pipex->path = NULL;
-	//pipex->command = NULL;
-
-	save = shell->tokens;
-	while (save)
-	{
-		while (save && save->type != PIPE)
-		{
-			if (save && save->type == COMMAND)
-			{
-				pipex->command = ft_split(save->str, ' ');
-				if (ft_path(shell->env, &pipex, pipex->command[0]) == 0)
-					return (-1);
-				pipex->pid = fork();
-				if (pipex->pid > 0)
-					waitpid(pipex->pid, NULL, 0);
-				tmp = save;
-				save = save->next;
-			}
-			else if (save && (save->type == BUILTIN || save->type == EXEC))
-			{
-				pipex->pid = fork();
-				if (pipex->pid > 0)
-					waitpid(pipex->pid, NULL, 0);
-				tmp = save;
-				save = save->next;
-			}
-			if (pipex->pid == 0 && save && save->type == REDIR_IN)
-			{
-				pipex->docs[0] = open(save->str, O_RDONLY);
-				save = save->next;
-				ft_printf("redir in\n");
-			}
-			if (pipex->pid == 0 && save && save->type == REDIR_OUT)
-			{
-				pipex->docs[1] = open(save->str, O_WRONLY);
-				save = save->next;
-				ft_printf("redir out\n");
-			}
-			if (pipex->pid == 0 && save && save->type == PIPE)//&& pipe(pipex->pipe[1]) == -1)
-			{
-				ft_printf("adeu2\n");
-				pipe(pipex->pipe[1]);
-				//return (-1);
-			}
-			else if (save && pipe(pipex->pipe[1]))
-				return (-1);
-			if (pipex->docs[0] < 0)
-				pipex->docs[0] = 0;
-			if (pipex->docs[1] < 0)
-				pipex->docs[1] = 0;
-			if (pipex->pid == 0)
-				ft_exec(shell, pipex, tmp);
-			else
-			{
-				if (save && save->type == REDIR_IN)
-					save = save->next;
-				if (save && save->type == REDIR_OUT)
-					save = save->next;
-			}
-		}
-		if (save) //&& save->type != PIPE)
-			save = save->next;
-		ft_arrange_fd(pipex);
-		ft_printf("fin del bucle\n");
-	}
-	//ft_free_pipex(pipex);
-	return (1);
-}*/
 
 t_token *ft_redir(t_token *save, t_token_type type, t_pipex *pipex)
 {
@@ -504,15 +717,24 @@ t_token *ft_redir(t_token *save, t_token_type type, t_pipex *pipex)
 	return (save);
 }
 
+void	ft_init_pipex(t_pipex **pipex)
+{
+	(*pipex)->childs = 0;
+	(*pipex)->docs_in = NULL;
+	(*pipex)->docs_out = NULL;
+	(*pipex)->command = NULL;
+	(*pipex)->path = NULL;
+	return ;
+}
+
 int	ft_executor(t_minishell *shell)
 {
 	t_token	*save;
 	t_token	*tmp;
-	t_pipex	*pipex = (t_pipex *)malloc(sizeof(pipex));
-	pipex->childs = 0;
-	pipex->docs_in = NULL;
-	pipex->docs_out = NULL;
-
+	t_pipex	*pipex = (t_pipex *)malloc(sizeof(t_pipex));
+	if (!pipex)
+		return (-1);
+	ft_init_pipex(&pipex);
 	save = shell->tokens;
 	while (save)
 	{
@@ -520,15 +742,26 @@ int	ft_executor(t_minishell *shell)
 		{
 			if (save->type == COMMAND || save->type == BUILTIN || save->type == EXEC)
 			{
+				if (ft_strncmp("exit", save->str, 5) == 0)
+					exit(0);
 				tmp = save;
-				pipex->pid = fork();
-				if (pipex->pid != 0)
-					pipex->childs++;
-				if (pipex->pid == 0 && save->type == COMMAND)
+				if (ft_strncmp("cd", save->str, 2) == 0)
+				{}
+				else if (ft_strncmp("export ", save->str, 7) == 0)
+				{}
+				else if (ft_strncmp("env ", save->str, 4) == 0)
+				{}
+				else
 				{
-					pipex->command = ft_split(save->str, ' ');
-					if (ft_path(shell->env, &pipex, pipex->command[0]) == 0)
-						return (-1);
+					pipex->pid = fork();
+					pipex->childs++;
+					if (pipex->pid == 0 && save->type == COMMAND)
+					{
+						ft_manage_child_signals();
+						pipex->command = ft_split(save->str, ' ');
+						if (ft_path(&shell->env, &pipex, pipex->command[0]) == 0)
+							return (-1);
+					}
 				}
 			}
 			while (save && (save->type == REDIR_IN || save->type == REDIR_OUT || save->type == PIPE))
@@ -544,10 +777,14 @@ int	ft_executor(t_minishell *shell)
 				}
 			}
 			if (pipex->pid == 0)
+			{
+				ft_manage_child_signals();
 				ft_exec(shell, pipex, tmp);
+				save = save->next;
+			}
 			else
 			{
-				while (save && save != PIPE && save->type != AND && save->type != OR)
+				while (save && save->type != PIPE && save->type != AND && save->type != OR)
 					save = save->next;
 			}
 		}

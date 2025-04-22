@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/04/08 16:36:13 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/04/08 17:06:54 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -315,6 +315,7 @@ void	ft_exec(t_minishell *shell, t_pipex *pipex, t_token *save)
 			dup2(pipex->pipe[1][1], 1);
 			close(pipex->pipe[1][1]);
 		}
+		char **env = shell->env;
 		t_token *temp;
 		while (shell->tokens)
 		{
@@ -323,7 +324,6 @@ void	ft_exec(t_minishell *shell, t_pipex *pipex, t_token *save)
 			free(shell->tokens);
 			shell->tokens = temp;
 		}
-		char **env = shell->env;
 		free(shell);
 		ft_pre_exec_command(pipex, env, save);
 	}

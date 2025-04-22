@@ -6,20 +6,24 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:15:05 by carlopez          #+#    #+#             */
-/*   Updated: 2025/04/07 14:30:11 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/04/08 17:07:33 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 # include "../header/ft_minishell.h"
 
 char	*token_type_to_str(t_token_type type);
+void	ft_print_array(char **arr);
 
 void	ft_free_minishell(t_minishell **minishell)
 {
 	if (!minishell || !*minishell)
 		return ;
 	if ((*minishell)->tokens)
+	{
 		ft_free_tokens(minishell);
+		(*minishell)->tokens = NULL;
+	}
 	if ((*minishell)->env)
 	{
 		ft_free_array((*minishell)->env);
@@ -48,11 +52,14 @@ void	ft_free_minishell(t_minishell **minishell)
 //solo para comprobar
 void	ft_print_tokens(t_token	*token)
 {
-	while (token)
+	t_token	*tmp;
+
+	tmp = token;
+	while (tmp)
 	{
-		ft_printf("El input es %s\n", (token->str));
-		ft_printf("El token type es: %s\n", token_type_to_str(token->type));
-		token = token->next;
+		ft_printf("El input es %s\n", tmp->str);
+		ft_printf("El token type es: %s\n", token_type_to_str(tmp->type));
+		tmp = tmp->next;
 	}
 	return ;
 }
@@ -76,13 +83,31 @@ int		ft_main_loop(t_minishell **minishell)
 				free(input);
 			return (ft_printf("Error in process input \n"), -1);
 		}
-		ft_print_tokens((*minishell)->tokens);
 		ft_executor(*minishell);
 		if (input)
 			free(input);
 		input = NULL;
-		ft_free_tokens(minishell);
+		/*
+		ft_printf("\nLISTA DE TOKENS : \n");
+		ft_print_tokens((*minishell)->tokens);
+		ft_printf("\nENVIRONMENT : \n");
+		ft_print_array((*minishell)->env);
+		ft_printf("\nEXPORT : \n");
+		ft_print_array((*minishell)->export);
+		*/
+		//ft_free_tokens(minishell);
+		(*minishell)->tokens = NULL;
 	}
+}
+
+void	ft_print_array(char **arr)
+{
+	int	i;
+
+	i = 0;
+	while (arr && arr[i])
+		ft_printf("%s\n", arr[i++]);
+	return ;
 }
 
 int	main(int argc, char **argv, char **env)

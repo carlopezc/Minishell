@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/04/22 12:58:52 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/04/23 12:55:12 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,6 +156,7 @@ void	ft_cd(t_minishell *shell, char *cmd)
 			return ;
 		node = ft_create_node(ft_strdup("PWD"), ft_strdup(home->value));
 		ft_add_node(&shell->env, pwd, node);
+		chdir(home->value);
 		return ;
 	}
 	if (*(cmd + 3) == '/')
@@ -169,6 +170,7 @@ void	ft_cd(t_minishell *shell, char *cmd)
 		{
 			node = ft_create_node(ft_strdup("PWD"), ft_strdup(cmd + 3));
 			ft_add_node(&shell->env, pwd, node);
+			chdir(cmd + 3);
 			return ;
 		}
 		else
@@ -183,6 +185,7 @@ void	ft_cd(t_minishell *shell, char *cmd)
 			ft_errase_pwd(shell);
 			temp = ft_strchr(temp + 1, '/');
 		}
+
 	}
 	else
 		temp = ft_strchr(cmd, ' ');
@@ -199,6 +202,7 @@ void	ft_cd(t_minishell *shell, char *cmd)
 		node = ft_create_node(ft_strdup("PWD"), ft_strjoin(join, temp + 1));
 		ft_add_node(&shell->env, pwd, node);
 	}
+	chdir(pwd->value);
 	//shell->env[p] = ft_strdup(shell->env[p]);
 	//free(shell->env[p]);
 //	shell->env[p] = ft_strjoin(temp, "\n");
@@ -697,16 +701,22 @@ t_token *ft_redir(t_token *save, t_token_type type, t_pipex *pipex)
 	t_token *temp;
 	int	count;
 
+
 	temp = save;
 	count = 0;
-	while (temp->type == type)
+	while (temp && temp->type == type)
 	{
 		count++;
 		temp = temp->next;
 	}
-	pipex->docs_in = (int *)malloc(count * sizeof(int));
+	if (type == REDIR_IN)
+		pipex->docs_in = (int *)malloc(count * sizeof(int));
+	else
+		pipex->docs_out = (int *)malloc(count * sizeof(int));
+	if (!pipex->docs_in && !pipex->docs_out)
+		exit(0);
 	count = 0;
-	while (save->type == type)
+	while (save && save->type == type)
 	{
 		if (type == REDIR_IN)
 			pipex->docs_in[count] = open(save->str, O_RDONLY);
@@ -745,13 +755,7 @@ int	ft_executor(t_minishell *shell)
 				if (ft_strncmp("exit", save->str, 5) == 0)
 					exit(0);
 				tmp = save;
-				if (ft_strncmp("cd", save->str, 2) == 0)
-				{}
-				else if (ft_strncmp("export ", save->str, 7) == 0)
-				{}
-				else if (ft_strncmp("env ", save->str, 4) == 0)
-				{}
-				else
+				if ((ft_strncmp("cd", save->str, 2) != 0) && (ft_strncmp("env ", save->str, 4) != 0 || ft_strncmp("export ", save->str, 7) != 0))
 				{
 					pipex->pid = fork();
 					pipex->childs++;
@@ -762,15 +766,16 @@ int	ft_executor(t_minishell *shell)
 						if (ft_path(&shell->env, &pipex, pipex->command[0]) == 0)
 							return (-1);
 					}
+					save = save->next;
 				}
 			}
-			while (save && (save->type == REDIR_IN || save->type == REDIR_OUT || save->type == PIPE))
+			while (pipex->pid == 0 && save && (save->type == REDIR_IN || save->type == REDIR_OUT || save->type == PIPE))
 			{
 				if (save->type == REDIR_IN)
 					save = ft_redir(save, REDIR_IN, pipex);
-				if (save->type == REDIR_OUT)
+				if (save && save->type == REDIR_OUT)
 					save = ft_redir(save, REDIR_OUT, pipex);
-				if (save->type == PIPE)
+				if (save && save->type == PIPE)
 				{
 					pipe(pipex->pipe[1]);
 					break ;
@@ -786,14 +791,20 @@ int	ft_executor(t_minishell *shell)
 			{
 				while (save && save->type != PIPE && save->type != AND && save->type != OR)
 					save = save->next;
+				if (save && save->type == PIPE)
+					break ;
 			}
 		}
-		while (pipex->childs > 0)
-		{
-			wait(NULL);
-			pipex->childs--;
-		}
+		if (save && save->type == PIPE)
+			save = save->next;
 		ft_arrange_fd(pipex);
+	}
+	while (pipex->childs > 0)
+	{
+		wait(NULL);
+		pipex->childs--;
+		if (save && save->type == PIPE)
+			save = save->next;
 	}
 	return (0);
 }

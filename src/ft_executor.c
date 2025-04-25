@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/04/23 12:55:12 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/04/24 16:02:24 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -178,6 +178,9 @@ void	ft_cd(t_minishell *shell, char *cmd)
 	}
 	if (!ft_strncmp(ft_strchr(cmd, ' ') + 1, "..", 2))
 	{
+		pwd = shell->env;
+		while (pwd && pwd->next && ft_strncmp((pwd->next)->name, "PWD", ft_max_strlen("PWD", (pwd->next)->name)))
+			pwd = pwd->next;
 		ft_errase_pwd(shell);
 		temp = ft_strchr(cmd, '/');
 		while (temp && !ft_strncmp(temp + 1, "..", 2))
@@ -202,7 +205,7 @@ void	ft_cd(t_minishell *shell, char *cmd)
 		node = ft_create_node(ft_strdup("PWD"), ft_strjoin(join, temp + 1));
 		ft_add_node(&shell->env, pwd, node);
 	}
-	chdir(pwd->value);
+	chdir(pwd->next->value);
 	//shell->env[p] = ft_strdup(shell->env[p]);
 	//free(shell->env[p]);
 //	shell->env[p] = ft_strjoin(temp, "\n");
@@ -518,7 +521,7 @@ void	ft_exec_build(t_minishell *shell, char *cmd)
 	if (!ft_strncmp(cmd, "cd", ft_strlen("cd")))
 	{
 		ft_cd(shell, cmd);
-		ft_pwd(shell);
+	//	ft_pwd(shell);
 		ft_merge_lists(&shell, shell->env, shell->undefined_var);
 		ft_sort_list(shell->export);
 	}

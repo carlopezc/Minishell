@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/04/24 16:02:24 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/04/25 14:38:14 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,6 +129,38 @@ void	ft_add_node(t_env **list, t_env *prev, t_env *node)
 	}
 	return ;
 }
+
+char	*ft_correct_cd(char *path)
+{
+	char	*dots;
+	char	*first;
+	int	p;
+	int i;
+
+	p = 4;
+	i = 1;
+	dots = ft_strnstr(path, "/../", ft_strlen(path));
+//	first = ft_strrchr(dots - 1, '/');
+	while (*dots - i != '/' && (dots - i != path))
+		i++;
+	if (dots - i == path)
+		first = ft_strchr(path, ' ') + 1;
+	else
+		first = dots - 1;
+	(*first) = '\0';
+	if (!(dots + p))
+		return (path);
+	i = 0;
+	while (dots[p])
+	{
+		(first[i]) = (dots[p]);
+		p++;
+		i++;
+	}
+	first[i] = '\0';
+	return (path);
+}
+
 void	ft_cd(t_minishell *shell, char *cmd)
 {
 	char	*temp;
@@ -202,6 +234,10 @@ void	ft_cd(t_minishell *shell, char *cmd)
 		if (!ft_check_cd(temp + 1, (pwd->next)->value))
 			return ;
 		join = ft_strjoin((pwd->next)->value, "/");
+		if (ft_strnstr(temp, "../", ft_strlen(temp)))
+			temp = ft_correct_cd(temp);
+		if (temp[ft_strlen(temp) - 1] == '/')
+			temp[ft_strlen(temp) - 1] = '\0';
 		node = ft_create_node(ft_strdup("PWD"), ft_strjoin(join, temp + 1));
 		ft_add_node(&shell->env, pwd, node);
 	}
@@ -737,6 +773,7 @@ void	ft_init_pipex(t_pipex **pipex)
 	(*pipex)->docs_out = NULL;
 	(*pipex)->command = NULL;
 	(*pipex)->path = NULL;
+	(*pipex)->pid = 0;
 	return ;
 }
 

@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/04/25 14:38:14 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/04/25 16:12:26 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,12 +141,12 @@ char	*ft_correct_cd(char *path)
 	i = 1;
 	dots = ft_strnstr(path, "/../", ft_strlen(path));
 //	first = ft_strrchr(dots - 1, '/');
-	while (*dots - i != '/' && (dots - i != path))
+	while (*(dots - i) != '/' && (dots - i != path))
 		i++;
 	if (dots - i == path)
 		first = ft_strchr(path, ' ') + 1;
 	else
-		first = dots - 1;
+		first = dots - i + 1;
 	(*first) = '\0';
 	if (!(dots + p))
 		return (path);
@@ -173,7 +173,7 @@ void	ft_cd(t_minishell *shell, char *cmd)
 	node = NULL;
 	home = NULL;
 	pwd = shell->env;
-	if (!ft_strncmp(cmd, "cd", 3))
+	if (!ft_strncmp(cmd, "cd", 3) || !(ft_strncmp(cmd, "cd ~", 5)))
 	{
 		//avanza hasta que encuentra el pwd
 		while (pwd && pwd->next && ft_strncmp((pwd->next)->name, "PWD", ft_max_strlen("PWD", (pwd->next)->name)))
@@ -234,13 +234,16 @@ void	ft_cd(t_minishell *shell, char *cmd)
 		if (!ft_check_cd(temp + 1, (pwd->next)->value))
 			return ;
 		join = ft_strjoin((pwd->next)->value, "/");
-		if (ft_strnstr(temp, "../", ft_strlen(temp)))
-			temp = ft_correct_cd(temp);
+		temp = ft_strjoin(join, temp + 1);
 		if (temp[ft_strlen(temp) - 1] == '/')
 			temp[ft_strlen(temp) - 1] = '\0';
-		node = ft_create_node(ft_strdup("PWD"), ft_strjoin(join, temp + 1));
+		while (ft_strnstr(temp, "../", ft_strlen(temp)))
+			temp = ft_correct_cd(temp);
+		node = ft_create_node(ft_strdup("PWD"), temp);
 		ft_add_node(&shell->env, pwd, node);
 	}
+	if (!pwd->next->value || pwd->next->value[0] == '\0')
+		pwd->next->value = ft_strdup("/");
 	chdir(pwd->next->value);
 	//shell->env[p] = ft_strdup(shell->env[p]);
 	//free(shell->env[p]);
@@ -811,15 +814,20 @@ int	ft_executor(t_minishell *shell)
 			}
 			while (pipex->pid == 0 && save && (save->type == REDIR_IN || save->type == REDIR_OUT || save->type == PIPE))
 			{
-				if (save->type == REDIR_IN)
-					save = ft_redir(save, REDIR_IN, pipex);
-				if (save && save->type == REDIR_OUT)
-					save = ft_redir(save, REDIR_OUT, pipex);
-				if (save && save->type == PIPE)
+				if (pipex->childs != 0)
 				{
-					pipe(pipex->pipe[1]);
-					break ;
+					if (save->type == REDIR_IN)
+						save = ft_redir(save, REDIR_IN, pipex);
+					if (save && save->type == REDIR_OUT)
+						save = ft_redir(save, REDIR_OUT, pipex);
+					if (save && save->type == PIPE)
+					{
+						pipe(pipex->pipe[1]);
+						break ;
+					}
 				}
+				else
+					save = save->next;
 			}
 			if (pipex->pid == 0)
 			{

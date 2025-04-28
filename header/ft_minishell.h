@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 14:59:32 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/04/20 20:52:45 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/25 11:15:28 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,8 +57,13 @@ typedef struct s_minishell
 	t_env	*env_tmp;
 	t_env	*export;
 	t_env 	*undefined_var;
-	char	**s_input;
 }	t_minishell;
+
+typedef struct s_quote
+{
+	char type;
+	int flag;
+}	t_quote;
 
 typedef struct s_pipex
 {

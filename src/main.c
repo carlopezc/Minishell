@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:15:05 by carlopez          #+#    #+#             */
-/*   Updated: 2025/04/20 20:52:49 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/25 19:13:42 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,11 +50,6 @@ void	ft_free_minishell(t_minishell **minishell)
 		ft_free_env(&(*minishell)->export);
 	if ((*minishell)->undefined_var)
 		ft_free_env(&(*minishell)->undefined_var);
-	if ((*minishell)->s_input)
-	{
-		ft_free_array((*minishell)->s_input);
-		(*minishell)->s_input = NULL;
-	}
 	free(*minishell);
 	*minishell = NULL;
 	return ;
@@ -113,7 +108,9 @@ int		ft_main_loop(t_minishell **minishell)
 				free(input);
 			return (ft_free_minishell(minishell), ft_printf("Error in process input \n"), -1);
 		}
-		ft_executor(*minishell);
+		ft_printf("Lista de tokens\n");
+		ft_print_tokens((*minishell)->tokens);
+		//ft_executor(*minishell);
 		if (input)
 			free(input);
 		input = NULL;

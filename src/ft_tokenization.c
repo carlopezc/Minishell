@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/04/25 20:21:59 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/29 17:19:51 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,13 +84,8 @@ void	ft_free_tokens(t_minishell **minishell)
 	while (token)
 	{
 		tmp = token->next;
-		//ft_printf("LIBERANDO CADENA , DIR DE MEMORIA: %p\n", (void *)token);
 		if (token->str)
-		{
-			//ft_printf("liberando su str...\n");
-			//ft_safe_free((void **)&token->str);
 			token->str = NULL;
-		}
 		free(token);
 		token = tmp;
 	}
@@ -113,6 +108,8 @@ char	*ft_expand(char *input, int *i, t_env *env)
 	if (*i == start)
 		return (ft_strdup("$"));
 	name_var = ft_substr(input, start, *i - start);
+	if (input[*i] == '\'' || input[*i] == '"')
+		(*i)--;
 	if (!name_var)
 		return (NULL);
 	tmp = env;
@@ -121,6 +118,8 @@ char	*ft_expand(char *input, int *i, t_env *env)
 		if (!ft_strncmp(name_var, tmp->name, ft_max_strlen(tmp->name, name_var)))
 		{
 			free(name_var);
+		//	ft_printf("Devuelve: %s\n", tmp->value);
+		//	ft_printf("El char en el que se queda es %c\n", input[*i]);
 			return (ft_strdup(tmp->value));
 		}
 		tmp = tmp->next;
@@ -142,23 +141,8 @@ char	*ft_check_var(t_minishell *minishell, char *input, int *i)
 	}
 	return (ft_expand(input, i, minishell->env));
 }
-/*
-int	ft_next_is_operator(char *input, int *i)
-{
-	if (input[*i + 1] && (!ft_strncmp(input[*i + 1], "||", 2) || (!ft_strncmp(input[*i + 1], "|", 1))))
-		return (1);
-	else if (input[*i + 1] && (!ft_strncmp(input[*i + 1], "<<", 2) || (!ft_strncmp(input[*i + 1], "<", 1))))
-		return (1);
-	else if (input[*i + 1] && (!ft_strncmp(input[*i + 1], ">>", 2) || (!ft_strncmp(input[*i + 1], ">", 1))))
-		return (1);
-	else if (input[*i + 1] && !ft_strncmp(input[*i + 1], "&&", 2))
-		return (1);
-	else
-		return (0);
-}
-		*/
 
-char *ft_strjoin_char(char *str, char c)
+char	*ft_strjoin_char(char *str, char c)
 {
 	int	i;
 	char *final;
@@ -179,7 +163,7 @@ char *ft_strjoin_char(char *str, char c)
 	return (final);
 }
 
-void ft_check_quote(t_quote *quote, char c)
+void	ft_check_quote(t_quote *quote, char c, int *i)
 {
 	if (c == '\'' || c == '"')
 	{
@@ -187,11 +171,13 @@ void ft_check_quote(t_quote *quote, char c)
 		{
 			quote->flag = 1;
 			quote->type = c;
+			(*i)++;
 		}
 		else if (quote->type == c)
 		{
 			quote->flag = 0;
 			quote->type = 0;
+			(*i)++;
 		}
 	}
 	return ;
@@ -223,9 +209,11 @@ char	*ft_group_input(t_minishell **minishell, char *input, int *i)
 	quote.type = 0;
 	value = NULL;
 	tmp = NULL;
+	//Vale aqui no se si dejar las comillas borradas o no
 	while (input[*i])
 	{
-		ft_check_quote(&quote, input[*i]);
+		if (!input[*i - 1] || input[*i - 1] != '\\')
+			ft_check_quote(&quote, input[*i], i);
 		if (quote.flag == 0 && ft_check_operator(input, i))
 			return (value);
 		if (input[*i] == '$' && quote.type != '\'')
@@ -241,10 +229,12 @@ char	*ft_group_input(t_minishell **minishell, char *input, int *i)
 			value = ft_strjoin_char(value, input[*i]);
 		(*i)++;
 	}
+	if (quote.flag != 0)
+		return (ft_printf("Quotes not closed\n"), NULL);
 	return (value);
 }
 
-char *ft_get_next(char *input, int *i)
+char	*ft_get_next(char *input, int *i)
 {
 	int start;
 
@@ -368,7 +358,7 @@ int	ft_group_command(t_minishell **minishell, char *input, int *i)
 	ft_add_node_back(&((*minishell)->tokens), token);
 	return (1);
 }
-/////////////////
+
 int	ft_process_input(t_minishell **minishell, char *input)
 {
 	int	i;
@@ -500,8 +490,8 @@ void	ft_free_node(t_env *node, t_env **list)
 	}
 	while (tmp)
 	{
-		//ft_printf("Mi siguiente: %s, el node name %s\n", (tmp->next)->name, node->name);
-		if (tmp->next && !ft_strncmp((tmp->next)->name, node->name, ft_max_strlen((tmp->next)->name, node->name)))
+		if (tmp->next && !ft_strncmp((tmp->next)->name,
+				node->name, ft_max_strlen((tmp->next)->name, node->name)))
 			prev = tmp;
 		if (!ft_strncmp(tmp->name, node->name, ft_max_strlen(tmp->name, node->name)))
 		{
@@ -529,7 +519,6 @@ int	ft_check_duplicated(char *str, t_env **env, t_env **undefined)
 	value = ft_get_value(str);
 	while (tmp)
 	{
-		//tmp value exista, porque si es nulo y ya existe variable con ese nombre y valor, no se cambia
 		if (!ft_strncmp(name_to_add, tmp->name, ft_max_strlen(name_to_add, tmp->name)))
 		{
 			if (!tmp->value)
@@ -594,7 +583,8 @@ int	ft_listlen(t_env *env)
 	}
 	return (i);
 }
-char **ft_create_array_env(t_env *env)
+
+char	**ft_create_array_env(t_env *env)
 {
 	int	i;
 	char **env_array;
@@ -623,7 +613,7 @@ char **ft_create_array_env(t_env *env)
 	return (env_array);
 }
 
-t_env *ft_create_env(char	**env_array)
+t_env	*ft_create_env(char **env_array)
 {
 	t_env *env;
 	t_env *node;
@@ -637,8 +627,6 @@ t_env *ft_create_env(char	**env_array)
 	env = NULL;
 	while (env_array[i])
 	{
-		//Esta variable: "_=/usr/bin/env" si esta en el env de bash pero no en el export, no se si deberia imprimirla o no
-		//pero no la estoy imprimiendo
 			name = ft_get_name(env_array[i]);
 			if (!ft_strncmp(name, "SHLVL", ft_max_strlen(name, "SHLVL")))
 				value = ft_itoa(ft_atoi(ft_get_value(env_array[i])) + 1);
@@ -653,7 +641,7 @@ t_env *ft_create_env(char	**env_array)
 	return (env);
 }
 
-void ft_empty_export(t_minishell **shell)
+void	ft_empty_export(t_minishell **shell)
 {
 	t_env *node;
 
@@ -664,19 +652,18 @@ void ft_empty_export(t_minishell **shell)
 	ft_merge_lists(shell, (*shell)->env, (*shell)->undefined_var);
 	return ;
 }
-t_env *ft_empty_env(void)
+
+t_env	*ft_empty_env(void)
 {
 	t_env *env;
 	t_env *node;
 	char *cwd;
 
 	env = NULL;
-	//Nivel de la shell
 	node = ft_create_node(ft_strdup("SHLVL"), ft_strdup("1"));
 	if (!node)
 		return (NULL);
 	ft_connect_node(&env, node);
-	//Sirve para obtener el path absoluto del directorio actual en el que se esta ejeutando el proceso
 	cwd = getcwd(NULL, 0);
 	node = ft_create_node(ft_strdup("PWD"), ft_strdup(cwd));
 	if (!node)
@@ -725,3 +712,4 @@ int	ft_init_minishell(t_minishell **minishell, char **env)
 //si hago hello=lucas se tiene que cambiar en export y añadir a env (NO CAMBIA NADA)
 //si hago carlota no se tiene que cambiar, si ya tiene valor no se cambia (LO HACE MAL, CREA OTRA VARIABLE SIN VALOR CARLOTA)
 //si hago carlota= si se tiene que cambiar a hello="" y en env se cambia tambien a hello= (ESTO BIEN!!!)
+//Tengo que hacer el env += y no se si export +=

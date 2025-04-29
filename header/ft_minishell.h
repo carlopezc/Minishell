@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 14:59:32 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/04/25 11:15:28 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/29 14:20:55 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,7 @@ typedef struct s_pipex
 	char	*path;
 } t_pipex;
 
+char	*token_type_to_str(t_token_type type);
 int	ft_init_minishell(t_minishell **minishell, char **env);
 int	ft_process_input(t_minishell **minishell, char *input);
 int	ft_executor(t_minishell *shell);

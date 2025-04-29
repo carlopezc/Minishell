@@ -6,14 +6,11 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:15:05 by carlopez          #+#    #+#             */
-/*   Updated: 2025/04/25 19:13:42 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/04/29 14:04:13 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 # include "../header/ft_minishell.h"
-
-char	*token_type_to_str(t_token_type type);
-
 
 void	ft_free_env(t_env **env)
 {
@@ -55,7 +52,6 @@ void	ft_free_minishell(t_minishell **minishell)
 	return ;
 }
 
-//solo para comprobar
 void	ft_print_tokens(t_token	*token)
 {
 	t_token	*tmp;
@@ -69,6 +65,7 @@ void	ft_print_tokens(t_token	*token)
 	}
 	return ;
 }
+
 void	ft_manage_sigint(int signal)
 {
 	(void)signal;
@@ -84,20 +81,21 @@ void	ft_manage_shell_signals()
 	signal(SIGINT, ft_manage_sigint);
 	signal(SIGQUIT, SIG_IGN);
 }
+
 void	ft_manage_child_signals()
 {
 	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
 }
 
-int		ft_main_loop(t_minishell **minishell)
+int	ft_main_loop(t_minishell **minishell)
 {
 	char	*input;
 
 	while (1)
 	{
 		input = readline("minishell> ");
-			//input puede ser nulo si recibe el EOF (CTRL + D)
+			//input puede ser nulo si recibe el EOF (CTRL + D), esto puede que este mal
 		if (!input)
 			return (ft_printf("exit\n"), 0);
 		if (*input)

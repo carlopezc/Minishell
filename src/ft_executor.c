@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/04/25 18:35:07 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/05/05 13:32:29 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,6 +129,7 @@ void	ft_add_node(t_env **list, t_env *prev, t_env *node)
 	}
 	return ;
 }
+
 void	ft_cd(t_minishell *shell, char *cmd)
 {
 	char	*temp;
@@ -243,10 +244,8 @@ void	ft_env(t_minishell *shell, char *cmd)
 	var = ft_split(cmd, ' ');
 	if (!var)
 		return ;
-	//Input es env unicamente
 	if (!ft_strncmp(var[i], "env", ft_max_strlen(var[i], "env")) && !var[++i])
 		return (ft_print_env(shell->env));
-	//En BASH al declarar variables temporales (con env) puedo nombrar las variables como quiera
 	env_tmp = ft_strdup_env(shell->env);
  	while (var[i])
  	{
@@ -258,17 +257,9 @@ void	ft_env(t_minishell *shell, char *cmd)
 				ft_connect_node(&env_tmp, node);
 			}
 			flag = 1;
-			
-			//Dos opciones:
-			//		1. La declaracion de la variable o cambio de valor va antes de env
-			//			En este caso declaramos la variable en primera linea
-			//		2. La declaracion de la variable o cambio de valor va despues de env
-			//			En este caso declaramos la variable en ultima line
-			//En ambos casos son variables temporales por lo que las metemos en env tmp
  		}
 		if (!flag)
 		{
-			//hay que acabar el programa
 			ft_printf("Wrong varibale declaration format\n");
 			return ;
 		}
@@ -277,7 +268,7 @@ void	ft_env(t_minishell *shell, char *cmd)
  	}
 	ft_print_env(env_tmp);
 	return ;
- }
+}
 
 void	ft_print_export(t_env *export)
 {
@@ -388,6 +379,8 @@ int	ft_check_name(char *var)
 		return (ft_printf("Non valid name\n"), 0);
 	while (var[++i] && var[i] != '=')
 	{
+		if (var[i] == '+' && var[i + 1] == '=')
+			return (1);
 		if (!ft_isalnum(var[i]) && (var[i] != '_'))
 			return (ft_printf("Non valid name\n"), 0);
 	}
@@ -406,10 +399,6 @@ void	ft_export(t_minishell *shell, char *cmd)
 		return ;
 	i = 0;
 	flag = 0;
- 	// NOMBRES VÁLIDOS:
-	// Tiene que comenzar con caracter o con guion bajo
-	// En el resto del nombre puede contener caracteres guiones bajos y números NADA MAS
-	// Para el valor no hay restricciones, cualquier simbolo, emoji, caracter etc, cuidado con caracteres especiales escaparlos, o entre comillas simples
 	if (!ft_strncmp(var[i], "export", ft_max_strlen(var[i], "export")) && !var[++i])
 		return (ft_sort_list(shell->export), ft_print_export(shell->export));
 	while (var[i])

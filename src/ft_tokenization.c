@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/04/29 17:19:51 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/05 14:48:42 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,8 +118,6 @@ char	*ft_expand(char *input, int *i, t_env *env)
 		if (!ft_strncmp(name_var, tmp->name, ft_max_strlen(tmp->name, name_var)))
 		{
 			free(name_var);
-		//	ft_printf("Devuelve: %s\n", tmp->value);
-		//	ft_printf("El char en el que se queda es %c\n", input[*i]);
 			return (ft_strdup(tmp->value));
 		}
 		tmp = tmp->next;
@@ -264,19 +262,19 @@ t_token_type	ft_is_operator(char **value, char *input, int *i)
 	else if (!ft_strncmp(input + *i, ">>", 2))
 	{
 		*i += 2;
-		*value = ft_get_next(input, i); //coge el valor de detras
+		*value = ft_get_next(input, i); //coge el valor siguiente 
 		return (APPEND);
 	}
 	else if (!ft_strncmp(input + *i, ">", 1))
 	{
 		*i += 1;
-		*value = ft_get_next(input, i); //coge el valor de detras
+		*value = ft_get_next(input, i); //coge el valor siguiente
 		return (REDIR_OUT);
 	}
 	else if (!ft_strncmp(input + *i, "<", 1))
 	{
 		*i += 1;
-		*value = ft_get_next(input, i);//coge el valor de detras
+		*value = ft_get_next(input, i); //coge el valor siguiente
 		return (REDIR_IN);
 	}
 	else if (!ft_strncmp(input + *i, "|", 1))
@@ -434,6 +432,11 @@ char	*ft_get_name(char *str)
 	{
 		if (str[i] == '=')
 			break ;
+		else if (str[i] == '+' && str[i + 1] == '=')
+		{
+			i++;
+			break ;
+		}
 		i++;
 	}
 	name = ft_substr(str, 0, i);
@@ -466,8 +469,14 @@ char	*ft_get_value(char *str)
 
 void	ft_change_value(char *str, t_env **node)
 {
+	char	*equal;
+
+	equal = ft_strchr(str, '=');
 	ft_safe_free((void **)&((*node)->value));
-	(*node)->value = ft_get_value(str);
+	if (*(equal - 1) == '+') 
+		(*node)->value = ft_strjoin((*node)->value, ft_get_value(str));
+	else
+		(*node)->value = ft_get_value(str);
 	return ;
 }
 
@@ -519,6 +528,7 @@ int	ft_check_duplicated(char *str, t_env **env, t_env **undefined)
 	value = ft_get_value(str);
 	while (tmp)
 	{
+		//AQUI tengo que mirar 
 		if (!ft_strncmp(name_to_add, tmp->name, ft_max_strlen(name_to_add, tmp->name)))
 		{
 			if (!tmp->value)

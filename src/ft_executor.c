@@ -6,10 +6,11 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/04/25 16:12:26 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/05/06 16:29:02 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "../get_next_line/get_next_line_bonus.h"
 #include "../header/ft_minishell.h"
 #include <fcntl.h>
 #include <sys/wait.h>
@@ -47,35 +48,7 @@ void	ft_arrange_fd(t_pipex *pipex)
 	if (pipex->docs_out)
 		ft_safe_free((void **)&pipex->docs_out);
 }
-/*
-static char	**ft_free_exec_cmd(t_pipex **pipex)
-{
-	char	**return_v;
 
-	if ((*pipex)->path)
-	{
-		//ft_printf("ft_free_exec_cmd: %p\n", (*pipex)->path);
-		ft_safe_free((void **)&(*pipex)->path);
-	}
-	return_v = (*pipex)->command;
-	ft_safe_free((void **)pipex);
-	return (return_v);
-}
-
-void	ft_exec_command(t_pipex *pipex, char **env)
-{
-	char	*temp;
-	char	*path_command;
-	char	**command;
-
-	temp = ft_strjoin("/", pipex->command[0]);
-	path_command = ft_strjoin(pipex->path, temp);
-	//ft_printf("ft_exec_command: %p\n", temp);
-	ft_safe_free((void **)&temp);
-	command = ft_free_exec_cmd(&pipex);
-	execve(path_command, command, env);
-}
-*/
 int	ft_check_cd(char *file, char *pwd)
 {
 	char	*temp;
@@ -630,18 +603,57 @@ void	ft_exec(t_minishell *shell, t_pipex *pipex, t_token *save)
 		{
 			dup2(pipex->docs_in[0], 0);
 			close(pipex->docs_in[0]);
+			// bucle escribiendo todos los archivos en un archivo basura
 		}
-		else if (pipex->pipe[0][0])
+		if (pipex->pipe[0][0])
 		{
 			//ft_printf("lee pipe %i\n", pipex->pipe[0][0]);
 			close(pipex->pipe[0][1]);
 			dup2(pipex->pipe[0][0], 0);
 			close(pipex->pipe[0][0]);
 		}
+	/*	if (pipex->docs_out && pipex->pipe[1][1])
+		{
+
+		}*/
 		if (pipex->docs_out)
 		{
-			dup2(pipex->docs_out[0], 1);
-			close(pipex->docs_out[0]);
+			if (pipex->docs_out[1] == 0)
+			{
+				dup2(pipex->docs_out[0], 1);
+				close(pipex->docs_out[0]);
+			}
+			/*else
+			{
+				char	*str;
+				char	*result = NULL;
+				int	p = 0;
+				int	tmp = open(".trash", O_CREAT | O_WRONLY | O_TRUNC, 0777);
+				pipex->pid = fork();
+				if (pipex->pid != 0)
+					waitpid(pipex->pid, NULL, 0);
+				else
+				{
+					dup2(tmp, 1);
+					close(tmp);
+				}
+				while (pipex->pid != 0 && pipex->docs_out[p] != 0)
+				{
+					//dup2(pipex->docs_out[p], 1);
+					str = get_next_line(tmp);
+					while (str)
+					{
+						result = ft_strjoin(result, str);
+						free(str);
+						str = get_next_line(tmp);
+					}
+					p++;
+				}
+				if (pipex->pid != 0)
+				{
+					exit(0);
+				}
+			}*/
 		}
 		else if (pipex->pipe[1][1])
 		{
@@ -745,7 +757,7 @@ t_token *ft_redir(t_token *save, t_token_type type, t_pipex *pipex)
 
 
 	temp = save;
-	count = 0;
+	count = 1;
 	while (temp && temp->type == type)
 	{
 		count++;
@@ -764,8 +776,13 @@ t_token *ft_redir(t_token *save, t_token_type type, t_pipex *pipex)
 			pipex->docs_in[count] = open(save->str, O_RDONLY);
 		else
 			pipex->docs_out[count] = open(save->str, O_WRONLY);
+		count++;
 		save = save->next;
 	}
+	if (type == REDIR_IN)
+		pipex->docs_in[count] = 0;
+	else
+		pipex->docs_out[count] = 0;
 	return (save);
 }
 
@@ -800,19 +817,24 @@ int	ft_executor(t_minishell *shell)
 				tmp = save;
 				if ((ft_strncmp("cd", save->str, 2) != 0) && (ft_strncmp("env ", save->str, 4) != 0 || ft_strncmp("export ", save->str, 7) != 0))
 				{
+					while (save && save->type != PIPE && save->type != AND && save->type != OR)
+						save = save->next;
+					if (save && save->type == PIPE)
+						 pipe(pipex->pipe[1]);
 					pipex->pid = fork();
 					pipex->childs++;
-					if (pipex->pid == 0 && save->type == COMMAND)
+					if (pipex->pid == 0 && tmp->type == COMMAND)
 					{
 						ft_manage_child_signals();
-						pipex->command = ft_split(save->str, ' ');
+						pipex->command = ft_split(tmp->str, ' ');
 						if (ft_path(&shell->env, &pipex, pipex->command[0]) == 0)
 							return (-1);
+						save = tmp->next;
 					}
-					save = save->next;
+					//save = save->next;
 				}
 			}
-			while (pipex->pid == 0 && save && (save->type == REDIR_IN || save->type == REDIR_OUT || save->type == PIPE))
+			while (pipex->pid == 0 && save && (save->type == REDIR_IN || save->type == REDIR_OUT))// || save->type == PIPE))
 			{
 				if (pipex->childs != 0)
 				{
@@ -822,7 +844,7 @@ int	ft_executor(t_minishell *shell)
 						save = ft_redir(save, REDIR_OUT, pipex);
 					if (save && save->type == PIPE)
 					{
-						pipe(pipex->pipe[1]);
+					//	pipe(pipex->pipe[1]);
 						break ;
 					}
 				}

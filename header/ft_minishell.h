@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 14:59:32 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/04/29 14:20:55 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/07 12:21:14 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,10 @@ t_env *ft_create_env(char	**env_array);
 int	ft_check_duplicated(char *str, t_env **env, t_env **undefined);
 t_env	*ft_create_node(char *name, char *value);
 void	ft_connect_node(t_env **env, t_env *node);
+char	**ft_split_cmd(char const *s, char c);
 int	ft_listlen(t_env *env);
+void	ft_free_todo(int p, char **word);
+void	ft_check_quote(t_quote *quote, char c, int *i);
 void	ft_free_env(t_env **env);
 void	ft_print_export(t_env *export);
 char *ft_choose_larger(char *str, char *str2);

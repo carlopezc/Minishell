@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/05 14:48:42 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/07 13:18:04 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,7 @@ void	ft_free_tokens(t_minishell **minishell)
 	while (token)
 	{
 		tmp = token->next;
+		//ft_printf("LIBERANDO CADENA , DIR DE MEMORIA: %p\n", (void *)token);
 		if (token->str)
 			token->str = NULL;
 		free(token);
@@ -118,6 +119,8 @@ char	*ft_expand(char *input, int *i, t_env *env)
 		if (!ft_strncmp(name_var, tmp->name, ft_max_strlen(tmp->name, name_var)))
 		{
 			free(name_var);
+			//Falla en algunos casos comiendose un caracter o anadiendolo
+			(*i)--;
 			return (ft_strdup(tmp->value));
 		}
 		tmp = tmp->next;
@@ -145,7 +148,10 @@ char	*ft_strjoin_char(char *str, char c)
 	int	i;
 	char *final;
 
-	i = ft_strlen(str);
+	if (!str || !*str)
+		i = 0;
+	else
+		i = ft_strlen(str);
 	final = (char *)malloc((i + 2) * sizeof(char));
 	if (!final)
 		return (NULL);
@@ -163,19 +169,20 @@ char	*ft_strjoin_char(char *str, char c)
 
 void	ft_check_quote(t_quote *quote, char c, int *i)
 {
+	(void)*i;
 	if (c == '\'' || c == '"')
 	{
 		if (quote->flag == 0)
 		{
 			quote->flag = 1;
 			quote->type = c;
-			(*i)++;
+			//(*i)++;
 		}
 		else if (quote->type == c)
 		{
 			quote->flag = 0;
 			quote->type = 0;
-			(*i)++;
+			//(*i)++;
 		}
 	}
 	return ;
@@ -207,7 +214,6 @@ char	*ft_group_input(t_minishell **minishell, char *input, int *i)
 	quote.type = 0;
 	value = NULL;
 	tmp = NULL;
-	//Vale aqui no se si dejar las comillas borradas o no
 	while (input[*i])
 	{
 		if (!input[*i - 1] || input[*i - 1] != '\\')
@@ -432,11 +438,8 @@ char	*ft_get_name(char *str)
 	{
 		if (str[i] == '=')
 			break ;
-		else if (str[i] == '+' && str[i + 1] == '=')
-		{
-			i++;
+		else if (str[i] == '+' && str[i + 1] && str[i + 1] == '=')
 			break ;
-		}
 		i++;
 	}
 	name = ft_substr(str, 0, i);
@@ -447,23 +450,26 @@ char	*ft_get_value(char *str)
 {
 	int 	i;
 	char	*value;
+	char	*equal;
+	//t_quote	quote;
 
 	i = 0;
-	while (str && str[i])
-	{
-		if (str[i] == '=')
-		{
-			i++;
-			break ;
-		}
-		i++;
-	}
-	if (str[i - 1] == '=' && !str[i])
+	//quote.flag = 0;
+	//quote.type = 0;
+	value = NULL;
+	equal = ft_strchr(str, '=');
+	if (!equal)
+		return (NULL);
+	else if (!*(equal + 1))
 		value = ft_strdup("");
-	else if (!str[i])
-		value = NULL;
 	else
-		value = ft_substr(str, i, ft_strlen(str) - i);
+	{
+		i++;
+		while (equal[i])
+			value = ft_strjoin_char(value, equal[i++]);
+	}
+	if ((value[0] == '\"' || value[0] == '\'') && ((value[ft_strlen(value) - 1] == '\"') || (value[ft_strlen(value) - 1] == '\'')))
+		value = ft_substr(value, 1, ft_strlen(value) - 2);
 	return (value);
 }
 
@@ -472,11 +478,13 @@ void	ft_change_value(char *str, t_env **node)
 	char	*equal;
 
 	equal = ft_strchr(str, '=');
-	ft_safe_free((void **)&((*node)->value));
 	if (*(equal - 1) == '+') 
 		(*node)->value = ft_strjoin((*node)->value, ft_get_value(str));
 	else
+	{
+		ft_safe_free((void **)&((*node)->value));
 		(*node)->value = ft_get_value(str);
+	}
 	return ;
 }
 
@@ -495,6 +503,7 @@ void	ft_free_node(t_env *node, t_env **list)
 		ft_safe_free((void **)&tmp->value);
 		ft_safe_free((void **)&tmp);
 		*list = NULL;
+		list = NULL;
 		return ;
 	}
 	while (tmp)
@@ -506,6 +515,8 @@ void	ft_free_node(t_env *node, t_env **list)
 		{
 			if (prev)
 				prev->next = tmp->next;
+			else
+				*list = tmp->next;
 			ft_safe_free((void **)&tmp->name);
 			ft_safe_free((void **)&tmp->value);
 			tmp->next = NULL;
@@ -525,21 +536,34 @@ int	ft_check_duplicated(char *str, t_env **env, t_env **undefined)
 
 	tmp = *env;
 	name_to_add = ft_get_name(str);
+	ft_printf("El name es : %s\n", name_to_add);
 	value = ft_get_value(str);
+	ft_printf("El value es : %s\n", value);
+	ft_printf("BUSCA en env\n");
 	while (tmp)
 	{
-		//AQUI tengo que mirar 
 		if (!ft_strncmp(name_to_add, tmp->name, ft_max_strlen(name_to_add, tmp->name)))
 		{
-			if (!tmp->value)
-			{
-				ft_free_node(tmp, undefined);
-				return (0);
-			}
 			if (value)
 				ft_change_value(str, &tmp);
 			ft_safe_free((void **)&name_to_add);
 			return (1);
+		}
+		tmp = tmp->next;
+	}
+	tmp = *undefined;
+	ft_printf("BUSCA en undefined\n");
+	while (tmp)
+	{
+		ft_printf("Entra en el bucle\n");
+		ft_printf("Tmp_name: %s\n", tmp->name);
+		ft_printf("Name to add: %s\n", name_to_add);
+		if (!ft_strncmp(name_to_add, tmp->name, ft_max_strlen(name_to_add, tmp->name)))
+		{
+			ft_printf("Encuentra\n");
+			ft_free_node(tmp, undefined);
+			ft_safe_free((void **)&name_to_add);
+			return (0);
 		}
 		tmp = tmp->next;
 	}
@@ -637,15 +661,15 @@ t_env	*ft_create_env(char **env_array)
 	env = NULL;
 	while (env_array[i])
 	{
-			name = ft_get_name(env_array[i]);
-			if (!ft_strncmp(name, "SHLVL", ft_max_strlen(name, "SHLVL")))
-				value = ft_itoa(ft_atoi(ft_get_value(env_array[i])) + 1);
-			else
-				value = ft_get_value(env_array[i]);
-			node = ft_create_node(ft_strdup(name), ft_strdup(value));
-			if (!node)
-				return (ft_printf("Error creating environment node\n"), NULL);
-			ft_connect_node(&env, node);
+		name = ft_get_name(env_array[i]);
+		if (!ft_strncmp(name, "SHLVL", ft_max_strlen(name, "SHLVL")))
+			value = ft_itoa(ft_atoi(ft_get_value(env_array[i])) + 1);
+		else
+			value = ft_get_value(env_array[i]);
+		node = ft_create_node(ft_strdup(name), ft_strdup(value));
+		if (!node)
+			return (ft_printf("Error creating environment node\n"), NULL);
+		ft_connect_node(&env, node);
 		i++;
 	}
 	return (env);
@@ -714,12 +738,3 @@ int	ft_init_minishell(t_minishell **minishell, char **env)
 		return (ft_free_minishell(minishell), ft_printf("Error creating export \n"), 0);
 	return (1);
 }
-//declare x hello
-//declare x hi=
-//declare x carlota=maja
-
-//si hago hi=carlota se tiene que cambiar en env y export (ESTO BIEN!!!)
-//si hago hello=lucas se tiene que cambiar en export y añadir a env (NO CAMBIA NADA)
-//si hago carlota no se tiene que cambiar, si ya tiene valor no se cambia (LO HACE MAL, CREA OTRA VARIABLE SIN VALOR CARLOTA)
-//si hago carlota= si se tiene que cambiar a hello="" y en env se cambia tambien a hello= (ESTO BIEN!!!)
-//Tengo que hacer el env += y no se si export +=

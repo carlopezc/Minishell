@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:15:05 by carlopez          #+#    #+#             */
-/*   Updated: 2025/04/29 14:04:13 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/07 11:44:20 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,6 @@ void	ft_print_tokens(t_token	*token)
 	}
 	return ;
 }
-
 void	ft_manage_sigint(int signal)
 {
 	(void)signal;
@@ -108,24 +107,12 @@ int	ft_main_loop(t_minishell **minishell)
 		}
 		ft_printf("Lista de tokens\n");
 		ft_print_tokens((*minishell)->tokens);
-		//ft_executor(*minishell);
+		ft_executor(*minishell);
 		if (input)
 			free(input);
 		input = NULL;
-		/*
-		ft_printf("\nLISTA DE TOKENS : \n");
-		ft_print_tokens((*minishell)->tokens);
-		ft_printf("\nENVIRONMENT : \n");
-		ft_print_array((*minishell)->env);
-		ft_printf("\nEXPORT : \n");
-		ft_print_array((*minishell)->export);
-		*/
 		ft_free_tokens(minishell);
 		(*minishell)->tokens = NULL;
-		/*
-		ft_free_array((*minishell)->env_temporal);
-		(*minishell)->env_temporal = NULL;
-		*/
 	}
 }
 

@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/05/07 13:01:16 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/07 14:17:21 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -286,7 +286,7 @@ void	ft_env(t_minishell *shell, char *cmd)
  
  	i = 0;
 	flag = 0;
-	var = ft_split(cmd, ' ');
+	var = ft_split_cmd(cmd, ' ');
 	if (!var)
 		return ;
 	if (!ft_strncmp(var[i], "env", ft_max_strlen(var[i], "env")) && !var[++i])
@@ -467,14 +467,9 @@ void	ft_export(t_minishell *shell, char *cmd)
 	int flag;
 	t_env *node;
 	char	**split;
-	int	j;
 
 	i = 0;
-	j = 0;
 	split = ft_split_cmd(cmd, ' ');
-	ft_printf("LOS COMANDOS: \n");
-	while (split[j])
-		ft_printf("%s\n", split[j++]);
 	if (!split || !*split)
 		return (ft_free_todo(i, split));
 	if (!ft_strncmp(split[i], "export", ft_max_strlen(split[i], "export")) && !split[i + 1])
@@ -485,7 +480,6 @@ void	ft_export(t_minishell *shell, char *cmd)
 			return ;
 		if (ft_strchr(split[i], '='))
 		{
-			ft_printf("Entra en el igual\n");
 			if (!ft_check_duplicated(split[i], &shell->env, &shell->undefined_var))
 			{
 				node = ft_create_node(ft_get_name(split[i]), ft_get_value(split[i]));
@@ -495,13 +489,10 @@ void	ft_export(t_minishell *shell, char *cmd)
 		}
 		else if (!flag)
 		{
-			ft_printf("Entra en no hay flag\n");
 			if (!ft_check_duplicated(split[i], &shell->env, &shell->undefined_var))
 			{
-				ft_printf("Pasa el duplicated\n");
 				node = ft_create_node(ft_get_name(split[i]), NULL);
 				ft_connect_node(&shell->undefined_var, node);
-				ft_printf("Pasa connect\n");
 			}
 		}
 		flag = 0;
@@ -509,10 +500,7 @@ void	ft_export(t_minishell *shell, char *cmd)
 	}
 	ft_merge_lists(&shell, shell->env, shell->undefined_var);
 	ft_sort_list(shell->export);
-	ft_printf("UNDEFINEDDDDD\n");
-	ft_print_export(shell->undefined_var);
-	ft_printf("EXXXPORTTTT\n");
-	ft_print_export(shell->export);
+	//ft_print_export(shell->export);
 	return ;
 }
 

@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/07 13:18:04 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/07 14:42:42 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -451,11 +451,8 @@ char	*ft_get_value(char *str)
 	int 	i;
 	char	*value;
 	char	*equal;
-	//t_quote	quote;
 
 	i = 0;
-	//quote.flag = 0;
-	//quote.type = 0;
 	value = NULL;
 	equal = ft_strchr(str, '=');
 	if (!equal)
@@ -536,10 +533,7 @@ int	ft_check_duplicated(char *str, t_env **env, t_env **undefined)
 
 	tmp = *env;
 	name_to_add = ft_get_name(str);
-	ft_printf("El name es : %s\n", name_to_add);
 	value = ft_get_value(str);
-	ft_printf("El value es : %s\n", value);
-	ft_printf("BUSCA en env\n");
 	while (tmp)
 	{
 		if (!ft_strncmp(name_to_add, tmp->name, ft_max_strlen(name_to_add, tmp->name)))
@@ -552,15 +546,10 @@ int	ft_check_duplicated(char *str, t_env **env, t_env **undefined)
 		tmp = tmp->next;
 	}
 	tmp = *undefined;
-	ft_printf("BUSCA en undefined\n");
 	while (tmp)
 	{
-		ft_printf("Entra en el bucle\n");
-		ft_printf("Tmp_name: %s\n", tmp->name);
-		ft_printf("Name to add: %s\n", name_to_add);
 		if (!ft_strncmp(name_to_add, tmp->name, ft_max_strlen(name_to_add, tmp->name)))
 		{
-			ft_printf("Encuentra\n");
 			ft_free_node(tmp, undefined);
 			ft_safe_free((void **)&name_to_add);
 			return (0);

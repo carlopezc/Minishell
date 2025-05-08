@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/07 14:42:42 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/08 17:07:22 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -322,6 +322,10 @@ int	ft_is_builtin(char *input)
 
 int	ft_define_parts(t_minishell **minishell, char *input, char **value, t_token_type *type, int *i)
 {
+	//t_quote quote;
+
+	//quote.flag = 0;
+	//quote.type = 0;
 	if (input[*i] == '.' && input[*i + 1] && input[*i + 1] == '/')
 	{
 		*type = EXEC;
@@ -354,6 +358,9 @@ int	ft_group_command(t_minishell **minishell, char *input, int *i)
 	token = NULL;
 	value = NULL;
 	type = NOT_SET;
+	/*
+	if (!ft_parsing())
+		return (0);*/
 	if (!ft_define_parts(minishell, input, &value, &type, i))
 		return (0);
 	token = ft_create_token(value, type);

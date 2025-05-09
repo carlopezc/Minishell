@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 14:59:32 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/04/20 20:52:45 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/05/09 12:51:36 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,7 @@ typedef struct s_pipex
 	int	*docs_in;
 	int	*docs_out;
 	int	pipe[2][2];
+	int	heredoc;
 	int	pid;
 	int	childs;
 	char	**command;

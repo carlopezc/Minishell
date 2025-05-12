@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/05/12 12:59:31 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/05/12 14:29:07 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -894,6 +894,15 @@ t_token	*ft_heredoc(t_token *save, t_pipex *pipex)
 	return (save);
 }
 
+void	ft_terminator(t_pipex *pipex)
+{
+	while (pipex->childs > 0)
+	{
+		wait(NULL);
+		pipex->childs--;
+	}
+}
+
 int	ft_executor(t_minishell *shell)
 {
 	t_token	*save;
@@ -907,74 +916,83 @@ int	ft_executor(t_minishell *shell)
 	{
 		while (save && save->type != AND && save->type != OR)
 		{
-			if (save->type == COMMAND || save->type == BUILTIN || save->type == EXEC)
+			while (save && save->type != PIPE && save->type != AND && save->type != OR)//(save && save->type != AND && save->type != OR)
 			{
-				if (ft_strncmp("exit", save->str, 5) == 0)
-					exit(0);
-				tmp = save;
-				if ((ft_strncmp("cd", save->str, 2) != 0) && (ft_strncmp("env ", save->str, 4) != 0 || ft_strncmp("export ", save->str, 7) != 0))
+				if (save->type == COMMAND || save->type == BUILTIN || save->type == EXEC)
+				{
+					if (ft_strncmp("exit", save->str, 5) == 0)
+						exit(0);
+					tmp = save;
+					if ((ft_strncmp("cd", save->str, 2) != 0) && (ft_strncmp("env ", save->str, 4) != 0 || ft_strncmp("export ", save->str, 7) != 0))
+					{
+						while (save && save->type != PIPE && save->type != AND && save->type != OR)
+							save = save->next;
+						if (save && save->type == PIPE)
+							 pipe(pipex->pipe[1]);
+						pipex->pid = fork();
+						pipex->childs++;
+						if (pipex->pid == 0 && tmp->type == COMMAND)
+						{
+							ft_manage_child_signals();
+							pipex->command = ft_split(tmp->str, ' ');
+							if (ft_path(&shell->env, &pipex, pipex->command[0]) == 0)
+								return (-1);
+							save = tmp->next;
+						}
+					}
+				}
+				while (pipex->pid == 0 && save && (save->type == REDIR_IN || save->type == REDIR_OUT || save->type == HEREDOC || save->type == APPEND))
+				{
+					if (pipex->childs != 0)
+					{
+						if (save->type == REDIR_IN)
+							save = ft_redir(save, REDIR_IN, pipex);
+						if (save && save->type == REDIR_OUT)
+							save = ft_redir(save, REDIR_OUT, pipex);
+						if (save && save->type == HEREDOC)
+							save = ft_heredoc(save, pipex);
+						if (save && save->type == APPEND)
+							save = ft_redir(save, APPEND, pipex);
+						if (save && save->type == PIPE)
+							break ;
+					}
+					else
+						save = save->next;
+				}
+				if (pipex->pid == 0 && tmp)
+				{
+					ft_manage_child_signals();
+					ft_exec(shell, pipex, tmp);
+					save = save->next;
+				}
+				else
 				{
 					while (save && save->type != PIPE && save->type != AND && save->type != OR)
 						save = save->next;
-					if (save && save->type == PIPE)
-						 pipe(pipex->pipe[1]);
-					pipex->pid = fork();
-					pipex->childs++;
-					if (pipex->pid == 0 && tmp->type == COMMAND)
-					{
-						ft_manage_child_signals();
-						pipex->command = ft_split(tmp->str, ' ');
-						if (ft_path(&shell->env, &pipex, pipex->command[0]) == 0)
-							return (-1);
-						save = tmp->next;
-					}
 				}
 			}
-			while (pipex->pid == 0 && save && (save->type == REDIR_IN || save->type == REDIR_OUT || save->type == HEREDOC || save->type == APPEND))
-			{
-				if (pipex->childs != 0)
-				{
-					if (save->type == REDIR_IN)
-						save = ft_redir(save, REDIR_IN, pipex);
-					if (save && save->type == REDIR_OUT)
-						save = ft_redir(save, REDIR_OUT, pipex);
-					if (save && save->type == HEREDOC)
-						save = ft_heredoc(save, pipex);
-					if (save && save->type == APPEND)
-						save = ft_redir(save, APPEND, pipex);
-					if (save && save->type == PIPE)
-					{
-					//	pipe(pipex->pipe[1]);
-						break ;
-					}
-				}
-				else
-					save = save->next;
-			}
-			if (pipex->pid == 0 && tmp)
-			{
-				ft_manage_child_signals();
-				ft_exec(shell, pipex, tmp);
+			if (save && save->type == PIPE)
 				save = save->next;
-			}
-			else
-			{
-				while (save && save->type != PIPE && save->type != AND && save->type != OR)
-					save = save->next;
-				if (save && save->type == PIPE)
-					break ;
-			}
+			ft_arrange_fd(pipex);
 		}
-		if (save && save->type == PIPE)
+		while (pipex->childs > 0)
+		{
+			wait(&shell->status);
+			pipex->childs--;
+			if (shell->status != 0 && save && save->type == AND)
+			{
+				ft_terminator(pipex);
+				return(0) ;
+			}
+			if (shell->status == 0 && save && save->type == OR)
+			{
+				ft_terminator(pipex);
+				return(0) ;
+			}
+			//if (save && save->type == PIPE)
+			if (save && save->next)
 			save = save->next;
-		ft_arrange_fd(pipex);
-	}
-	while (pipex->childs > 0)
-	{
-		wait(NULL);
-		pipex->childs--;
-		if (save && save->type == PIPE)
-			save = save->next;
+		}
 	}
 	return (0);
 }

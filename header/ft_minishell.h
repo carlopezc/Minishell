@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 14:59:32 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/05/09 12:51:36 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/05/12 14:07:38 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ typedef struct s_token
 
 typedef struct s_minishell
 {
+	int		status;
 	t_token *tokens;
 	t_env	*env;
 	t_env	*env_tmp;

@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 12:44:53 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/12 14:13:28 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/12 15:11:34 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,8 +85,11 @@ int	ft_strlen_quoted(char *input)
 	int	len;
 
 	i = 0;
+	len = 0;
+	ft_printf("Input: %s\n", input);
 	while (input[i])
 	{
+		ft_printf("Char es: %c\n", input[i]);
 		if (input[i] == '\'' || input[i] == '\"' || input[i] == '\\')
 		{
 			if (input[i - 1] && input[i - 1] == '\\')
@@ -100,10 +103,10 @@ int	ft_strlen_quoted(char *input)
 			i++;
 		}
 	}
-	return (1);
+	return (len);
 }
 
-void	ft_unquote(char **s_input)
+void	ft_unquote(char **input)
 {
 	char *unquoted;
 	int	i;
@@ -112,24 +115,27 @@ void	ft_unquote(char **s_input)
 
 	i = 0;
 	j = 0;
-	len = ft_strlen_quoted(*s_input);
+	len = ft_strlen_quoted(*input);
+	ft_printf("UNQUOTE\n");
+	ft_printf("len es %d\n", len);
 	unquoted = (char *)malloc((len + 1) * sizeof(char));
 	if (!unquoted)
 		return ;
-	while (*s_input[i])
+	while ((*input)[i])
 	{
-		if (!*s_input[i - 1] || *s_input[i - 1] != '\\')
+		if (!(*input)[i - 1] || (*input)[i - 1] != '\\')
 		{
-			if (*s_input[i] == '\'' || *s_input[i] == '\"' || *s_input[i] == '\\')
+			if ((*input)[i] == '\'' || (*input)[i] == '\"' || (*input)[i] == '\\')
 				i++;
 			else
-				unquoted[j++] = *s_input[i++];
+				unquoted[j++] = (*input)[i++];
 		}
 		else
-			unquoted[j++] = *s_input[i++];
+			unquoted[j++] = (*input)[i++];
 	}
 	unquoted[j] = '\0';
-	*s_input = unquoted;
+	*input = unquoted;
+	ft_printf("Hecho\n");
 	return ;
 }
 
@@ -162,13 +168,13 @@ char	*ft_quit_quotes(char **s_input, t_minishell **minishell)
 	char *input;
 
 	i = 0;
-	//ft_printf("El split de comillas : \n");
+	ft_printf("El split de comillas : \n");
 	while (s_input[i])
 	{
-		//ft_printf("%s\n", s_input[i]);
+		ft_printf("%s\n", s_input[i]);
 		if (!ft_check_word(s_input[i], minishell))
 		{
-			//ft_printf("Ha entrado\n");
+			ft_printf("Ha entrado\n");
 			ft_unquote(&s_input[i]);
 		}
 		i++;
@@ -190,7 +196,6 @@ int	ft_parsing(char **input, t_minishell **minishell)
 	s_input = ft_split_cmd(*input, ' ');
 	if (!s_input || !*s_input)
 		return (0);
-	//ft_printf("Input ahora es %s\n", *input);
 	*input = ft_quit_quotes(s_input, minishell);
 	if (!*input)
 		return (0);

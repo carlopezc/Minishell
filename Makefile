@@ -6,7 +6,7 @@
 #    By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/27 15:14:10 by carlopez          #+#    #+#              #
-#    Updated: 2025/05/07 12:03:05 by carlopez         ###   ########.fr        #
+#    Updated: 2025/05/12 11:55:39 by carlopez         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,7 +35,7 @@ OUTILSDIR	= utils_objects
 LIB        = header/ft_minishell.h
 
 # Archivos fuente
-SRC        = ft_tokenization.c ft_executor.c ft_split_cmd.c
+SRC        = ft_tokenization.c ft_parsing.c ft_executor.c ft_split_cmd.c
 BSRC		= 
 UTILS      = ft_utils.c
 

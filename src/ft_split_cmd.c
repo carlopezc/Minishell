@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 09:31:50 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/05/07 12:21:07 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/12 14:32:28 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,8 @@ static int	ft_word_count(char const *w, char c)
 	while (w[p] != '\0')
 	{
 		//lo de pasar el puntero de la posicion es porque me da pereza cambiar los parametros que recibe pero no se usa luego los cambio
-		ft_check_quote(&quote, w[p], &p);
+		if (!w[p - 1] || w[p - 1] != '\\')
+			ft_check_quote(&quote, w[p], &p);
 		if (w[p] != c && in_word == 0)
 		{
 			in_word = 1;
@@ -38,6 +39,7 @@ static int	ft_word_count(char const *w, char c)
 			in_word = 0;
 		p++;
 	}
+	ft_printf("Ha contado %d\n", count);
 	return (count);
 }
 
@@ -52,36 +54,65 @@ void	ft_free_todo(int p, char **word)
 	return ;
 }
 
-static char	**ft_cpy(char const *s, char **word, char c, int count)
+int	ft_count_letters(char const *s, char c, int i)
 {
-	size_t	start;
-	size_t	end;
-	int		p;
-	t_quote quote;
+	int	letters;
+	t_quote	quote;
 
-	p = 0;
-	start = 0;
+	letters = 0;
 	quote.flag = 0;
 	quote.type = 0;
+	while (s[i] && s[i] == c)
+		(i)++;
+	while (s[i] && (s[i] != c || (s[i] == c && quote.flag == 1)))
+	{
+		if (!s[i - 1] || s[i - 1] != '\\')
+			ft_check_quote(&quote, s[i], &i);
+		(i)++;
+		letters++;
+	}
+	return (letters);
+}
+
+static char	**ft_cpy(char const *s, char **word, char c, int count)
+{
+	int		p;
+	t_quote quote;
+	int	chars;
+	int	i;
+	int	j;
+
+	p = 0;
+	i = 0;
+	j = 0;
+	chars = 0;
+	quote.flag = 0;
+	quote.type = 0;
+	//Hay que arreglar esto, al hacerlo con substr se cagaaa por ej con "exp"
 	while (p < count)
 	{
-		while (s[start] == c)
-			start++;
-		end = start;
-		while (((s[end] != c) && (s[end] != '\0')) || ((s[end] == c) && (quote.flag == 1)))
-		{
-			end++;
-			ft_check_quote(&quote, s[end], 0);
-		}
-		word[p] = ft_substr(s, start, (end - start));
+		chars = ft_count_letters(s, c, i);
+		ft_printf("Ha contado %d letras\n", chars);
+		ft_printf("La flag es %c\n", c);
+		word[p] = (char *)malloc((chars + 1) * sizeof(char));
 		if (!word[p])
+			return (ft_free_todo(p, word), NULL);
+		while (s[i] == c)
+			i++;
+		if (!s[i - 1] || s[i - 1] != '\\')
+			ft_check_quote(&quote, s[i], &i);
+		while (s[i] && (s[i] != c || (s[i] == c && quote.flag == 1)))
 		{
-			ft_free_todo(p, word);
-			return (NULL);
+			word[p][j++] = s[i++];
+			if (!s[i - 1] || s[i - 1] != '\\')
+				ft_check_quote(&quote, s[i], &i);
 		}
-		start = end;
+		word[p][j] = '\0';
+		ft_printf("Word es : %s\n", word[p]);
+		j = 0;
 		p++;
 	}
+	word[p] = NULL;
 	return (word);
 }
 
@@ -95,7 +126,6 @@ char	**ft_split_cmd(char const *s, char c)
 	if (!word)
 		return (NULL);
 	word = ft_cpy(s, word, c, count);
-	word[count] = NULL;
 	return (word);
 }
 /*

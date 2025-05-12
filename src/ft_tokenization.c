@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/08 17:07:22 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/12 13:00:45 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,19 +170,17 @@ char	*ft_strjoin_char(char *str, char c)
 void	ft_check_quote(t_quote *quote, char c, int *i)
 {
 	(void)*i;
-	if (c == '\'' || c == '"')
+	if (c == '\'' || c == '\"')
 	{
 		if (quote->flag == 0)
 		{
 			quote->flag = 1;
 			quote->type = c;
-			//(*i)++;
 		}
 		else if (quote->type == c)
 		{
 			quote->flag = 0;
 			quote->type = 0;
-			//(*i)++;
 		}
 	}
 	return ;
@@ -207,19 +205,21 @@ int	ft_check_operator(char *input, int *i)
 char	*ft_group_input(t_minishell **minishell, char *input, int *i)
 {
 	char	*value;
-	char	*tmp;
+	//char	*tmp;
 	t_quote quote;
 
 	quote.flag = 0;
 	quote.type = 0;
 	value = NULL;
-	tmp = NULL;
+	//tmp = NULL;
+	(void)minishell;
 	while (input[*i])
 	{
-		if (!input[*i - 1] || input[*i - 1] != '\\')
-			ft_check_quote(&quote, input[*i], i);
-		if (quote.flag == 0 && ft_check_operator(input, i))
+		/*if (!input[*i - 1] || input[*i - 1] != '\\')
+			ft_check_quote(&quote, input[*i], i);*/
+		if (/*quote.flag == 0 && */ft_check_operator(input, i))
 			return (value);
+		/*
 		if (input[*i] == '$' && quote.type != '\'')
 		{
 			tmp = ft_check_var(*minishell, input, i);
@@ -229,7 +229,7 @@ char	*ft_group_input(t_minishell **minishell, char *input, int *i)
 				free(tmp);
 			}
 		}
-		else
+		else*/
 			value = ft_strjoin_char(value, input[*i]);
 		(*i)++;
 	}
@@ -358,9 +358,12 @@ int	ft_group_command(t_minishell **minishell, char *input, int *i)
 	token = NULL;
 	value = NULL;
 	type = NOT_SET;
-	/*
-	if (!ft_parsing())
-		return (0);*/
+	ft_printf("Antes del  parseo: %s\n", input);
+	ft_printf("Tiene que eliminar comillas si no tienen espacios dentro, eliminar los /' y dejarlos solo con ', y expandir variables\n");
+	if (!ft_parsing(&input, minishell))
+		return (0);
+	ft_printf("Tras parseo: %s\n", input);
+	exit(0);
 	if (!ft_define_parts(minishell, input, &value, &type, i))
 		return (0);
 	token = ft_create_token(value, type);

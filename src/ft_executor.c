@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/05/12 14:29:07 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/05/12 15:46:39 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -653,14 +653,14 @@ void	ft_docs_in(t_pipex *pipex)
 
 void	ft_exec(t_minishell *shell, t_pipex *pipex, t_token *save)
 {
-	if (save->type == BUILTIN)
+/*	if (save->type == BUILTIN)
 	{
 		ft_exec_build(shell, save->str);
 		if (pipex->childs != 0)
 			exit (0);
-	}
-	if (save->type == COMMAND || save->type == EXEC)
-	{
+	}*/
+//	if (save->type == COMMAND || save->type == EXEC)
+//	{
 		if (pipex->pipe[0][0] && !pipex->docs_in && !pipex->heredoc)
 		{
 			close(pipex->pipe[0][1]);
@@ -727,8 +727,15 @@ void	ft_exec(t_minishell *shell, t_pipex *pipex, t_token *save)
 			dup2(pipex->pipe[1][1], 1);
 			close(pipex->pipe[1][1]);
 		}
-		ft_pre_exec_command(pipex, save, shell);
-	}
+		if (save->type == BUILTIN)
+		{
+			ft_exec_build(shell, save->str);
+			if (pipex->childs != 0)
+				exit (0);
+		}
+		else
+			ft_pre_exec_command(pipex, save, shell);
+//	}
 }
 
 char	*ft_find_path(t_env **env)
@@ -937,8 +944,8 @@ int	ft_executor(t_minishell *shell)
 							pipex->command = ft_split(tmp->str, ' ');
 							if (ft_path(&shell->env, &pipex, pipex->command[0]) == 0)
 								return (-1);
-							save = tmp->next;
 						}
+						save = tmp->next;
 					}
 				}
 				while (pipex->pid == 0 && save && (save->type == REDIR_IN || save->type == REDIR_OUT || save->type == HEREDOC || save->type == APPEND))

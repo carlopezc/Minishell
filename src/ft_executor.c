@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/05/09 16:36:03 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/05/12 12:59:31 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -625,6 +625,7 @@ void	ft_docs_in(t_pipex *pipex)
 			close(pipex->heredoc);
 			unlink(".heredoc");
 		}
+		p = 0;
 		while (pipex->docs_in[p])
 		{
 			str = get_next_line(pipex->docs_in[p]);
@@ -641,6 +642,8 @@ void	ft_docs_in(t_pipex *pipex)
 	}
 	else
 	{
+		close(pipex->pipe[0][0]);
+		close(pipex->pipe[0][1]);
 		waitpid(pipex->pid, NULL, 0);
 		close(tmp_pipe[1]);
 		dup2(tmp_pipe[0], 0);
@@ -658,14 +661,14 @@ void	ft_exec(t_minishell *shell, t_pipex *pipex, t_token *save)
 	}
 	if (save->type == COMMAND || save->type == EXEC)
 	{
-		if (pipex->docs_in || pipex->pipe[0][0] || pipex->heredoc)
-			ft_docs_in(pipex);
-		else if (pipex->pipe[0][0])
+		if (pipex->pipe[0][0] && !pipex->docs_in && !pipex->heredoc)
 		{
 			close(pipex->pipe[0][1]);
 			dup2(pipex->pipe[0][0], 0);
 			close(pipex->pipe[0][0]);
 		}
+		else if (pipex->docs_in || pipex->pipe[0][0] || pipex->heredoc)
+			ft_docs_in(pipex);
 		if (pipex->docs_out)
 		{
 			if (pipex->docs_out[1] == 0 && pipex->pipe[1][1] == 0)
@@ -836,8 +839,10 @@ t_token *ft_redir(t_token *save, t_token_type type, t_pipex *pipex)
 	{
 		if (type == REDIR_IN)
 			pipex->docs_in[count] = open(save->str, O_RDONLY);
+		else if (type == APPEND)
+			pipex->docs_out[count] = open(save->str, O_WRONLY | O_APPEND | O_CREAT, 0777);
 		else
-			pipex->docs_out[count] = open(save->str, O_WRONLY);
+			pipex->docs_out[count] = open(save->str, O_WRONLY | O_CREAT, 0777);
 		count++;
 		save = save->next;
 	}
@@ -923,10 +928,9 @@ int	ft_executor(t_minishell *shell)
 							return (-1);
 						save = tmp->next;
 					}
-					//save = save->next;
 				}
 			}
-			while (pipex->pid == 0 && save && (save->type == REDIR_IN || save->type == REDIR_OUT || save->type == HEREDOC))
+			while (pipex->pid == 0 && save && (save->type == REDIR_IN || save->type == REDIR_OUT || save->type == HEREDOC || save->type == APPEND))
 			{
 				if (pipex->childs != 0)
 				{
@@ -936,6 +940,8 @@ int	ft_executor(t_minishell *shell)
 						save = ft_redir(save, REDIR_OUT, pipex);
 					if (save && save->type == HEREDOC)
 						save = ft_heredoc(save, pipex);
+					if (save && save->type == APPEND)
+						save = ft_redir(save, APPEND, pipex);
 					if (save && save->type == PIPE)
 					{
 					//	pipe(pipex->pipe[1]);

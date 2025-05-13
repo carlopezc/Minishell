@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/05/12 15:46:39 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/05/13 16:13:01 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -533,7 +533,6 @@ void	ft_exec_build(t_minishell *shell, char *cmd)
 	if (!ft_strncmp(cmd, "cd", ft_strlen("cd")))
 	{
 		ft_cd(shell, cmd);
-	//	ft_pwd(shell);
 		ft_merge_lists(&shell, shell->env, shell->undefined_var);
 		ft_sort_list(shell->export);
 	}
@@ -551,8 +550,6 @@ void	ft_exec_build(t_minishell *shell, char *cmd)
 		exit(0) ;
 	}
 	return ;
-	//ft_free_minishell(&shell);
-	//exit(0);
 }
 
 void	ft_pre_exec_command(t_pipex *pipex, t_token *cmd, t_minishell *shell)
@@ -722,7 +719,6 @@ void	ft_exec(t_minishell *shell, t_pipex *pipex, t_token *save)
 		}
 		else if (pipex->pipe[1][1])
 		{
-			//ft_printf("ecribe pipe %i\n", pipex->pipe[1][1]);
 			close(pipex->pipe[1][0]);
 			dup2(pipex->pipe[1][1], 1);
 			close(pipex->pipe[1][1]);
@@ -930,7 +926,8 @@ int	ft_executor(t_minishell *shell)
 					if (ft_strncmp("exit", save->str, 5) == 0)
 						exit(0);
 					tmp = save;
-					if ((ft_strncmp("cd", save->str, 2) != 0) && (ft_strncmp("env ", save->str, 4) != 0 || ft_strncmp("export ", save->str, 7) != 0))
+				//	if ((ft_strncmp("cd", save->str, 2) != 0) && (ft_strncmp("env ", save->str, 4) != 0 || ft_strncmp("export ", save->str, 7) != 0))
+					if (save->type == COMMAND || save->type == EXEC || !ft_strncmp("pwd", save->str, 3) || (ft_strncmp("cd", save->str, 2) && ((!ft_strncmp("env", save->str, 3) && ft_strncmp("env ", save->str, 4)) || (!ft_strncmp("export", save->str, 6) && ft_strncmp("export ", save->str, 7)))))
 					{
 						while (save && save->type != PIPE && save->type != AND && save->type != OR)
 							save = save->next;
@@ -996,10 +993,10 @@ int	ft_executor(t_minishell *shell)
 				ft_terminator(pipex);
 				return(0) ;
 			}
-			//if (save && save->type == PIPE)
-			if (save && save->next)
+			if (save && (save->type == AND || save->type == OR))
 			save = save->next;
 		}
 	}
+	ft_free_pipex(pipex);
 	return (0);
 }

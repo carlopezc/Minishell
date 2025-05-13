@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 14:59:32 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/05/12 12:14:45 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/13 16:28:32 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,6 +104,7 @@ void	ft_free_todo(int p, char **word);
 void	ft_check_quote(t_quote *quote, char c, int *i);
 void	ft_free_env(t_env **env);
 void	ft_print_export(t_env *export);
+char	*ft_expand(char *input, int *i, t_env *env);
 char *ft_choose_larger(char *str, char *str2);
 void	ft_merge_lists(t_minishell **shell, t_env *first, t_env *second);
 size_t	ft_max_strlen(char *s1, char *s2);

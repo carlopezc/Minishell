@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/12 13:00:45 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/13 19:15:34 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,7 +120,7 @@ char	*ft_expand(char *input, int *i, t_env *env)
 		{
 			free(name_var);
 			//Falla en algunos casos comiendose un caracter o anadiendolo
-			(*i)--;
+			//(*i)--;
 			return (ft_strdup(tmp->value));
 		}
 		tmp = tmp->next;
@@ -128,7 +128,7 @@ char	*ft_expand(char *input, int *i, t_env *env)
 	free(name_var);
 	return (ft_strdup(""));
 }
-
+/*
 char	*ft_check_var(t_minishell *minishell, char *input, int *i)
 {
 	if (!input || input[*i] != '$')
@@ -142,7 +142,7 @@ char	*ft_check_var(t_minishell *minishell, char *input, int *i)
 	}
 	return (ft_expand(input, i, minishell->env));
 }
-
+*/
 char	*ft_strjoin_char(char *str, char c)
 {
 	int	i;
@@ -215,22 +215,9 @@ char	*ft_group_input(t_minishell **minishell, char *input, int *i)
 	(void)minishell;
 	while (input[*i])
 	{
-		/*if (!input[*i - 1] || input[*i - 1] != '\\')
-			ft_check_quote(&quote, input[*i], i);*/
-		if (/*quote.flag == 0 && */ft_check_operator(input, i))
+		if (ft_check_operator(input, i))
 			return (value);
-		/*
-		if (input[*i] == '$' && quote.type != '\'')
-		{
-			tmp = ft_check_var(*minishell, input, i);
-			if (tmp)
-			{
-				value = ft_strjoin(value, tmp);
-				free(tmp);
-			}
-		}
-		else*/
-			value = ft_strjoin_char(value, input[*i]);
+		value = ft_strjoin_char(value, input[*i]);
 		(*i)++;
 	}
 	if (quote.flag != 0)

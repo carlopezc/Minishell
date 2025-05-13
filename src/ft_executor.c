@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/05/07 14:17:21 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/13 16:42:02 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -315,6 +315,23 @@ void	ft_env(t_minishell *shell, char *cmd)
 	return ;
 }
 
+void	ft_print_value(char *value)
+{
+	int	i;
+
+	i = 0;
+	ft_printf("\"");
+	while (value[i])
+	{
+		if (value[i] == '\"' || value[i] == '\'')
+			write(1, "\\", 1);
+		write(1, &value[i], 1);
+		i++;
+	}
+	ft_printf("\"\n");
+	return ;
+}
+
 void	ft_print_export(t_env *export)
 {
 	t_env *tmp;
@@ -330,7 +347,11 @@ void	ft_print_export(t_env *export)
 		{
 			//Super chorra hay que cambairlo
 			if (!(tmp->name[0] == '_' && tmp->name[1] == '\0'))
-				ft_printf("declare -x %s=\"%s\"\n", tmp->name, tmp->value);
+			{
+				ft_printf("declare -x %s=", tmp->name, tmp->value);
+				//el value anadiendo las
+				ft_print_value(tmp->value);
+			}
 		}
 		tmp = tmp->next;
 	}

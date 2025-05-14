@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/13 19:15:34 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/14 18:46:42 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,6 @@ void	ft_free_tokens(t_minishell **minishell)
 	while (token)
 	{
 		tmp = token->next;
-		//ft_printf("LIBERANDO CADENA , DIR DE MEMORIA: %p\n", (void *)token);
 		if (token->str)
 			token->str = NULL;
 		free(token);
@@ -186,17 +185,17 @@ void	ft_check_quote(t_quote *quote, char c, int *i)
 	return ;
 }
 
-int	ft_check_operator(char *input, int *i)
+int	ft_check_operator(char *input)
 {
-	if (!input || input[*i] == '\0')
+	if (!input || input[0] == '\0')
 		return (0);
-	if (!ft_strncmp(input + *i, "||", 2) || !ft_strncmp(input + *i, "|", 1))
+	if (!ft_strncmp(input, "||", 2) || !ft_strncmp(input, "|", 1))
 		return (1);
-	else if (!ft_strncmp(input + *i, ">>", 2) || !ft_strncmp(input + *i, ">", 1))
+	else if (!ft_strncmp(input, ">>", 2) || !ft_strncmp(input, ">", 1))
 		return (1);
-	else if (!ft_strncmp(input + *i, "<<", 2) || !ft_strncmp(input + *i, "<", 1))
+	else if (!ft_strncmp(input, "<<", 2) || !ft_strncmp(input, "<", 1))
 		return (1);
-	else if (!ft_strncmp(input + *i, "&&", 2))
+	else if (!ft_strncmp(input, "&&", 2))
 		return (1);
 	else
 		return (0);
@@ -205,23 +204,16 @@ int	ft_check_operator(char *input, int *i)
 char	*ft_group_input(t_minishell **minishell, char *input, int *i)
 {
 	char	*value;
-	//char	*tmp;
-	t_quote quote;
 
-	quote.flag = 0;
-	quote.type = 0;
 	value = NULL;
-	//tmp = NULL;
 	(void)minishell;
 	while (input[*i])
 	{
-		if (ft_check_operator(input, i))
+		if (ft_check_operator(&input[*i]))
 			return (value);
 		value = ft_strjoin_char(value, input[*i]);
 		(*i)++;
 	}
-	if (quote.flag != 0)
-		return (ft_printf("Quotes not closed\n"), NULL);
 	return (value);
 }
 
@@ -240,43 +232,43 @@ char	*ft_get_next(char *input, int *i)
 
 t_token_type	ft_is_operator(char **value, char *input, int *i)
 {
- 	if (!ft_strncmp(input + *i, "||", 2))
+ 	if (!ft_strncmp(input, "||", 2))
 	{
 		*value = ft_strdup("||");
 		*i += 2;
 		return (OR);
 	}
-	else if (!ft_strncmp(input + *i, "<<", 2))
+	else if (!ft_strncmp(input, "<<", 2))
 	{
 		*i += 2;
 		*value = ft_get_next(input, i);
 		return (HEREDOC);
 	}
-	else if (!ft_strncmp(input + *i, ">>", 2))
+	else if (!ft_strncmp(input, ">>", 2))
 	{
 		*i += 2;
 		*value = ft_get_next(input, i); //coge el valor siguiente 
 		return (APPEND);
 	}
-	else if (!ft_strncmp(input + *i, ">", 1))
+	else if (!ft_strncmp(input, ">", 1))
 	{
 		*i += 1;
 		*value = ft_get_next(input, i); //coge el valor siguiente
 		return (REDIR_OUT);
 	}
-	else if (!ft_strncmp(input + *i, "<", 1))
+	else if (!ft_strncmp(input, "<", 1))
 	{
 		*i += 1;
 		*value = ft_get_next(input, i); //coge el valor siguiente
 		return (REDIR_IN);
 	}
-	else if (!ft_strncmp(input + *i, "|", 1))
+	else if (!ft_strncmp(input, "|", 1))
 	{
 		*value = ft_strdup("|");
 		*i += 1;
 		return (PIPE);
 	}
-	else if (!ft_strncmp(input + *i, "&&", 2))
+	else if (!ft_strncmp(input, "&&", 2))
 	{
 		*value = ft_strdup("&&");
 		*i += 2;
@@ -309,23 +301,19 @@ int	ft_is_builtin(char *input)
 
 int	ft_define_parts(t_minishell **minishell, char *input, char **value, t_token_type *type, int *i)
 {
-	//t_quote quote;
-
-	//quote.flag = 0;
-	//quote.type = 0;
 	if (input[*i] == '.' && input[*i + 1] && input[*i + 1] == '/')
 	{
 		*type = EXEC;
 		*value = ft_group_input(minishell, input, i);
 		return (1);
 	}
-	else if (ft_is_builtin(input + *i))
+	else if (ft_is_builtin(&input[*i]))
 	{
 		*type = BUILTIN;
 		*value = ft_group_input(minishell, input, i);
 		return (1);
 	}
-	*type = ft_is_operator(value, input, i);
+	*type = ft_is_operator(value, &input[*i], i);
 	if (*type != NOT_SET)
 		return (1); //Ya ha avanzado el puntero en caso de que sea operador
 	else
@@ -345,12 +333,8 @@ int	ft_group_command(t_minishell **minishell, char *input, int *i)
 	token = NULL;
 	value = NULL;
 	type = NOT_SET;
-	ft_printf("Antes del  parseo: %s\n", input);
-	ft_printf("Tiene que eliminar comillas si no tienen espacios dentro, eliminar los /' y dejarlos solo con ', y expandir variables\n");
-	if (!ft_parsing(&input, minishell))
-		return (0);
-	ft_printf("Tras parseo: %s\n", input);
-	exit(0);
+
+	//de momento define parts nunca devuelve 0
 	if (!ft_define_parts(minishell, input, &value, &type, i))
 		return (0);
 	token = ft_create_token(value, type);
@@ -367,6 +351,9 @@ int	ft_process_input(t_minishell **minishell, char *input)
 	i = 0;
 	if (!minishell || !input)
 		return (0);
+	if (!ft_parsing(&input, minishell))
+		return (0);
+	ft_printf("Input tras parseo: %s\n", input);
 	while (input[i])
 	{
 		while (input[i] && input[i] == ' ')

@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 09:31:50 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/05/12 14:32:28 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/14 15:01:56 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,6 @@ static int	ft_word_count(char const *w, char c)
 			in_word = 0;
 		p++;
 	}
-	ft_printf("Ha contado %d\n", count);
 	return (count);
 }
 
@@ -92,8 +91,6 @@ static char	**ft_cpy(char const *s, char **word, char c, int count)
 	while (p < count)
 	{
 		chars = ft_count_letters(s, c, i);
-		ft_printf("Ha contado %d letras\n", chars);
-		ft_printf("La flag es %c\n", c);
 		word[p] = (char *)malloc((chars + 1) * sizeof(char));
 		if (!word[p])
 			return (ft_free_todo(p, word), NULL);
@@ -108,7 +105,6 @@ static char	**ft_cpy(char const *s, char **word, char c, int count)
 				ft_check_quote(&quote, s[i], &i);
 		}
 		word[p][j] = '\0';
-		ft_printf("Word es : %s\n", word[p]);
 		j = 0;
 		p++;
 	}

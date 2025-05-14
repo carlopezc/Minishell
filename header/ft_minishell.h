@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 14:59:32 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/05/13 19:06:35 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/14 18:39:41 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,9 @@ int	ft_init_minishell(t_minishell **minishell, char **env);
 int	ft_process_input(t_minishell **minishell, char *input);
 int	ft_executor(t_minishell *shell);
 void	ft_clear_split(char **split);
+t_token_type	ft_is_operator(char **value, char *input, int *i);
 void	ft_free_tokens(t_minishell **minishell);
+int	ft_check_operator(char *input);
 void 	ft_add_to_env(t_minishell **minishell, char *str, int flag);
 void	ft_free_array(char **arr);
 void	ft_free_minishell(t_minishell **minishell);

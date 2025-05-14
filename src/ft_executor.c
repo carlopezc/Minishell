@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/05/13 16:42:02 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/14 19:16:23 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -325,6 +325,10 @@ void	ft_print_value(char *value)
 	{
 		if (value[i] == '\"' || value[i] == '\'')
 			write(1, "\\", 1);
+		if (value[i] == '$')
+			write(1, "\\", 1);
+		if (value[i] == '\\')
+			write(1, "\\", 1);
 		write(1, &value[i], 1);
 		i++;
 	}
@@ -445,7 +449,6 @@ int	ft_check_name(char *var)
 		return (ft_printf("Non valid name\n"), 0);
 	while (var[++i] && (var[i] != '=' && var[i] != ' '))
 	{
-		ft_printf("Var en i es %c\n", var[i]);
 		if (var[i] == '+' && var[i + 1] == '=')
 			return (1);
 		if (!ft_isalnum(var[i]) && (var[i] != '_'))

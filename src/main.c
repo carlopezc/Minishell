@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:15:05 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/12 10:43:49 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/14 19:18:33 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ int	ft_main_loop(t_minishell **minishell)
 		}
 		ft_printf("Lista de tokens\n");
 		ft_print_tokens((*minishell)->tokens);
-		//ft_executor(*minishell);
+		ft_executor(*minishell);
 		if (input)
 			free(input);
 		input = NULL;

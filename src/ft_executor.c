@@ -6,10 +6,11 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/05/14 19:16:23 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/15 11:52:50 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "../get_next_line/get_next_line_bonus.h"
 #include "../header/ft_minishell.h"
 #include <fcntl.h>
 #include <sys/wait.h>
@@ -47,35 +48,7 @@ void	ft_arrange_fd(t_pipex *pipex)
 	if (pipex->docs_out)
 		ft_safe_free((void **)&pipex->docs_out);
 }
-/*
-static char	**ft_free_exec_cmd(t_pipex **pipex)
-{
-	char	**return_v;
 
-	if ((*pipex)->path)
-	{
-		//ft_printf("ft_free_exec_cmd: %p\n", (*pipex)->path);
-		ft_safe_free((void **)&(*pipex)->path);
-	}
-	return_v = (*pipex)->command;
-	ft_safe_free((void **)pipex);
-	return (return_v);
-}
-
-void	ft_exec_command(t_pipex *pipex, char **env)
-{
-	char	*temp;
-	char	*path_command;
-	char	**command;
-
-	temp = ft_strjoin("/", pipex->command[0]);
-	path_command = ft_strjoin(pipex->path, temp);
-	//ft_printf("ft_exec_command: %p\n", temp);
-	ft_safe_free((void **)&temp);
-	command = ft_free_exec_cmd(&pipex);
-	execve(path_command, command, env);
-}
-*/
 int	ft_check_cd(char *file, char *pwd)
 {
 	char	*temp;
@@ -600,7 +573,6 @@ void	ft_exec_build(t_minishell *shell, char *cmd)
 	if (!ft_strncmp(cmd, "cd", ft_strlen("cd")))
 	{
 		ft_cd(shell, cmd);
-	//	ft_pwd(shell);
 		ft_merge_lists(&shell, shell->env, shell->undefined_var);
 		ft_sort_list(shell->export);
 	}
@@ -618,8 +590,6 @@ void	ft_exec_build(t_minishell *shell, char *cmd)
 		exit(0) ;
 	}
 	return ;
-	//ft_free_minishell(&shell);
-	//exit(0);
 }
 
 void	ft_pre_exec_command(t_pipex *pipex, t_token *cmd, t_minishell *shell)
@@ -648,31 +618,136 @@ void	ft_pre_exec_command(t_pipex *pipex, t_token *cmd, t_minishell *shell)
 	execve(path_command, command, env);
 }
 
+void	ft_docs_in(t_pipex *pipex)
+{
+	char	*str;
+	int		p;
+	int		tmp_pipe[2];
+	pipe(tmp_pipe);
+	pipex->pid = fork();
+	if (pipex->pid == 0)
+	{
+		close(tmp_pipe[0]);
+		dup2(tmp_pipe[1], 1);
+		close(tmp_pipe[1]);
+		if (pipex->pipe[0][0])
+		{
+			close(pipex->pipe[0][1]);
+			str = get_next_line(pipex->pipe[0][0]);
+			while (str)
+			{
+				ft_printf("%s", str);
+				free(str);
+				str = get_next_line(pipex->pipe[0][0]);
+			}
+			close(pipex->pipe[0][0]);
+		}
+		if (pipex->heredoc)
+		{
+			str = get_next_line(pipex->heredoc);
+			while (str)
+			{
+				ft_printf("%s", str);
+				free(str);
+				str = get_next_line(pipex->heredoc);
+			}
+			close(pipex->heredoc);
+			unlink(".heredoc");
+		}
+		p = 0;
+		while (pipex->docs_in[p])
+		{
+			str = get_next_line(pipex->docs_in[p]);
+			while (str)
+			{
+				ft_printf("%s", str);
+				free(str);
+				str = get_next_line(pipex->docs_in[p]);
+			}
+			close(pipex->docs_in[p]);
+			p++;
+		}
+		exit(0);
+	}
+	else
+	{
+		close(pipex->pipe[0][0]);
+		close(pipex->pipe[0][1]);
+		waitpid(pipex->pid, NULL, 0);
+		close(tmp_pipe[1]);
+		dup2(tmp_pipe[0], 0);
+		close(tmp_pipe[0]);
+	}
+}
+
 void	ft_exec(t_minishell *shell, t_pipex *pipex, t_token *save)
 {
-	if (save->type == BUILTIN)
+/*	if (save->type == BUILTIN)
 	{
 		ft_exec_build(shell, save->str);
 		if (pipex->childs != 0)
 			exit (0);
-	}
-	if (save->type == COMMAND || save->type == EXEC)
-	{
-		if (pipex->docs_in)
-		{
-			dup2(pipex->docs_in[0], 0);
-			close(pipex->docs_in[0]);
-		}
-		else if (pipex->pipe[0][0])
+	}*/
+//	if (save->type == COMMAND || save->type == EXEC)
+//	{
+		if (pipex->pipe[0][0] && !pipex->docs_in && !pipex->heredoc)
 		{
 			close(pipex->pipe[0][1]);
 			dup2(pipex->pipe[0][0], 0);
 			close(pipex->pipe[0][0]);
 		}
+		else if (pipex->docs_in || pipex->pipe[0][0] || pipex->heredoc)
+			ft_docs_in(pipex);
 		if (pipex->docs_out)
 		{
-			dup2(pipex->docs_out[0], 1);
-			close(pipex->docs_out[0]);
+			if (pipex->docs_out[1] == 0 && pipex->pipe[1][1] == 0)
+			{
+				dup2(pipex->docs_out[0], 1);
+				close(pipex->docs_out[0]);
+			}
+			else
+			{
+				char	*str;
+				char	*trash = ft_strdup("");
+				int	tmp_pipe[2];
+				int	p = 0;
+				pipe(tmp_pipe);
+				pipex->pid = fork();
+				if (pipex->pid == 0)
+				{
+					close(tmp_pipe[0]);
+					dup2(tmp_pipe[1], 1);
+					close(tmp_pipe[1]);
+				}
+				else
+				{
+					close(tmp_pipe[1]);
+					waitpid(pipex->pid, NULL, 0);
+					str = get_next_line(tmp_pipe[0]);
+					while (str)
+					{
+						trash = ft_strjoin(trash, str);
+						free(str);
+						str = get_next_line(tmp_pipe[0]);
+					}
+					if (pipex->pipe[1][1])
+					{
+						close(pipex->pipe[1][0]);
+						dup2(pipex->pipe[1][1], 1);
+						close(pipex->pipe[1][1]);
+						ft_printf("%s", trash);
+					}
+					while (pipex->docs_out[p])
+					{
+						dup2(pipex->docs_out[p], 1);
+						close(pipex->docs_out[p]);
+						ft_printf("%s", trash);
+						p++;
+					}
+					free(trash);
+					exit(0);
+				}
+			}
 		}
 		else if (pipex->pipe[1][1])
 		{
@@ -680,8 +755,15 @@ void	ft_exec(t_minishell *shell, t_pipex *pipex, t_token *save)
 			dup2(pipex->pipe[1][1], 1);
 			close(pipex->pipe[1][1]);
 		}
-		ft_pre_exec_command(pipex, save, shell);
-	}
+		if (save->type == BUILTIN)
+		{
+			ft_exec_build(shell, save->str);
+			if (pipex->childs != 0)
+				exit (0);
+		}
+		else
+			ft_pre_exec_command(pipex, save, shell);
+//	}
 }
 
 char	*ft_find_path(t_env **env)
@@ -773,7 +855,7 @@ t_token *ft_redir(t_token *save, t_token_type type, t_pipex *pipex)
 
 
 	temp = save;
-	count = 0;
+	count = 1;
 	while (temp && temp->type == type)
 	{
 		count++;
@@ -790,10 +872,17 @@ t_token *ft_redir(t_token *save, t_token_type type, t_pipex *pipex)
 	{
 		if (type == REDIR_IN)
 			pipex->docs_in[count] = open(save->str, O_RDONLY);
+		else if (type == APPEND)
+			pipex->docs_out[count] = open(save->str, O_WRONLY | O_APPEND | O_CREAT, 0777);
 		else
-			pipex->docs_out[count] = open(save->str, O_WRONLY);
+			pipex->docs_out[count] = open(save->str, O_WRONLY | O_CREAT, 0777);
+		count++;
 		save = save->next;
 	}
+	if (type == REDIR_IN)
+		pipex->docs_in[count] = 0;
+	else
+		pipex->docs_out[count] = 0;
 	return (save);
 }
 
@@ -805,13 +894,52 @@ void	ft_init_pipex(t_pipex **pipex)
 	(*pipex)->command = NULL;
 	(*pipex)->path = NULL;
 	(*pipex)->pid = 0;
+	(*pipex)->heredoc = 0;
 	return ;
+}
+
+t_token	*ft_heredoc(t_token *save, t_pipex *pipex)
+{
+	char	*str;
+	int		temp;
+
+	open(".heredoc", O_CREAT, 0777);
+	temp = open(".heredoc", O_WRONLY);
+	while (save && save->type == HEREDOC)
+	{
+		str = get_next_line(0);
+		while (str && !(ft_strncmp(str, save->str, ft_strlen(save->str)) == 0
+				&& str[ft_strlen(save->str)] == '\n'))
+		{
+			if (write(temp, str, ft_strlen(str)) == -1)
+				return (save->next);
+			free(str);
+			str = get_next_line(0);
+		}
+		if (str)
+			free(str);
+		save = save->next;
+	}
+//	if (str)
+//		free(str);
+	close(temp);
+	pipex->heredoc = open(".heredoc", O_RDONLY);
+	return (save);
+}
+
+void	ft_terminator(t_pipex *pipex)
+{
+	while (pipex->childs > 0)
+	{
+		wait(NULL);
+		pipex->childs--;
+	}
 }
 
 int	ft_executor(t_minishell *shell)
 {
 	t_token	*save;
-	t_token	*tmp;
+	t_token	*tmp = NULL;
 	t_pipex	*pipex = (t_pipex *)malloc(sizeof(t_pipex));
 	if (!pipex)
 		return (-1);
@@ -821,66 +949,84 @@ int	ft_executor(t_minishell *shell)
 	{
 		while (save && save->type != AND && save->type != OR)
 		{
-			if (save->type == COMMAND || save->type == BUILTIN || save->type == EXEC)
+			while (save && save->type != PIPE && save->type != AND && save->type != OR)//(save && save->type != AND && save->type != OR)
 			{
-				if (ft_strncmp("exit", save->str, 5) == 0)
-					exit(0);
-				tmp = save;
-				if (ft_strncmp("cd", save->str, 2) && ((!ft_strncmp("env", save->str, 3) && ft_strncmp("env ", save->str, 4)) || (!ft_strncmp("export", save->str, 6) && ft_strncmp("export ", save->str, 7))))
+				if (save->type == COMMAND || save->type == BUILTIN || save->type == EXEC)
 				{
-					pipex->pid = fork();
-					pipex->childs++;
-					if (pipex->pid == 0 && save->type == COMMAND)
+					if (ft_strncmp("exit", save->str, 5) == 0)
+						exit(0);
+					tmp = save;
+				//	if ((ft_strncmp("cd", save->str, 2) != 0) && (ft_strncmp("env ", save->str, 4) != 0 || ft_strncmp("export ", save->str, 7) != 0))
+					if (save->type == COMMAND || save->type == EXEC || !ft_strncmp("pwd", save->str, 3) || (ft_strncmp("cd", save->str, 2) && ((!ft_strncmp("env", save->str, 3) && ft_strncmp("env ", save->str, 4)) || (!ft_strncmp("export", save->str, 6) && ft_strncmp("export ", save->str, 7)))))
 					{
-						ft_manage_child_signals();
-						pipex->command = ft_split(save->str, ' ');
-						if (ft_path(&shell->env, &pipex, pipex->command[0]) == 0)
-							return (-1);
+						while (save && save->type != PIPE && save->type != AND && save->type != OR)
+							save = save->next;
+						if (save && save->type == PIPE)
+							 pipe(pipex->pipe[1]);
+						pipex->pid = fork();
+						pipex->childs++;
+						if (pipex->pid == 0 && tmp->type == COMMAND)
+						{
+							ft_manage_child_signals();
+							pipex->command = ft_split(tmp->str, ' ');
+							if (ft_path(&shell->env, &pipex, pipex->command[0]) == 0)
+								return (-1);
+						}
+						save = tmp->next;
 					}
-					save = save->next;
 				}
-			}
-			while (pipex->pid == 0 && save && (save->type == REDIR_IN || save->type == REDIR_OUT || save->type == PIPE))
-			{
-				if (pipex->childs != 0)
+				while (pipex->pid == 0 && save && (save->type == REDIR_IN || save->type == REDIR_OUT || save->type == HEREDOC || save->type == APPEND))
 				{
-					if (save->type == REDIR_IN)
-						save = ft_redir(save, REDIR_IN, pipex);
-					if (save && save->type == REDIR_OUT)
-						save = ft_redir(save, REDIR_OUT, pipex);
-					if (save && save->type == PIPE)
+					if (pipex->childs != 0)
 					{
-						pipe(pipex->pipe[1]);
-						break ;
+						if (save->type == REDIR_IN)
+							save = ft_redir(save, REDIR_IN, pipex);
+						if (save && save->type == REDIR_OUT)
+							save = ft_redir(save, REDIR_OUT, pipex);
+						if (save && save->type == HEREDOC)
+							save = ft_heredoc(save, pipex);
+						if (save && save->type == APPEND)
+							save = ft_redir(save, APPEND, pipex);
+						if (save && save->type == PIPE)
+							break ;
 					}
+					else
+						save = save->next;
+				}
+				if (pipex->pid == 0 && tmp)
+				{
+					ft_manage_child_signals();
+					ft_exec(shell, pipex, tmp);
+					save = save->next;
 				}
 				else
-					save = save->next;
+				{
+					while (save && save->type != PIPE && save->type != AND && save->type != OR)
+						save = save->next;
+				}
 			}
-			if (pipex->pid == 0)
-			{
-				ft_manage_child_signals();
-				ft_exec(shell, pipex, tmp);
+			if (save && save->type == PIPE)
 				save = save->next;
-			}
-			else
-			{
-				while (save && save->type != PIPE && save->type != AND && save->type != OR)
-					save = save->next;
-				if (save && save->type == PIPE)
-					break ;
-			}
+			ft_arrange_fd(pipex);
 		}
-		if (save && save->type == PIPE)
+		while (pipex->childs > 0)
+		{
+			wait(&shell->status);
+			pipex->childs--;
+			if (shell->status != 0 && save && save->type == AND)
+			{
+				ft_terminator(pipex);
+				return(0) ;
+			}
+			if (shell->status == 0 && save && save->type == OR)
+			{
+				ft_terminator(pipex);
+				return(0) ;
+			}
+			if (save && (save->type == AND || save->type == OR))
 			save = save->next;
-		ft_arrange_fd(pipex);
+		}
 	}
-	while (pipex->childs > 0)
-	{
-		wait(NULL);
-		pipex->childs--;
-		if (save && save->type == PIPE)
-			save = save->next;
-	}
+	ft_free_pipex(pipex);
 	return (0);
 }

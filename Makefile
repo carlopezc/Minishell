@@ -6,7 +6,7 @@
 #    By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/27 15:14:10 by carlopez          #+#    #+#              #
-#    Updated: 2025/05/12 11:55:39 by carlopez         ###   ########.fr        #
+#    Updated: 2025/05/15 11:52:31 by carlotalcd       ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,20 +30,25 @@ OBJDIR     = objs
 BOBJDIR		= bonus_obj
 PRINTFDIR  = printf
 OUTILSDIR	= utils_objects
+OBJ_GETDIR = objs/get_next_line
+GETDIR     = get_next_line
 
 # Archivos de cabecera
 LIB        = header/ft_minishell.h
+LIBGET     = $(GETDIR)/get_next_line_bonus.h
 
 # Archivos fuente
 SRC        = ft_tokenization.c ft_parsing.c ft_executor.c ft_split_cmd.c
 BSRC		= 
 UTILS      = ft_utils.c
+GET        = get_next_line_bonus.c get_next_line_utils_bonus.c
 
 # Archivos de objetos
 OBJS       = $(addprefix $(OBJDIR)/, $(SRC:.c=.o))
 BOBOJ		= $(addprefix $(BOBJDIR)/, $(BSRC:.c=.o))
 DEPS       = $(addprefix $(DEPDIR)/, $(SRC:.c=.d) $(UTILS:.c=.d) $(GET:.c=.d))
 OUTILS	= $(addprefix $(OUTILSDIR)/, $(UTILS:.c=.o))
+OBJS_GET   = $(addprefix $(OBJ_GETDIR)/, $(GET:.c=.o))
 
 # Biblioteca
 LIBPRINTF  = $(PRINTFDIR)/libftprintf.a
@@ -61,7 +66,7 @@ CYAN       = \033[0;36m
 RESET      = \033[m
 
 # Objetivo principal
-all: $(LIBPRINTF) $(NAME) $(LIB) Makefile
+all: $(LIBPRINTF) $(NAME) $(LIB) $(LIBGET) Makefile
 
 -include $(DEPS)
 
@@ -76,6 +81,11 @@ $(BOBJ): $(BOBJDIR)/%.o : $(BSRCDIR)/%.c Makefile | $(BOBJDIR) $(DEPDIR)
 	@$(CC) $(CFLAGS) $(OFLAGS) -c $< -o $@
 	@mv $(OBJDIR)/*.d $(DEPDIR)
 
+$(OBJS_GET): $(OBJ_GETDIR)/%.o : $(GETDIR)/%.c Makefile | $(OBJ_GETDIR) $(DEPDIR)
+	@printf "%-42b%b" "$(PURPLE)$<:" "$(BLUE)$(@F)$(RESET)\n"
+	@$(CC) $(CFLAGS) $(OFLAGS) -c $< -o $@
+	@mv $(OBJ_GETDIR)/*.d $(DEPDIR)
+
 $(OUTILS): $(OUTILSDIR)/%.o : $(UTILSDIR)/%.c Makefile | $(OUTILSDIR) $(DEPSDIR)
 	@printf "%-42b%b" "$(PURPLE)$<:" "$(BLUE)$(@F)$(RESET)\n"
 	@$(CC) $(CFLAGS) $(OFLAGS) -c $< -o $@
@@ -84,6 +94,9 @@ $(OUTILS): $(OUTILSDIR)/%.o : $(UTILSDIR)/%.c Makefile | $(OUTILSDIR) $(DEPSDIR)
 # Creación de directorios
 $(OBJDIR):
 	@mkdir -p $(OBJDIR)
+
+$(OBJ_GETDIR):
+	@mkdir -p $(OBJ_GETDIR)
 
 $(OUTILSDIR):
 	@mkdir -p $(OUTILSDIR)
@@ -97,9 +110,9 @@ $(LIBPRINTF):
 	@$(MAKE) --silent -C $(PRINTFDIR)
 
 # Enlace final del ejecutable
-$(NAME): $(MAIN) $(OBJS) $(OUTILS) $(LIBPRINTF)
+$(NAME): $(MAIN) $(OBJS) $(OBJS_GET) $(OUTILS) $(LIBPRINTF)
 	@printf "%-42b%b" "$(PURPLE)$<:" "$(BLUE)$(@F)$(RESET)\n"
-	@$(CC) $(CFLAGS) $(MAIN) $(OBJS) $(OUTILS) $(LIBPRINTF) -o $(NAME) $(RFLAGS)
+	@$(CC) $(CFLAGS) $(MAIN) $(OBJS) $(OBJS_GET) $(OUTILS) $(LIBPRINTF) -o $(NAME) $(RFLAGS)
 
 bonus: $(BONUS) $(LIBPRINTF) $(LIB) Makefile
 
@@ -112,7 +125,7 @@ clean:
 	@printf "%b" "$(BLUE)Cleaning objects...$(RESET)\n"
 	@rm -rf $(OBJDIR)
 	@rm -rf $(DEPDIR)
-	@rm -rf $(OUTILSDIR)
+	@rm -rf $(OBJ_GETDIR)
 	@$(MAKE) -C $(PRINTFDIR) clean --silent
 
 # Limpiar todo

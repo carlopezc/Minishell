@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 14:59:32 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/05/14 18:39:41 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/15 11:52:30 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ typedef struct s_token
 
 typedef struct s_minishell
 {
+	int		status;
 	t_token *tokens;
 	t_env	*env;
 	t_env	*env_tmp;
@@ -70,6 +71,7 @@ typedef struct s_pipex
 	int	*docs_in;
 	int	*docs_out;
 	int	pipe[2][2];
+	int	heredoc;
 	int	pid;
 	int	childs;
 	char	**command;

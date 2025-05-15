@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/15 11:52:34 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/05/15 16:58:49 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -232,43 +232,43 @@ char	*ft_get_next(char *input, int *i)
 
 t_token_type	ft_is_operator(char **value, char *input, int *i)
 {
- 	if (!ft_strncmp(input, "||", 2))
+ 	if (!ft_strncmp(input + *i, "||", 2))
 	{
 		*value = ft_strdup("||");
 		*i += 2;
 		return (OR);
 	}
-	else if (!ft_strncmp(input, "<<", 2))
+	else if (!ft_strncmp(input + *i, "<<", 2))
 	{
 		*i += 2;
 		*value = ft_get_next(input, i);
 		return (HEREDOC);
 	}
-	else if (!ft_strncmp(input, ">>", 2))
+	else if (!ft_strncmp(input + *i, ">>", 2))
 	{
 		*i += 2;
 		*value = ft_get_next(input, i); //coge el valor siguiente 
 		return (APPEND);
 	}
-	else if (!ft_strncmp(input, ">", 1))
+	else if (!ft_strncmp(input + *i, ">", 1))
 	{
 		*i += 1;
 		*value = ft_get_next(input, i); //coge el valor siguiente
 		return (REDIR_OUT);
 	}
-	else if (!ft_strncmp(input, "<", 1))
+	else if (!ft_strncmp(input + *i, "<", 1))
 	{
 		*i += 1;
 		*value = ft_get_next(input, i); //coge el valor siguiente
 		return (REDIR_IN);
 	}
-	else if (!ft_strncmp(input, "|", 1))
+	else if (!ft_strncmp(input + *i, "|", 1))
 	{
 		*value = ft_strdup("|");
 		*i += 1;
 		return (PIPE);
 	}
-	else if (!ft_strncmp(input, "&&", 2))
+	else if (!ft_strncmp(input + *i, "&&", 2))
 	{
 		*value = ft_strdup("&&");
 		*i += 2;
@@ -313,7 +313,8 @@ int	ft_define_parts(t_minishell **minishell, char *input, char **value, t_token_
 		*value = ft_group_input(minishell, input, i);
 		return (1);
 	}
-	*type = ft_is_operator(value, &input[*i], i);
+	//luego miro el is builtin
+	*type = ft_is_operator(value, input, i);
 	if (*type != NOT_SET)
 		return (1); //Ya ha avanzado el puntero en caso de que sea operador
 	else
@@ -353,7 +354,6 @@ int	ft_process_input(t_minishell **minishell, char *input)
 		return (0);
 	if (!ft_parsing(&input, minishell))
 		return (0);
-	//ft_printf("Input tras parseo: %s\n", input);
 	while (input[i])
 	{
 		while (input[i] && input[i] == ' ')

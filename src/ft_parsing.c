@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 12:44:53 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/15 11:40:25 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/05/15 18:35:00 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ int	ft_strlen_quoted(char *input, int flag)
 			i++;
 		else if (input[i] == '\'' || input[i] == '\"')
 		{
-			if (input[i] == '\'' && (!input[i - 1] || (input[i - 1] && input[i - 1] != '\\')))
+			if (input[i] == '\'' && (!input[i - 1] || input[i - 1] != '\\'))
 			{
 				if (simp)
 					simp = 0;
@@ -68,6 +68,8 @@ int	ft_strlen_quoted(char *input, int flag)
 				len += 2;
 			i++;
 		}
+		else if (input[i] == ';' && !simp && (!input[i - 1] || input[i - 1] != '\\'))
+			i++;
 		else
 		{
 			len++;
@@ -91,7 +93,6 @@ void	ft_unquote(char **input, int flag)
 	in_word = 0;
 	simp = 0;
 	len = ft_strlen_quoted(*input, flag);
-	ft_printf("Len calculada de la string quoted: %d\n", len);
 	unquoted = (char *)malloc((len + 1) * sizeof(char));
 	if (!unquoted)
 		return ;
@@ -99,17 +100,17 @@ void	ft_unquote(char **input, int flag)
 	{
 		if (!(*input)[i - 1] || (*input)[i - 1] != '\\')
 		{
-			if (((*input)[i] == '\'' || (*input)[i] == '\"') && in_word && flag)
+			if (((*input)[i] == '\'' || (*input)[i] == '\"') && flag && in_word)
 			{
 				in_word = 0;
 				unquoted[j++] = (*input)[i++];
 			}
-			if (((*input)[i] == '\"') && flag && ((ft_strchr(&(*input)[i], ' ')) && (ft_strchr(&(*input)[i + 1], '\"')) && (ft_strchr(&(*input)[i], ' ') < ft_strchr(&(*input)[i + 1], '\"'))))
+			else if (((*input)[i] == '\"') && flag && ((ft_strchr(&(*input)[i], ' ')) && (ft_strchr(&(*input)[i + 1], '\"')) && (ft_strchr(&(*input)[i], ' ') < ft_strchr(&(*input)[i + 1], '\"'))))
 			{
 				unquoted[j++] = (*input)[i++];
 				in_word = 1;
 			}
-			if (((*input)[i] == '\'') && flag && ((ft_strchr(&(*input)[i], ' ')) && (ft_strchr(&(*input)[i + 1], '\'')) && (ft_strchr(&(*input)[i], ' ') < ft_strchr(&(*input)[i + 1], '\''))))
+			else if (((*input)[i] == '\'') && flag && ((ft_strchr(&(*input)[i], ' ')) && (ft_strchr(&(*input)[i + 1], '\'')) && (ft_strchr(&(*input)[i], ' ') < ft_strchr(&(*input)[i + 1], '\''))))
 			{
 				unquoted[j++] = (*input)[i++];
 				in_word = 1;
@@ -129,7 +130,7 @@ void	ft_unquote(char **input, int flag)
 				}
 				i++;
 			}
-			else if ((*input)[i] == '\\')
+			else if ((*input)[i] == '\\' || (*input)[i] == ';')
 			{
 				if (simp)
 					unquoted[j++] = (*input)[i++];
@@ -258,15 +259,13 @@ int	ft_parsing(char **input, t_minishell **minishell)
 	if (!input || !*input)
 		return (0);
 	src = *input;
+	//aqui miro quotes y brackets
 	if (!ft_count_quotes(src))
 		return (ft_printf("Quotes not closed\n"), 0);
 	s_input = ft_split_cmd(*input, ' ');
-	ft_printf("\n SPLIT CON COMILLAS: \n");
-	int i = 0;
-	while (s_input[i])
-		ft_printf(" * %s\n", s_input[i++]);
 	if (!s_input || !*s_input)
 		return (0);
+	//para eliminar los brackets, si tiene operador entre medias se deja, si no se quitan
 	*input = ft_quit_quotes(s_input, minishell);
 	if (!*input)
 		return (0);

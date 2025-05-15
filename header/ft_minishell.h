@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 14:59:32 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/05/15 11:52:30 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/05/15 17:44:43 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@ typedef enum e_token_type
 	BUILTIN,
 	REDIR_IN,
 	REDIR_OUT,
+	S_BRACKET,
+	C_BRACKET,
 	HEREDOC,
 	APPEND,
 	AND,

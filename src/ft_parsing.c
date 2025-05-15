@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_parsing.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
+/*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 12:44:53 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/14 19:11:49 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/15 11:40:25 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,10 +190,10 @@ void	ft_variable(char **input, t_minishell **minishell)
 		return ;
 	while ((*input)[i])
 	{
-		if ((*input)[i - 1] && (*input)[i - 1] != '\\')
+		if (!(*input)[i - 1] || ((*input)[i - 1] && (*input)[i - 1] != '\\'))
 			ft_check_quote(&quote, (*input)[i], &i);
  		if ((*input)[i] == '$' && (quote.type != '\'' && (!(*input)[i - 1] || ((*input)[i - 1] && (*input)[i - 1] != '\\'))))
-                {
+        {
 			if ((!(*input)[i - 1]) || ((*input)[i - 1] && (*input)[i - 1] != '\\'))
 			{
 				i++;
@@ -215,8 +215,7 @@ void	ft_variable(char **input, t_minishell **minishell)
 				if ((*input)[i + 1] && ((*input)[i + 1] != '\'' && (*input)[i + 1] != '\"'))
 					i--;
 			}
-
-                }
+        }
 		else
 			final = ft_strjoin_char(final, (*input)[i]);
 		/*

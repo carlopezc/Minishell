@@ -6,7 +6,7 @@
 #    By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/27 15:14:10 by carlopez          #+#    #+#              #
-#    Updated: 2025/05/15 11:52:31 by carlotalcd       ###   ########.fr        #
+#    Updated: 2025/05/16 20:01:43 by carlotalcd       ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -126,6 +126,7 @@ clean:
 	@rm -rf $(OBJDIR)
 	@rm -rf $(DEPDIR)
 	@rm -rf $(OBJ_GETDIR)
+	@rm -rf $(OUTILSDIR)
 	@$(MAKE) -C $(PRINTFDIR) clean --silent
 
 # Limpiar todo

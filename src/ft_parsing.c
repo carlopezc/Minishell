@@ -6,12 +6,33 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 12:44:53 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/15 18:35:00 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/05/16 20:00:06 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
 
+int	ft_count_brackets(char *str)
+{
+	int 	i;
+	int	o_bracket;
+	int	c_bracket;
+
+	o_bracket = 0;
+	c_bracket = 0;
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == '(' && (!str[i - 1] || str[i - 1] != '\\'))
+			o_bracket++;
+		else if (str[i] == ')' && (!str[i - 1] || str[i - 1] != '\\'))
+			c_bracket++;
+		i++;
+	}
+	if (o_bracket == c_bracket)
+		return (1);
+	return (0);
+}
 int	ft_count_quotes(char *str)
 {
 	int	i;
@@ -140,7 +161,7 @@ void	ft_unquote(char **input, int flag)
 			else
 				unquoted[j++] = (*input)[i++];
 		}
-		else if ((*input)[i] == '\\' && !simp)
+		else if ((*input)[i] == '\\' && !simp && (!(*input)[i + 1] || ((*input)[i + 1] != '(' && (*input)[i + 1] != ')')))
 			i++;
 		else
 			unquoted[j++] = (*input)[i++];
@@ -262,7 +283,9 @@ int	ft_parsing(char **input, t_minishell **minishell)
 	//aqui miro quotes y brackets
 	if (!ft_count_quotes(src))
 		return (ft_printf("Quotes not closed\n"), 0);
-	s_input = ft_split_cmd(*input, ' ');
+	if (!ft_count_brackets(src))
+		return (ft_printf("Brackets not closed\n"), 0);
+	s_input = ft_split_cmd(*input, ' '); 
 	if (!s_input || !*s_input)
 		return (0);
 	//para eliminar los brackets, si tiene operador entre medias se deja, si no se quitan

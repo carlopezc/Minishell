@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 14:59:32 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/05/16 18:00:02 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/05/17 19:31:23 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,6 +118,7 @@ size_t	ft_max_strlen(char *s1, char *s2);
 void	ft_free_node(t_env *node, t_env **list);
 void	ft_print_array(char **arr);
 int	ft_parsing(char **input, t_minishell **minishell);
+int	ft_manage_brackets(t_token *tokens);
 	
 char	*ft_check_var(t_minishell *minishell, char *input, int *i);
 #endif

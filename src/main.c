@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:15:05 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/15 17:43:17 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/05/17 19:41:42 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,6 +106,9 @@ int	ft_main_loop(t_minishell **minishell)
 			return (ft_free_minishell(minishell), ft_printf("Error in process input \n"), -1);
 		}
 		ft_printf("Lista de tokens\n");
+		ft_print_tokens((*minishell)->tokens);
+		ft_manage_brackets((*minishell)->tokens);
+		ft_printf("Lista de tokens tras brackets\n");
 		ft_print_tokens((*minishell)->tokens);
 		//ft_executor(*minishell);
 		if (input)

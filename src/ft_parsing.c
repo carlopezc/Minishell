@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 12:44:53 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/16 20:00:06 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/05/17 20:08:10 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -271,7 +271,112 @@ char	*ft_quit_quotes(char **s_input, t_minishell **minishell)
 	input = ft_create_array(s_input);
 	return (input);
 }
+int	ft_quit_brackets(t_token *token, int *open, int *close)
+{
+	int	to_quit;
+	char *new_value;
+	char *value;
+	int	i;
+	int	j;
 
+	if (*open > *close)
+		to_quit = *close;
+	else
+		to_quit = *open;
+	*open -= to_quit;
+	*close -= to_quit;
+	value = token->str;
+	i = 0;
+	j = 0;
+	/*
+	new_value = (char *)malloc((ft_strlen(token->value) - to_quit + 1) * (char))
+	if (!new_value)
+		return (0);
+		*/
+	new_value = NULL;
+	j = to_quit;
+	while (value[i] == '(' && (!value[i - 1] || value[i - 1] != '\\') && j)
+	{
+		j--;
+		i++;
+	}
+	j = to_quit;
+	while (value[i] && (value[i] != ')' || (value[i - 1] && value[i - 1] == '\\')))
+	{
+		new_value = ft_strjoin_char(new_value, value[i]);
+		if (!new_value)
+			return (0);
+		i++;
+	}
+	while (value[i] == ')' && (!value[i - 1] || value[i - 1] != '\\') && j)
+	{
+		j--;
+		i++;
+	}
+	while (value[i])
+	{
+		new_value = ft_strjoin_char(new_value, value[i]);
+		if (!new_value)
+			return (0);
+		i++;
+	}
+	ft_safe_free((void *)token->str);
+	token->str = new_value;
+	return (1);
+}
+//Esto bastante mal y quita las comillas de cada token, faltan las generales meterlas en token y las de comandos quitarlas
+//Hay bucle infinito por ahi
+int	ft_check_brackets(t_token *token, int *o_bracket, int *c_bracket)
+{
+	char	*value;
+	int	i;
+	//int	flag;
+	int	open;
+	int close;
+
+	(void)o_bracket;
+	(void)c_bracket;
+	value = token->str;
+	i = 0;
+	open = 0;
+	close = 0;
+	while (value[i] && (value[i] == '(' && (!value[i - 1] || value[i - 1] != '\\')))
+	{
+		i++;
+		open++;
+	}
+	while (value[i] && (value[i] != '(' && value[i] != ')'))
+		i++;
+	while (value[i] && (value[i] == ')' && (!value[i - 1] || value[i - 1] != '\\')))
+	{
+		i++;
+		close++;
+	}
+	if (close && value[i])
+		return (ft_printf("Syntax error near blabla \n"), 0);
+	else if (open && close)
+		ft_quit_brackets(token, &open, &close);
+	return (1);
+}
+
+
+int	ft_manage_brackets(t_token *tokens)
+{
+	t_token *tmp;
+	int o_bracket;
+	int	c_bracket;
+
+	tmp = tokens;
+	o_bracket = 0;
+	c_bracket = 0;
+	while (tmp)
+	{
+		if (!ft_check_brackets(tmp, &o_bracket, &c_bracket))
+			return (0);
+		tmp = tmp->next;
+	}
+	return (1);
+}
 int	ft_parsing(char **input, t_minishell **minishell)
 {
 	char	*src;

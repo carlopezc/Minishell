@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:15:05 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/21 12:04:54 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/21 15:17:06 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,6 +105,8 @@ int	ft_main_loop(t_minishell **minishell)
 			//ft_safe_free((void *)input);
 			return (ft_free_minishell(minishell), ft_printf("Error in process input \n"), -1);
 		}
+		ft_printf("\nANTES DE ANADIR BRCKT TOKEN\n");
+		ft_print_tokens((*minishell)->tokens);
 		if (!ft_add_bracket_token(&((*minishell)->tokens)))
 			return (ft_printf("Error in brackets tokenization \n"), -1);
 		ft_printf("\nTOKENS FINALES: \n");

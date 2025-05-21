@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/21 12:07:05 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/21 16:30:28 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -236,6 +236,14 @@ char	*ft_get_next(char *input, int *i)
 
 t_token_type	ft_is_operator(char **value, char *input, int *i)
 {
+	int	flag;
+
+	flag = 0;
+	if ((*(input + *i) == '('))
+	{
+		flag = 1;
+		(*i)++;
+	}
  	if (!ft_strncmp(input + *i, "||", 2))
 	{
 		*value = ft_strdup("||");
@@ -264,6 +272,8 @@ t_token_type	ft_is_operator(char **value, char *input, int *i)
 	{
 		*i += 1;
 		*value = ft_get_next(input, i); //coge el valor siguiente
+		if (flag)
+			*value = ft_strjoin("(", *value);
 		return (REDIR_IN);
 	}
 	else if (!ft_strncmp(input + *i, "|", 1))
@@ -568,7 +578,7 @@ t_env	*ft_create_node(char *name, char *value)
 	return (node);
 }
 
-void	ft_connect_token(t_token **tokens, t_token *new, t_token *next)
+void	ft_connect_token(t_token **tokens, t_token *new, t_token *prev)
 {
 	t_token *tmp;
 	t_token *save;
@@ -577,16 +587,16 @@ void	ft_connect_token(t_token **tokens, t_token *new, t_token *next)
 		return ;
 	save = NULL;
 	tmp = *tokens;
-	if (tmp == next)
+	if (!prev)
 	{
 		save = *tokens;
 		*tokens = new;
 		new->next = save;
 		return ;
 	}
-	while (tmp && tmp->next)
+	while (tmp)
 	{
-		if (tmp->next == next)
+		if (tmp == prev)
 		{
 			save = tmp->next;
 			tmp->next = new;
@@ -595,8 +605,6 @@ void	ft_connect_token(t_token **tokens, t_token *new, t_token *next)
 		}
 		tmp = tmp->next;
 	}
-	if (tmp && !tmp->next)
-		tmp->next = new;
 	return ;
 }
 

@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 12:44:53 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/21 12:38:21 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/21 16:20:12 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,13 @@ int	ft_count_brackets(char *str)
 	while (str[i])
 	{
 		if (str[i] == '(' /*&& (!str[i - 1] || str[i - 1] != '\\')*/)
+		{
+			/*
+			if (str[i + 1] && str[i + 1] == '<')
+				return (ft_printf("parse error near blabla\n"), 0);
+				*/
 			o_bracket++;
+		}
 		else if (str[i] == ')'/* && (!str[i - 1] || str[i - 1] != '\\')*/)
 			c_bracket++;
 		i++;
@@ -467,9 +473,12 @@ int	ft_add_bracket_token(t_token **token)
 	int	start;
 	char	*cpy;
 	t_token *new_token;
+	t_token *prev;
 
 	if (!ft_manage_brackets(*token))
 		return (0);
+	ft_printf("\nTRAS MANAGE BRACKETS\n");
+	ft_print_tokens(*token);
 	tmp = *token;
 	if (!tmp)
 		return (1);
@@ -477,6 +486,8 @@ int	ft_add_bracket_token(t_token **token)
 	i = 0;
 	start = 0;
 	cpy = NULL;
+	prev = NULL;
+	//hacerlo anadiendo el de antes
 	while (tmp)
 	{
 		str = tmp->str;
@@ -488,7 +499,7 @@ int	ft_add_bracket_token(t_token **token)
 				new_token = ft_create_token("(", O_BRACKET);
 				if (!new_token)
 					return (0);
-				ft_connect_token(token, new_token, tmp);
+				ft_connect_token(token, new_token, prev);
 				tmp->str = ft_substr(str, start + 1, ft_strlen(str) - (start + 1));
 				str = tmp->str;
 				i--;
@@ -497,12 +508,12 @@ int	ft_add_bracket_token(t_token **token)
 			{
 				cpy = ft_strdup(str);
 				tmp->str = ft_substr(str, 0, i);
-				while (cpy[i] && cpy[i] == ')' && (!cpy[i - 1] || cpy[i] != '\\'))
+				while (tmp && cpy[i] && cpy[i] == ')' && (!cpy[i - 1] || cpy[i] != '\\'))
 				{
 					new_token = ft_create_token(")", C_BRACKET);
 					if (!new_token)
 						return (0);
-					ft_connect_token(token, new_token, NULL);
+					ft_connect_token(token, new_token, tmp);
 					tmp = tmp->next;
 					i++;
 				}
@@ -511,6 +522,7 @@ int	ft_add_bracket_token(t_token **token)
 			}
 			i++;
 		}
+		prev = tmp;
 		tmp = tmp->next;
 		start = 0;
 		i = 0;

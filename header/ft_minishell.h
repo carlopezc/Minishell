@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 14:59:32 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/05/19 18:45:58 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/21 15:45:32 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,7 +122,7 @@ int	ft_parsing(char **input, t_minishell **minishell);
 int	ft_manage_brackets(t_token *tokens);
 char	*ft_check_var(t_minishell *minishell, char *input, int *i);
 t_token	*ft_create_token(char *str, t_token_type type);
-void	ft_connect_token(t_token **tokens, t_token *new, t_token *next);
+void	ft_connect_token(t_token **tokens, t_token *new, t_token *prev);
 int	ft_add_bracket_token(t_token **token);
 
 #endif

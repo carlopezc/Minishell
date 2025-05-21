@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/15 16:58:49 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/05/21 12:07:05 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,10 @@ char	*token_type_to_str(t_token_type type)
 {
 	if (type == COMMAND)
 		return ("COMMAND");
+	if (type == O_BRACKET)
+		return ("O_BRACKET");
+	if (type == C_BRACKET)
+		return ("C_BRACKET");
 	if (type == PIPE)
 		return ("PIPE");
 	if (type == EXEC)
@@ -354,6 +358,8 @@ int	ft_process_input(t_minishell **minishell, char *input)
 		return (0);
 	if (!ft_parsing(&input, minishell))
 		return (0);
+	ft_printf("\n TRAS PARSING\n");
+	ft_printf("%s\n", input);
 	while (input[i])
 	{
 		while (input[i] && input[i] == ' ')
@@ -560,6 +566,38 @@ t_env	*ft_create_node(char *name, char *value)
 		node->value = value;
 	node->next = NULL;
 	return (node);
+}
+
+void	ft_connect_token(t_token **tokens, t_token *new, t_token *next)
+{
+	t_token *tmp;
+	t_token *save;
+
+	if (!tokens)
+		return ;
+	save = NULL;
+	tmp = *tokens;
+	if (tmp == next)
+	{
+		save = *tokens;
+		*tokens = new;
+		new->next = save;
+		return ;
+	}
+	while (tmp && tmp->next)
+	{
+		if (tmp->next == next)
+		{
+			save = tmp->next;
+			tmp->next = new;
+			new->next = save;
+			return ;
+		}
+		tmp = tmp->next;
+	}
+	if (tmp && !tmp->next)
+		tmp->next = new;
+	return ;
 }
 
 void	ft_connect_node(t_env **env, t_env *node)

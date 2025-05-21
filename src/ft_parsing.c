@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 12:44:53 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/17 20:08:10 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/05/21 12:38:21 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,9 @@ int	ft_count_brackets(char *str)
 	i = 0;
 	while (str[i])
 	{
-		if (str[i] == '(' && (!str[i - 1] || str[i - 1] != '\\'))
+		if (str[i] == '(' /*&& (!str[i - 1] || str[i - 1] != '\\')*/)
 			o_bracket++;
-		else if (str[i] == ')' && (!str[i - 1] || str[i - 1] != '\\'))
+		else if (str[i] == ')'/* && (!str[i - 1] || str[i - 1] != '\\')*/)
 			c_bracket++;
 		i++;
 	}
@@ -153,7 +153,7 @@ void	ft_unquote(char **input, int flag)
 			}
 			else if ((*input)[i] == '\\' || (*input)[i] == ';')
 			{
-				if (simp)
+				if (simp || ((*input)[i + 1] && ((*input)[i + 1] == '(' || (*input)[i + 1] == ')')))
 					unquoted[j++] = (*input)[i++];
 				else
 					i++;
@@ -161,8 +161,10 @@ void	ft_unquote(char **input, int flag)
 			else
 				unquoted[j++] = (*input)[i++];
 		}
+		/*
 		else if ((*input)[i] == '\\' && !simp && (!(*input)[i + 1] || ((*input)[i + 1] != '(' && (*input)[i + 1] != ')')))
 			i++;
+			*/
 		else
 			unquoted[j++] = (*input)[i++];
 	}
@@ -240,10 +242,6 @@ void	ft_variable(char **input, t_minishell **minishell)
         }
 		else
 			final = ft_strjoin_char(final, (*input)[i]);
-		/*
-		if ((*input)[i] == '\\')
-			final = ft_strjoin_char(final, '\\');
-			*/
 		i++;
 	}
 	*input = final;
@@ -288,11 +286,6 @@ int	ft_quit_brackets(t_token *token, int *open, int *close)
 	value = token->str;
 	i = 0;
 	j = 0;
-	/*
-	new_value = (char *)malloc((ft_strlen(token->value) - to_quit + 1) * (char))
-	if (!new_value)
-		return (0);
-		*/
 	new_value = NULL;
 	j = to_quit;
 	while (value[i] == '(' && (!value[i - 1] || value[i - 1] != '\\') && j)
@@ -320,22 +313,17 @@ int	ft_quit_brackets(t_token *token, int *open, int *close)
 			return (0);
 		i++;
 	}
-	ft_safe_free((void *)token->str);
 	token->str = new_value;
 	return (1);
 }
-//Esto bastante mal y quita las comillas de cada token, faltan las generales meterlas en token y las de comandos quitarlas
-//Hay bucle infinito por ahi
-int	ft_check_brackets(t_token *token, int *o_bracket, int *c_bracket)
+
+int	ft_check_brackets(t_token *token)
 {
 	char	*value;
 	int	i;
-	//int	flag;
 	int	open;
 	int close;
 
-	(void)o_bracket;
-	(void)c_bracket;
 	value = token->str;
 	i = 0;
 	open = 0;
@@ -352,31 +340,184 @@ int	ft_check_brackets(t_token *token, int *o_bracket, int *c_bracket)
 		i++;
 		close++;
 	}
+	while (value[i] && value[i] == ' ')
+		i++;
 	if (close && value[i])
-		return (ft_printf("Syntax error near blabla \n"), 0);
+		return (ft_printf("parse error near blabla \n"), 0);
 	else if (open && close)
 		ft_quit_brackets(token, &open, &close);
 	return (1);
 }
 
-
-int	ft_manage_brackets(t_token *tokens)
+int	ft_quit_brckt_dup(t_token *tmp, char c)
 {
-	t_token *tmp;
-	int o_bracket;
-	int	c_bracket;
+	int	i;
+	char *str;
+
+	i = 0;
+	str = tmp->str;
+	if (c == '(')
+	{
+		while (str[i + 1] && str[i + 1] == c)
+			i++;
+		str = ft_substr(str, i, ft_strlen(str) - i);
+		tmp->str = str;
+	}
+	else if (c == ')')
+	{
+		while (str[i] && (str[i] != c || (str[i - 1] && str[i - 1] == '\\')))
+			i++;
+		if (str[i] && str[i] == c)
+			str = ft_substr(str, 0, i + 1);
+		tmp->str = str;
+	}
+	if (!str)
+		return (0);
+	return (1);
+}
+
+int	ft_check_next(t_token *tokens, int o_brckt)
+{
+	t_token	*tmp;
+	int	c_brckt;
+	int	i;
 
 	tmp = tokens;
-	o_bracket = 0;
-	c_bracket = 0;
+	c_brckt = 0;
+	i = 0;
 	while (tmp)
 	{
-		if (!ft_check_brackets(tmp, &o_bracket, &c_bracket))
-			return (0);
+		while ((tmp->str)[i])
+		{
+			if ((tmp->str)[i] && (tmp->str)[i] == ')' && ((!(tmp->str)[i - 1] || (tmp->str)[i - 1] != '\\')))
+				c_brckt++;
+			i++;
+		}
+		if (c_brckt == o_brckt)
+		{
+			if (!ft_quit_brckt_dup(tmp, ')'))
+				return (0);
+			return (2);
+		}
+		c_brckt = 0;
+		i = 0;
 		tmp = tmp->next;
 	}
 	return (1);
 }
+
+int	ft_last_check(t_token *tokens)
+{
+	t_token *tmp;
+	int o_brckt;
+	int	i;
+	int	res;
+
+	tmp = tokens;
+	o_brckt = 0;
+	i = 0;
+	res = 0;
+	while (tmp)
+	{
+		while ((tmp->str)[i])
+		{
+			if ((tmp->str)[i] && (tmp->str)[i] == '(' && ((!(tmp->str)[i - 1] || (tmp->str)[i - 1] != '\\')))
+				o_brckt++;
+			i++;
+		}
+		if (o_brckt > 1)
+		{
+			res = ft_check_next(tokens, o_brckt);
+			if (res == 0)
+				return (0);
+			else if (res == 2)
+			{
+				if (!ft_quit_brckt_dup(tmp, '('))
+					return (0);
+			}
+		}
+		o_brckt = 0;
+		i = 0;
+		tmp = tmp->next;
+	}
+	return (1);
+}
+
+int	ft_manage_brackets(t_token *tokens)
+{
+	t_token *tmp;
+
+	tmp = tokens;
+	while (tmp)
+	{
+		if (!ft_check_brackets(tmp))
+			return (0);
+		tmp = tmp->next;
+	}
+	if (!ft_last_check(tokens))
+		return (0);
+	return (1);
+}
+
+int	ft_add_bracket_token(t_token **token)
+{
+	t_token	*tmp;
+	char	*str;
+	int	i;
+	int	start;
+	char	*cpy;
+	t_token *new_token;
+
+	if (!ft_manage_brackets(*token))
+		return (0);
+	tmp = *token;
+	if (!tmp)
+		return (1);
+	str = tmp->str;
+	i = 0;
+	start = 0;
+	cpy = NULL;
+	while (tmp)
+	{
+		str = tmp->str;
+		while (str[i])
+		{
+			if (str[i] == '(' && (!str[i - 1] || str[i - 1] != '\\'))
+			{
+				start = i;
+				new_token = ft_create_token("(", O_BRACKET);
+				if (!new_token)
+					return (0);
+				ft_connect_token(token, new_token, tmp);
+				tmp->str = ft_substr(str, start + 1, ft_strlen(str) - (start + 1));
+				str = tmp->str;
+				i--;
+			}
+			else if (str[i] == ')' && (!str[i - 1] || str[i - 1] != '\\'))
+			{
+				cpy = ft_strdup(str);
+				tmp->str = ft_substr(str, 0, i);
+				while (cpy[i] && cpy[i] == ')' && (!cpy[i - 1] || cpy[i] != '\\'))
+				{
+					new_token = ft_create_token(")", C_BRACKET);
+					if (!new_token)
+						return (0);
+					ft_connect_token(token, new_token, NULL);
+					tmp = tmp->next;
+					i++;
+				}
+				if (!cpy[i])
+					break ;
+			}
+			i++;
+		}
+		tmp = tmp->next;
+		start = 0;
+		i = 0;
+	}
+	return (1);
+}
+
 int	ft_parsing(char **input, t_minishell **minishell)
 {
 	char	*src;
@@ -385,7 +526,6 @@ int	ft_parsing(char **input, t_minishell **minishell)
 	if (!input || !*input)
 		return (0);
 	src = *input;
-	//aqui miro quotes y brackets
 	if (!ft_count_quotes(src))
 		return (ft_printf("Quotes not closed\n"), 0);
 	if (!ft_count_brackets(src))
@@ -393,7 +533,6 @@ int	ft_parsing(char **input, t_minishell **minishell)
 	s_input = ft_split_cmd(*input, ' '); 
 	if (!s_input || !*s_input)
 		return (0);
-	//para eliminar los brackets, si tiene operador entre medias se deja, si no se quitan
 	*input = ft_quit_quotes(s_input, minishell);
 	if (!*input)
 		return (0);

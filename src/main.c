@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:15:05 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/17 19:41:42 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/05/21 12:04:54 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ void	ft_print_tokens(t_token	*token)
 	{
 		ft_printf("El input es %s\n", tmp->str);
 		ft_printf("El token type es: %s\n", token_type_to_str(tmp->type));
+		//ft_printf("El next es %p\n", tmp->next);
 		tmp = tmp->next;
 	}
 	return ;
@@ -101,18 +102,15 @@ int	ft_main_loop(t_minishell **minishell)
 			add_history(input);
 		if (!ft_process_input(minishell, input))
 		{
-			if (input)
-				free(input);
+			//ft_safe_free((void *)input);
 			return (ft_free_minishell(minishell), ft_printf("Error in process input \n"), -1);
 		}
-		ft_printf("Lista de tokens\n");
-		ft_print_tokens((*minishell)->tokens);
-		ft_manage_brackets((*minishell)->tokens);
-		ft_printf("Lista de tokens tras brackets\n");
+		if (!ft_add_bracket_token(&((*minishell)->tokens)))
+			return (ft_printf("Error in brackets tokenization \n"), -1);
+		ft_printf("\nTOKENS FINALES: \n");
 		ft_print_tokens((*minishell)->tokens);
 		//ft_executor(*minishell);
-		if (input)
-			free(input);
+		ft_safe_free((void **)&input);
 		input = NULL;
 		ft_free_tokens(minishell);
 		(*minishell)->tokens = NULL;

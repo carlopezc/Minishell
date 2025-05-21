@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 14:59:32 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/05/17 19:31:23 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/05/19 18:45:58 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ typedef enum e_token_type
 	BUILTIN,
 	REDIR_IN,
 	REDIR_OUT,
-	S_BRACKET,
+	O_BRACKET,
 	C_BRACKET,
 	HEREDOC,
 	APPEND,
@@ -101,6 +101,7 @@ void	ft_manage_child_signals();
 void	ft_print_env(t_env *env);
 char **ft_create_array_env(t_env *env);
 t_env *ft_create_env(char	**env_array);
+void	ft_print_tokens(t_token	*token);
 int	ft_check_duplicated(char *str, t_env **env, t_env **undefined);
 t_env	*ft_create_node(char *name, char *value);
 void	ft_connect_node(t_env **env, t_env *node);
@@ -119,6 +120,9 @@ void	ft_free_node(t_env *node, t_env **list);
 void	ft_print_array(char **arr);
 int	ft_parsing(char **input, t_minishell **minishell);
 int	ft_manage_brackets(t_token *tokens);
-	
 char	*ft_check_var(t_minishell *minishell, char *input, int *i);
+t_token	*ft_create_token(char *str, t_token_type type);
+void	ft_connect_token(t_token **tokens, t_token *new, t_token *next);
+int	ft_add_bracket_token(t_token **token);
+
 #endif

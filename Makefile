@@ -6,7 +6,7 @@
 #    By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/27 15:14:10 by carlopez          #+#    #+#              #
-#    Updated: 2025/05/16 20:01:43 by carlotalcd       ###   ########.fr        #
+#    Updated: 2025/05/22 17:57:39 by carlopez         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -38,7 +38,7 @@ LIB        = header/ft_minishell.h
 LIBGET     = $(GETDIR)/get_next_line_bonus.h
 
 # Archivos fuente
-SRC        = ft_tokenization.c ft_parsing.c ft_executor.c ft_split_cmd.c
+SRC        = ft_tokenization.c ft_parsing.c ft_executor.c ft_split_cmd.c ft_wildcard.c
 BSRC		= 
 UTILS      = ft_utils.c
 GET        = get_next_line_bonus.c get_next_line_utils_bonus.c

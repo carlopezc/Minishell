@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 14:59:32 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/05/21 15:45:32 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/22 17:45:40 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,8 @@ typedef enum e_token_type
 	APPEND,
 	AND,
 	OR,
-	NOT_SET	
+	NOT_SET,
+	ERROR	
 }	t_token_type;
 
 typedef struct s_env

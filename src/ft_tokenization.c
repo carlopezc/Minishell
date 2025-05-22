@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/22 13:19:07 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/22 17:51:35 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -172,6 +172,8 @@ int	ft_check_operator(char *input)
 {
 	if (!input || input[0] == '\0')
 		return (0);
+	else if (*input == '(' || *input == ')')
+		input = input + 1;
 	if (!ft_strncmp(input, "||", 2) || !ft_strncmp(input, "|", 1))
 		return (1);
 	else if (!ft_strncmp(input, ">>", 2) || !ft_strncmp(input, ">", 1))
@@ -233,18 +235,31 @@ t_token_type	ft_is_operator(char **value, char *input, int *i)
 	{
 		*i += 2;
 		*value = ft_get_next(input, i);
+		/*
+		if (flag)
+			*value = ft_strjoin("(", *value);
+			*/
 		return (HEREDOC);
 	}
 	else if (!ft_strncmp(input + *i, ">>", 2))
 	{
 		*i += 2;
 		*value = ft_get_next(input, i); //coge el valor siguiente 
+		/*
+		if (flag)
+			*value = ft_strjoin("(", *value);
+			*/
 		return (APPEND);
 	}
 	else if (!ft_strncmp(input + *i, ">", 1))
 	{
 		*i += 1;
 		*value = ft_get_next(input, i); //coge el valor siguiente
+		if (flag)
+		{
+			ft_printf("parse error near blabla\n");
+			return (ERROR);
+		}
 		return (REDIR_OUT);
 	}
 	else if (!ft_strncmp(input + *i, "<", 1))
@@ -314,7 +329,9 @@ int	ft_define_parts(t_minishell **minishell, char *input, char **value, t_token_
 	}
 	//luego miro el is builtin
 	*type = ft_is_operator(value, input, i);
-	if (*type != NOT_SET)
+	if (*type == ERROR)
+		return (0);
+	else if (*type != NOT_SET)
 		return (1); //Ya ha avanzado el puntero en caso de que sea operador
 	else
 	{
@@ -334,7 +351,6 @@ int	ft_group_command(t_minishell **minishell, char *input, int *i)
 	value = NULL;
 	type = NOT_SET;
 
-	//de momento define parts nunca devuelve 0
 	if (!ft_define_parts(minishell, input, &value, &type, i))
 		return (0);
 	token = ft_create_token(value, type);

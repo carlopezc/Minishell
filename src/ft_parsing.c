@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 12:44:53 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/22 13:07:23 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/22 18:21:27 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -493,17 +493,25 @@ void	ft_quit_first_last(t_token **token)
 void	ft_last(t_token **token)
 {
 	t_token	*tmp;
+	int	o_bracket;
+	int	c_bracket;
 
 	tmp = *token;
+	o_bracket = 0;
+	c_bracket = 0;
 	if (tmp->type != O_BRACKET)
 		return ;
 	tmp = tmp->next;
 	while (tmp && tmp->next)
 	{
-		if (tmp->type == O_BRACKET || tmp->type == C_BRACKET)
-			return ;
+		if (tmp->type == O_BRACKET)
+			o_bracket++;
+		else if (tmp->type == C_BRACKET)
+			c_bracket++;
 		tmp = tmp->next;
 	}
+	if (o_bracket != c_bracket)
+		return ;
 	if (tmp->type == C_BRACKET)
 		ft_quit_first_last(token);
 	return ;
@@ -591,6 +599,9 @@ int	ft_parsing(char **input, t_minishell **minishell)
 	if (!s_input || !*s_input)
 		return (0);
 	*input = ft_quit_quotes(s_input, minishell);
+	if (!*input)
+		return (0);
+	ft_check_wildcard(input);
 	if (!*input)
 		return (0);
 	return (1);

@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/22 12:38:59 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/22 13:19:07 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,8 +112,6 @@ char	*ft_expand(char *input, int *i, t_env *env)
 	if (*i == start)
 		return (ft_strdup("$"));
 	name_var = ft_substr(input, start, *i - start);
-	if (input[*i] == '\'' || input[*i] == '"')
-		(*i)--;
 	if (!name_var)
 		return (NULL);
 	tmp = env;

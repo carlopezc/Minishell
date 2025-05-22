@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 12:44:53 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/21 16:20:12 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/22 13:07:23 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -223,7 +223,7 @@ void	ft_variable(char **input, t_minishell **minishell)
 		if (!(*input)[i - 1] || ((*input)[i - 1] && (*input)[i - 1] != '\\'))
 			ft_check_quote(&quote, (*input)[i], &i);
  		if ((*input)[i] == '$' && (quote.type != '\'' && (!(*input)[i - 1] || ((*input)[i - 1] && (*input)[i - 1] != '\\'))))
-        {
+        	{
 			if ((!(*input)[i - 1]) || ((*input)[i - 1] && (*input)[i - 1] != '\\'))
 			{
 				i++;
@@ -235,8 +235,8 @@ void	ft_variable(char **input, t_minishell **minishell)
 				else
 				{
 					final = ft_strjoin(final, ft_expand(*input, &i, (*minishell)->env));
-					if ((*input)[i + 1] && ((*input)[i + 1] != '\'' && (*input)[i + 1] != '\"'))
-						i--;
+					/*if ((*input)[i + 1] && ((*input)[i + 1] != '\'' && (*input)[i + 1] != '\"'))
+						i--;*/
 				}
 			}
 			else
@@ -245,10 +245,12 @@ void	ft_variable(char **input, t_minishell **minishell)
 				if ((*input)[i + 1] && ((*input)[i + 1] != '\'' && (*input)[i + 1] != '\"'))
 					i--;
 			}
-        }
+        	}
 		else
+		{
 			final = ft_strjoin_char(final, (*input)[i]);
-		i++;
+			i++;
+		}
 	}
 	*input = final;
 	return ;
@@ -465,6 +467,48 @@ int	ft_manage_brackets(t_token *tokens)
 	return (1);
 }
 
+void	ft_quit_first_last(t_token **token)
+{
+	t_token	*tmp;
+	t_token	*next;
+	t_token *prev;
+
+	next = *token;
+	*token = next->next;
+	free(next->str);
+	free(next);
+	tmp = *token;
+	while (tmp && tmp->next)
+	{
+		prev = tmp;
+		tmp = tmp->next;
+	}
+	free(tmp->str);
+	free(tmp);
+	prev->next = NULL;
+	return ;
+	//no se si puedo borrar el type
+}
+
+void	ft_last(t_token **token)
+{
+	t_token	*tmp;
+
+	tmp = *token;
+	if (tmp->type != O_BRACKET)
+		return ;
+	tmp = tmp->next;
+	while (tmp && tmp->next)
+	{
+		if (tmp->type == O_BRACKET || tmp->type == C_BRACKET)
+			return ;
+		tmp = tmp->next;
+	}
+	if (tmp->type == C_BRACKET)
+		ft_quit_first_last(token);
+	return ;
+}
+
 int	ft_add_bracket_token(t_token **token)
 {
 	t_token	*tmp;
@@ -527,6 +571,7 @@ int	ft_add_bracket_token(t_token **token)
 		start = 0;
 		i = 0;
 	}
+	ft_last(token);
 	return (1);
 }
 

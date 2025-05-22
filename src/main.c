@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:15:05 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/21 15:17:06 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/22 12:42:12 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,7 @@ int	ft_main_loop(t_minishell **minishell)
 		if (!ft_process_input(minishell, input))
 		{
 			//ft_safe_free((void *)input);
+			//en algun lado estoy guardando input en vez de duplicarlo porque me peta al liberar ahora
 			return (ft_free_minishell(minishell), ft_printf("Error in process input \n"), -1);
 		}
 		ft_printf("\nANTES DE ANADIR BRCKT TOKEN\n");

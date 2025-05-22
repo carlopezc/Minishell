@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/21 16:30:28 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/22 12:38:59 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,32 +120,13 @@ char	*ft_expand(char *input, int *i, t_env *env)
 	while (tmp)
 	{
 		if (!ft_strncmp(name_var, tmp->name, ft_max_strlen(tmp->name, name_var)))
-		{
-			free(name_var);
-			//Falla en algunos casos comiendose un caracter o anadiendolo
-			//(*i)--;
-			return (ft_strdup(tmp->value));
-		}
+			return (free(name_var), ft_strdup(tmp->value));
 		tmp = tmp->next;
 	}
 	free(name_var);
 	return (ft_strdup(""));
 }
-/*
-char	*ft_check_var(t_minishell *minishell, char *input, int *i)
-{
-	if (!input || input[*i] != '$')
-		return (NULL);
-	(*i)++;
-	if (input[*i] == '?')
-	{
-		(*i)++;
-		ft_printf("Aqui ira el codigo de salida\n");
-		return (ft_strdup("0"));
-	}
-	return (ft_expand(input, i, minishell->env));
-}
-*/
+
 char	*ft_strjoin_char(char *str, char c)
 {
 	int	i;
@@ -288,13 +269,19 @@ t_token_type	ft_is_operator(char **value, char *input, int *i)
 		*i += 2;
 		return (AND);
 	}
-	else
+	else if (flag)
+	{
+		(*i)--;
 		return (NOT_SET);
+	}
+	return (NOT_SET);
 }
 
 int	ft_is_builtin(char *input)
 {
 	//Si pwd tiene argumentos error
+	if (*input == '(')
+		input = input + 1;
 	if (!ft_strncmp(input, "echo", 4))
 		return (1);
 	else if (!ft_strncmp(input, "cd", 2))
@@ -368,8 +355,6 @@ int	ft_process_input(t_minishell **minishell, char *input)
 		return (0);
 	if (!ft_parsing(&input, minishell))
 		return (0);
-	ft_printf("\n TRAS PARSING\n");
-	ft_printf("%s\n", input);
 	while (input[i])
 	{
 		while (input[i] && input[i] == ' ')

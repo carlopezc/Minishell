@@ -6,14 +6,11 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:15:05 by carlopez          #+#    #+#             */
-/*   Updated: 2025/04/20 20:52:49 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/05/22 13:27:14 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 # include "../header/ft_minishell.h"
-
-char	*token_type_to_str(t_token_type type);
-
 
 void	ft_free_env(t_env **env)
 {
@@ -50,17 +47,11 @@ void	ft_free_minishell(t_minishell **minishell)
 		ft_free_env(&(*minishell)->export);
 	if ((*minishell)->undefined_var)
 		ft_free_env(&(*minishell)->undefined_var);
-	if ((*minishell)->s_input)
-	{
-		ft_free_array((*minishell)->s_input);
-		(*minishell)->s_input = NULL;
-	}
 	free(*minishell);
 	*minishell = NULL;
 	return ;
 }
 
-//solo para comprobar
 void	ft_print_tokens(t_token	*token)
 {
 	t_token	*tmp;
@@ -70,6 +61,7 @@ void	ft_print_tokens(t_token	*token)
 	{
 		ft_printf("El input es %s\n", tmp->str);
 		ft_printf("El token type es: %s\n", token_type_to_str(tmp->type));
+		//ft_printf("El next es %p\n", tmp->next);
 		tmp = tmp->next;
 	}
 	return ;
@@ -89,48 +81,42 @@ void	ft_manage_shell_signals()
 	signal(SIGINT, ft_manage_sigint);
 	signal(SIGQUIT, SIG_IGN);
 }
+
 void	ft_manage_child_signals()
 {
 	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
 }
 
-int		ft_main_loop(t_minishell **minishell)
+int	ft_main_loop(t_minishell **minishell)
 {
 	char	*input;
 
 	while (1)
 	{
 		input = readline("minishell> ");
-			//input puede ser nulo si recibe el EOF (CTRL + D)
+			//input puede ser nulo si recibe el EOF (CTRL + D), esto puede que este mal
 		if (!input)
 			return (ft_printf("exit\n"), 0);
 		if (*input)
 			add_history(input);
 		if (!ft_process_input(minishell, input))
 		{
-			if (input)
-				free(input);
+			//ft_safe_free((void *)input);
+			//en algun lado estoy guardando input en vez de duplicarlo porque me peta al liberar ahora
 			return (ft_free_minishell(minishell), ft_printf("Error in process input \n"), -1);
 		}
-		ft_executor(*minishell);
-		if (input)
-			free(input);
-		input = NULL;
-		/*
-		ft_printf("\nLISTA DE TOKENS : \n");
+		ft_printf("\nANTES DE ANADIR BRCKT TOKEN\n");
 		ft_print_tokens((*minishell)->tokens);
-		ft_printf("\nENVIRONMENT : \n");
-		ft_print_array((*minishell)->env);
-		ft_printf("\nEXPORT : \n");
-		ft_print_array((*minishell)->export);
-		*/
+		if (!ft_add_bracket_token(&((*minishell)->tokens)))
+			return (ft_printf("Error in brackets tokenization \n"), -1);
+		ft_printf("\nTOKENS FINALES: \n");
+		ft_print_tokens((*minishell)->tokens);
+		ft_executor(*minishell);
+		ft_safe_free((void **)&input);
+		input = NULL;
 		ft_free_tokens(minishell);
 		(*minishell)->tokens = NULL;
-		/*
-		ft_free_array((*minishell)->env_temporal);
-		(*minishell)->env_temporal = NULL;
-		*/
 	}
 }
 

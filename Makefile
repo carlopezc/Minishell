@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+         #
+#    By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/27 15:14:10 by carlopez          #+#    #+#              #
-#    Updated: 2025/05/06 13:30:01 by lbellmas         ###   ########.fr        #
+#    Updated: 2025/05/16 20:01:43 by carlotalcd       ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,7 @@ AR         = ar
 ARFLAGS    = -rcs
 CC         = cc
 
-RFLAGS	= -L/usr/local/lib -I/usr/local/include -lreadline -lncurses
+RFLAGS = -I/opt/homebrew/opt/readline/include -L/opt/homebrew/opt/readline/lib -lreadline -lhistory
 CFLAGS     = -g -Wall -Wextra -Werror #-fsanitize=address 
 OFLAGS     = -MMD -MF $(@:.o=.d)
 
@@ -38,7 +38,7 @@ LIB        = header/ft_minishell.h
 LIBGET     = $(GETDIR)/get_next_line_bonus.h
 
 # Archivos fuente
-SRC        = ft_tokenization.c ft_executor.c
+SRC        = ft_tokenization.c ft_parsing.c ft_executor.c ft_split_cmd.c
 BSRC		= 
 UTILS      = ft_utils.c
 GET        = get_next_line_bonus.c get_next_line_utils_bonus.c
@@ -126,6 +126,7 @@ clean:
 	@rm -rf $(OBJDIR)
 	@rm -rf $(DEPDIR)
 	@rm -rf $(OBJ_GETDIR)
+	@rm -rf $(OUTILSDIR)
 	@$(MAKE) -C $(PRINTFDIR) clean --silent
 
 # Limpiar todo

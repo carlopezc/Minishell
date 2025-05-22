@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/05/14 16:01:11 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/05/22 16:56:08 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -861,6 +861,7 @@ t_pipex	*ft_init_pipex()
 	pipex->command = NULL;
 	pipex->path = NULL;
 	pipex->pid = 0;
+	pipex->brackets_count = 0;
 	pipex->heredoc = 0;
 	return (pipex);
 }
@@ -959,28 +960,80 @@ t_token	*ft_exectime(t_pipex *pipex, t_minishell *shell, t_token *tmp, t_token *
 	else
 	{
 		while (save && save->type != PIPE && save->type != AND && save->type != OR)
+		{
+			if (save->type == C_BRACKET)
+				pipex->brackets_count--;
 			save = save->next;
+		}
+	}
+	return (save);
+}
+
+t_token	*ft_and(t_pipex *pipex, t_minishell *shell, t_token *save)
+{
+	int	brackets;
+
+	brackets = pipex->brackets_count;
+	while (pipex->childs > 0)
+	{
+		wait(&shell->status);
+		pipex->childs--;
+	}
+	if (shell->status != 0)
+	{
+		while (save && (save->type != AND || pipex->brackets_count != brackets) && (save->type != OR || brackets != pipex->brackets_count))
+		{
+			if (save->type == O_BRACKET)
+				pipex->brackets_count += 1;
+			if (save->type == C_BRACKET)
+				pipex->brackets_count -= 1;
+			save = save->next;
+		}
+	}
+	return (save);
+}
+
+t_token	*ft_or(t_pipex *pipex, t_minishell *shell, t_token *save)
+{
+	int	brackets;
+
+	brackets = pipex->brackets_count;
+	while (pipex->childs > 0)
+	{
+		wait(&shell->status);
+		pipex->childs--;
+	}
+	if (shell->status == 0)
+	{
+		while (save && (save->type != AND || pipex->brackets_count != brackets) && (save->type != OR || brackets != pipex->brackets_count))
+		{
+			if (save->type == O_BRACKET)
+				pipex->brackets_count += 1;
+			if (save->type == C_BRACKET)
+				pipex->brackets_count -= 1;
+			save = save->next;
+		}
 	}
 	return (save);
 }
 
 t_token	*ft_killchilds(t_pipex *pipex, t_minishell *shell, t_token *save)
 {
-	wait(&shell->status);
-	pipex->childs--;
-	if (shell->status != 0 && save && save->type == AND)
+	if (save && save->type == AND)
+		save = ft_and(pipex, shell, save->next);
+	else if (save && save->type == OR)
+		save = ft_or(pipex, shell, save->next);
+	else
 	{
-		ft_terminator(pipex);
-		return(NULL) ;
+		while (pipex->childs > 0)
+		{
+			wait(&shell->status);
+			pipex->childs--;
+		}
 	}
-	if (shell->status == 0 && save && save->type == OR)
-	{
-		ft_terminator(pipex);
-		return(NULL) ;
-	}
-	if (save && (save->type == AND || save->type == OR))
-		save = save->next;
-	return (save);
+	if (save)
+		return (save);
+	return (ft_terminator(pipex), NULL);
 }
 
 int	ft_executor(t_minishell *shell)
@@ -995,6 +1048,11 @@ int	ft_executor(t_minishell *shell)
 	{
 		while (save && save->type != AND && save->type != OR)
 		{
+			if (save && save->type == O_BRACKET)
+			{
+				pipex->brackets_count += 1;
+				save = save->next;
+			}
 			while (save && save->type != PIPE && save->type != AND && save->type != OR)//(save && save->type != AND && save->type != OR)
 			{
 				if (save->type == COMMAND || save->type == BUILTIN || save->type == EXEC)
@@ -1002,13 +1060,17 @@ int	ft_executor(t_minishell *shell)
 				while (pipex->pid == 0 && save && (save->type == REDIR_IN || save->type == REDIR_OUT || save->type == HEREDOC || save->type == APPEND))
 					save = ft_analisis_redir(save, pipex);
 				save = ft_exectime(pipex, shell, tmp, save);
+				if (save && save->type == C_BRACKET)
+				{
+					pipex->brackets_count -= 1;
+					save = save->next;
+				}
 			}
 			if (save && save->type == PIPE)
 				save = save->next;
 			ft_arrange_fd(pipex);
 		}
-		while (pipex->childs > 0)
-			save = ft_killchilds(pipex, shell, save);
+		save = ft_killchilds(pipex, shell, save);
 	}
 	return (ft_free_pipex(pipex), 0);
 }

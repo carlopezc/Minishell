@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 14:59:32 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/05/22 17:45:40 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/26 11:28:31 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <signal.h>
+#include <dirent.h>
 
 typedef enum e_token_type
 {
@@ -125,5 +126,7 @@ char	*ft_check_var(t_minishell *minishell, char *input, int *i);
 t_token	*ft_create_token(char *str, t_token_type type);
 void	ft_connect_token(t_token **tokens, t_token *new, t_token *prev);
 int	ft_add_bracket_token(t_token **token);
+int	ft_check_wildcard(char **input);
+char	*ft_create_array(char **s_input);
 
 #endif

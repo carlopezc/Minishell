@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 17:57:16 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/26 22:49:05 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/27 12:59:07 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,7 @@ int	ft_delete_item(char ***elements, char *delete)
 	*elements = new;
 	return (1);	
 }
-
+/*
 int	ft_compare_elements(char *str, int flag, char ***elements)
 {
 	int	i;
@@ -177,7 +177,190 @@ int	ft_compare_elements(char *str, int flag, char ***elements)
 	}
 	return (1);
 }
+*/
 
+int	ft_get_size(char *input, char c)
+{
+	int 	i;
+	int	size;
+
+	i = 0;
+	size = 0;
+	while (input[i])
+	{
+		if (input[i] == c)
+			size++;
+		i++;
+	}
+	if (input[i - 1] != c)
+		size++;
+	return (size);
+}
+
+int	ft_fill_word(char *input, int *i, char **s_input, char c)
+{
+	int	start;
+
+	start = *i;
+	while (input[*i])
+	{
+		if (input[*i] == c)
+		{
+			(*i)++;
+			*s_input = ft_substr(input, start, *i - start);
+			if (!*s_input)
+				return (0);
+			return (1);
+		}
+		(*i)++;
+	}
+	if (!input[*i] && input[*i - 1] != '*')
+		*s_input = ft_substr(input, start, *i - start);
+	if (!*s_input)
+		return (0);
+	return (1);
+}
+
+char	**ft_split_asterisk(char *input, char c)
+{
+	int	i;
+	int	j;
+	int	size;
+	char	**s_input;
+
+	i = 0;
+	j = 0;
+	size = ft_get_size(input, c);
+	s_input = (char **)malloc((size + 1) * sizeof(char *));
+	if (!s_input || !*s_input)
+		return (NULL);
+	s_input[size] = NULL;
+	while (i < size)
+	{
+		if (!ft_fill_word(input, &j, &s_input[i], c))
+			return (ft_free_array(s_input), NULL);
+		i++;
+	}
+	return (s_input);
+}
+
+int	ft_check_asterisk(char *input, char ***elements)
+{
+	char	**s_input;
+	int	i;
+	int	j;
+	int	q;
+	int	flag;
+
+	i = 0;
+	j = 0;
+	q = 0;
+	flag = 0;
+	ft_printf("Entra en check asterisk\n");
+	s_input = ft_split_asterisk(input, '*');
+	if (!s_input || !*s_input)
+		return (0);
+	ft_printf("El split es: \n");
+	while (s_input[i])
+		ft_printf("%s\n", s_input[i++]);
+	i = 0;
+	ft_printf("Entra ya en el bucle para comprobar\n");
+	while ((*elements)[j])
+	{
+		ft_printf("A comprobar: %s\n", (*elements)[j]);
+		while (s_input[i])
+		{
+			//caso en que solo hay un asterisco
+			ft_printf("Con: %s\n", s_input[i]);
+			if (!ft_strncmp(s_input[i], "*", 2))
+			{
+				ft_printf("Entra en asterisco solo\n");
+				i++;
+			}
+			else if (ft_strchr(s_input[i], '*'))
+			{
+				ft_printf("Entra en asterisco y letras\n");
+				while ((*elements)[j][q])
+				{
+					if (i == 0)
+					{
+						ft_printf("Entra en i = 0\n");
+						if (!ft_strncmp(&(*elements)[j][0], s_input[i], ft_strlen(s_input[i]) - 1))
+						{
+							ft_printf("Encuentra coincidencia\n");
+							q = q + ft_strlen(s_input[i]) - 1;
+							flag = 1;
+							break ;
+						}
+						flag = -1;
+						ft_printf("Sale\n");
+						break ;
+						//primero, tiene que empezar con las letras
+					}
+					if (!ft_strncmp(&(*elements)[j][q], s_input[i], ft_strlen(s_input[i]) - 1))
+					{
+						ft_printf("Encuentra coincidencia\n");
+						q = q + ft_strlen(s_input[i]) - 1;
+						flag = 1;
+						break ;
+						//menos uno para que no pille el asterisco
+					}
+					q++;
+					//si no, que lo encuentre despues de la i que lleve
+				}
+				if ((!((*elements)[j][q]) && !flag) || flag == -1)
+				{	
+					ft_printf("Borra\n");
+					if (!ft_delete_item(elements, (*elements)[j]))
+						return (0);
+					flag = 1;
+					//lo elimina y no suma
+					break ;
+				}
+				else
+					i++;
+				//si no hay coincidencia que lo borre y no sume,
+				//si la hay que sume
+				//letras + * final
+			}
+			else
+			{
+				ft_printf("Entra en solo letras\n");
+				while ((*elements)[j][q])
+				{
+					if (!ft_strncmp(&(*elements)[j][q], s_input[i], ft_strlen(s_input[i]) + 1))
+					{
+						flag = 1;
+						break ;
+					}
+					q++;
+				}
+				if (!(*elements)[j][q] && !flag)
+				{
+					ft_printf("Borra\n");
+					if (!ft_delete_item(elements, (*elements)[j]))
+						return (0);
+					flag = 1;
+					break ;
+					//lo elimina y no suma
+				}
+				else
+					i++;	
+				//caso solo letras
+			}
+			flag = 0;
+		}
+		ft_printf("Sale del bucle s_input\n");
+		i = 0;
+		q = 0;
+		if (flag != 1)
+			j++;
+		flag = 0;
+	}
+	return (1);
+}
+
+/*
 int	ft_check_asterisk(char *input, int *i, int flag, char ***elements)
 {
 	char	*str;
@@ -220,7 +403,7 @@ int	ft_check_asterisk(char *input, int *i, int flag, char ***elements)
 		return (0);
 	return (1);
 }
-
+*/
 int	ft_parse_asterisk(char **input)
 {
 	int	i;
@@ -272,30 +455,18 @@ int	ft_parse_asterisk(char **input)
 char	*ft_expand_wildcard(char *input)
 {
 	char	**elements;
-	int	i;
-	int	flag;
 
-	i = 0;
-	flag = 0;
+	ft_printf("ENTRAMOS A EXPANDIR WILDCARD \n");
 	elements = ft_get_elements();
 	if (!elements)
 		return (ft_free_array(elements), NULL);
 	if (!ft_parse_asterisk(&input))
 		return (ft_free_array(elements), NULL);
+	ft_printf("Tras el parseo de asteriscos: %s\n", input);
 	if (!ft_strncmp(input, "*", 2))
 		return (ft_create_array(elements));
-	while (input[i])
-	{
-		if (input[i] == '*')
-		{
-			ft_check_asterisk(input, &i, flag, &elements);
-			flag = 1;
-		}
-		i++;
-	}
-	if (!input[i] && input[i - 1] && input[i - 1] != '*')
-		ft_check_asterisk(input, &i, flag, &elements);
-	ft_print_elements(elements);
+	if (!ft_check_asterisk(input, &elements))
+		return (NULL);
 	return (ft_create_array(elements));
 }
 

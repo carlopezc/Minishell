@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/05/22 16:56:08 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/05/27 16:21:51 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,18 @@ void	ft_add_node(t_env **list, t_env *prev, t_env *node)
 	return ;
 }
 
+void	ft_old_pwd(t_env **env, t_env *pwd)
+{
+	t_env	*old_pwd;
+	t_env	*new;
+
+	old_pwd = *env;
+	while (old_pwd && old_pwd->next && ft_strncmp((old_pwd->next)->name, "OLDPWD", ft_max_strlen("OLDPWD", (pwd->next)->name)))
+		old_pwd = old_pwd->next;
+	new = ft_create_node(ft_strdup("OLDPWD"), ft_strdup(pwd->value));
+	ft_add_node(env, old_pwd, new);
+}
+
 char	*ft_correct_cd(char *path)
 {
 	char	*dots;
@@ -145,6 +157,8 @@ void	ft_cd(t_minishell *shell, char *cmd)
 	node = NULL;
 	home = NULL;
 	pwd = shell->env;
+	while (pwd && pwd->next && ft_strncmp((pwd->next)->name, "PWD", ft_max_strlen("PWD", (pwd->next)->name)))
+		pwd = pwd->next;
 	if (!ft_strncmp(cmd, "cd", 3) || !(ft_strncmp(cmd, "cd ~", 5)))
 	{
 		//avanza hasta que encuentra el pwd
@@ -158,6 +172,7 @@ void	ft_cd(t_minishell *shell, char *cmd)
 			home = home->next;
 		if (!home)
 			return ;
+		ft_old_pwd(&shell->env, pwd->next);
 		node = ft_create_node(ft_strdup("PWD"), ft_strdup(home->value));
 		ft_add_node(&shell->env, pwd, node);
 		chdir(home->value);
@@ -172,6 +187,7 @@ void	ft_cd(t_minishell *shell, char *cmd)
 			return ;
 		if (access(cmd + 3, F_OK) == 0)
 		{
+			ft_old_pwd(&shell->env, pwd->next);
 			node = ft_create_node(ft_strdup("PWD"), ft_strdup(cmd + 3));
 			ft_add_node(&shell->env, pwd, node);
 			chdir(cmd + 3);
@@ -180,6 +196,7 @@ void	ft_cd(t_minishell *shell, char *cmd)
 		else
 			return ;
 	}
+	ft_old_pwd(&shell->env, pwd ->next);
 	if (!ft_strncmp(ft_strchr(cmd, ' ') + 1, "..", 2))
 	{
 		pwd = shell->env;
@@ -863,6 +880,8 @@ t_pipex	*ft_init_pipex()
 	pipex->pid = 0;
 	pipex->brackets_count = 0;
 	pipex->heredoc = 0;
+	pipex->pipe[0][0] = 0;
+	pipex->pipe[1][1] = 0;
 	return (pipex);
 }
 
@@ -909,7 +928,7 @@ t_token	*ft_analisis_comands(t_pipex *pipex, t_minishell *shell, t_token **save)
 	if (ft_strncmp("exit", (*save)->str, 5) == 0)
 		exit(0);
 	tmp = *save;
-	if ((*save)->type == COMMAND || (*save)->type == EXEC || !ft_strncmp("pwd", (*save)->str, 3) || !ft_strncmp("echo", (*save)->str, 4) || (ft_strncmp("cd", (*save)->str, 2) && ((!ft_strncmp("env", (*save)->str, 3) && ft_strncmp("env ", (*save)->str, 4)) || (!ft_strncmp("export", (*save)->str, 6) && ft_strncmp("export ", (*save)->str, 7)))))
+	if ((*save)->type == COMMAND || (*save)->type == EXEC || !ft_strncmp("pwd", (*save)->str, 3) || !ft_strncmp("echo", (*save)->str, 4) || (ft_strncmp("cd", (*save)->str, 2) || ((!ft_strncmp("env", (*save)->str, 3) && ft_strncmp("env ", (*save)->str, 4)) || (!ft_strncmp("export", (*save)->str, 6) && ft_strncmp("export ", (*save)->str, 7)))))
 	{
 		while (*save && (*save)->type != PIPE && (*save)->type != AND && (*save)->type != OR)
 			*save = (*save)->next;
@@ -922,7 +941,7 @@ t_token	*ft_analisis_comands(t_pipex *pipex, t_minishell *shell, t_token **save)
 			ft_manage_child_signals();
 			pipex->command = ft_split(tmp->str, ' ');
 			if (ft_path(&shell->env, &pipex, pipex->command[0]) == 0)
-				return (NULL);
+				exit (0);
 		}
 		*save = tmp->next;
 	}

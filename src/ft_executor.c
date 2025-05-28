@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/05/28 13:56:43 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/28 21:06:01 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -430,7 +430,7 @@ void	ft_export(t_minishell *shell, char *cmd)
 			return ;
 		if (ft_strchr(var[i], '='))
 		{
-			if (!ft_check_duplicated(var[i], &shell->export, &shell->undefined_var))
+			if (!ft_check_duplicated(var[i], &shell->env, &shell->undefined_var))
 			{
 				node = ft_create_node(ft_get_name(var[i]), ft_get_value(var[i]));
 				ft_connect_node(&shell->env, node);
@@ -441,8 +441,8 @@ void	ft_export(t_minishell *shell, char *cmd)
 		{	
 			if (!ft_check_duplicated(var[i], &shell->env, &shell->undefined_var))
 			{
-				node = ft_create_node(ft_get_name(var[i]), ft_get_value(var[i]));
-				ft_connect_node(&shell->env, node);
+				node = ft_create_node(ft_get_name(var[i]), NULL);
+				ft_connect_node(&shell->undefined_var, node);
 			}
 		}
 		flag = 0;

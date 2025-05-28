@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 12:44:53 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/28 17:12:06 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/28 21:08:17 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,7 +128,7 @@ void	ft_unquote(char **input, int flag)
 	unquoted = NULL;
 	while ((*input)[i])
 	{
-		if (!(*input)[i - 1] || (*input)[i - 1] != '\\')
+		if (i > 0 && (!(*input)[i - 1] || (*input)[i - 1] != '\\'))
 		{
 			if (((*input)[i] == '\'' || (*input)[i] == '\"') && (flag || asterisk) && in_word)
 			{

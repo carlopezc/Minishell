@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 09:31:50 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/05/14 15:01:56 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/28 20:49:39 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,10 @@ static int	ft_word_count(char const *w, char c)
 	in_word = 0;
 	quote.type = 0;
 	quote.flag = 0;
-	while (w[p] != '\0')
+	while (w && w[p])
 	{
 		//lo de pasar el puntero de la posicion es porque me da pereza cambiar los parametros que recibe pero no se usa luego los cambio
-		if (!w[p - 1] || w[p - 1] != '\\')
+		if (p > 0 && (!w[p - 1] || w[p - 1] != '\\'))
 			ft_check_quote(&quote, w[p], &p);
 		if (w[p] != c && in_word == 0)
 		{
@@ -52,7 +52,7 @@ void	ft_free_todo(int p, char **word)
 	free (word);
 	return ;
 }
-
+/*
 int	ft_count_letters(char const *s, char c, int i)
 {
 	int	letters;
@@ -72,7 +72,53 @@ int	ft_count_letters(char const *s, char c, int i)
 	}
 	return (letters);
 }
+*/
+int	ft_cpy(char const *s, char **word, char c, int count)
+{
+	int		p;
+	t_quote quote;
+	int	i;
 
+	p = 0;
+	i = 0;
+	quote.flag = 0;
+	quote.type = 0;
+	while (p < count)
+	{
+		word[p] = NULL;
+		while (s[i] == c)
+			i++;
+		if (i > 0 && (!s[i - 1] || s[i - 1] != '\\'))
+			ft_check_quote(&quote, s[i], &i);
+		while (s[i] && (s[i] != c || (s[i] == c && quote.flag == 1)))
+		{
+			word[p] = ft_strjoin_char(word[p], s[i++]);
+			if (!word[p])
+				return (0);
+			if (i > 0 && (!s[i - 1] || s[i - 1] != '\\'))
+				ft_check_quote(&quote, s[i], &i);
+		}
+		p++;
+	}
+	word[p] = NULL;
+	return (1);
+}
+
+char	**ft_split_cmd(char const *s, char c)
+{
+	char	**word;
+	int		count;
+
+	count = ft_word_count(s, c);
+	word = (char **)malloc((count + 1) * sizeof(char *));
+	if (!word)
+		return (NULL);
+	if (!ft_cpy(s, word, c, count))
+		return (NULL);
+	return (word);
+}
+
+/*
 static char	**ft_cpy(char const *s, char **word, char c, int count)
 {
 	int		p;
@@ -124,6 +170,7 @@ char	**ft_split_cmd(char const *s, char c)
 	word = ft_cpy(s, word, c, count);
 	return (word);
 }
+*/
 /*
 int	main()
 {

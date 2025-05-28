@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/05/27 16:21:51 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/05/28 14:16:48 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -638,10 +638,32 @@ static void	ft_docs_in_child(t_pipex *pipex)
 	exit(0);
 }
 
+int	ft_check_docs(int *docs)
+{
+	int	p;
+
+	p = 0;
+	while (docs[p])
+	{
+		if (docs[p] == -1)
+		{
+			perror(NULL);
+			return (-1);
+		}
+		p++;
+	}
+	return (0);
+}
+
 void	ft_docs_in(t_pipex *pipex)
 {
 	int		tmp_pipe[2];
 	pipe(tmp_pipe);
+	if (pipex->docs_in)
+	{
+		if (ft_check_docs(pipex->docs_in) == -1)
+			exit (1);
+	}
 	pipex->pid = fork();
 	if (pipex->pid == 0)
 	{
@@ -673,6 +695,8 @@ void	ft_exec(t_minishell *shell, t_pipex *pipex, t_token *save)
 		ft_docs_in(pipex);
 	if (pipex->docs_out)
 	{
+		if (ft_check_docs(pipex->docs_out) == -1)
+			exit (1);
 		if (pipex->docs_out[1] == 0 && pipex->pipe[1][1] == 0)
 		{
 			dup2(pipex->docs_out[0], 1);
@@ -821,11 +845,8 @@ void	ft_free_pipex(t_pipex *pipex)
 	pipex->command = NULL;
 }
 
-static t_token	*ft_redir2(t_pipex *pipex, t_token *save, t_token_type type)
+static t_token	*ft_redir2(t_pipex *pipex, t_token *save, t_token_type type, int count)
 {
-	int	count;
-
-	count = 0;
 	while (save && save->type == type)
 	{
 		if (type == REDIR_IN)
@@ -838,6 +859,47 @@ static t_token	*ft_redir2(t_pipex *pipex, t_token *save, t_token_type type)
 		save = save->next;
 	}
 	return (save);
+}
+
+int	ft_subint_out(t_pipex *pipex, int add)
+{
+	int	*new;
+	int	count;
+
+	count = 0;
+	while (pipex->docs_out[count])
+		count++;
+	new = (int *)malloc(sizeof(int) * (count + add));
+	count = 0;
+	while (pipex->docs_out[count])
+	{
+		new[count] = pipex->docs_out[count];
+		count++;
+	}
+	free(pipex->docs_out);
+	pipex->docs_out = new;
+	return (count);
+}
+
+
+int	ft_subint_in(t_pipex *pipex, int add)
+{
+	int	*new;
+	int	count;
+
+	count = 0;
+	while (pipex->docs_in[count])
+		count++;
+	new = (int *)malloc(sizeof(int) * (count + add));
+	count = 0;
+	while (pipex->docs_in[count])
+	{
+		new[count] = pipex->docs_in[count];
+		count++;
+	}
+	free(pipex->docs_in);
+	pipex->docs_in = new;
+	return (count);
 }
 
 t_token *ft_redir(t_token *save, t_token_type type, t_pipex *pipex)
@@ -853,17 +915,33 @@ t_token *ft_redir(t_token *save, t_token_type type, t_pipex *pipex)
 		count++;
 		temp = temp->next;
 	}
-	if (type == REDIR_IN)
+	temp = save;
+	if (type == REDIR_IN && pipex->docs_in)
+		count = ft_subint_in(pipex, count);
+	else if (type != REDIR_IN && pipex->docs_out)
+		count = ft_subint_out(pipex, count);
+	else if (type == REDIR_IN)
+	{
 		pipex->docs_in = (int *)malloc(count * sizeof(int));
+		count = 0;
+	}
 	else
+	{
 		pipex->docs_out = (int *)malloc(count * sizeof(int));
+		count = 0;
+	}
 	if (!pipex->docs_in && !pipex->docs_out)
 		exit(0);
-	save = ft_redir2(pipex, save, type);
+	save = ft_redir2(pipex, save, type, count);
+	while (temp && temp->type == type)
+	{
+		count++;
+		temp = temp->next;
+	}
 	if (type == REDIR_IN)
-		pipex->docs_in[count - 1] = 0;
+		pipex->docs_in[count] = 0;
 	else
-		pipex->docs_out[count - 1] = 0;
+		pipex->docs_out[count] = 0;
 	return (save);
 }
 

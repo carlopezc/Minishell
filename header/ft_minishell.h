@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 14:59:32 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/05/26 11:28:31 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/28 11:23:37 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,7 @@ typedef struct s_quote
 
 typedef struct s_pipex
 {
+	int	brackets_count;
 	int	*docs_in;
 	int	*docs_out;
 	int	pipe[2][2];
@@ -126,7 +127,7 @@ char	*ft_check_var(t_minishell *minishell, char *input, int *i);
 t_token	*ft_create_token(char *str, t_token_type type);
 void	ft_connect_token(t_token **tokens, t_token *new, t_token *prev);
 int	ft_add_bracket_token(t_token **token);
-int	ft_check_wildcard(char **input);
+int	ft_check_wildcard(t_token **tokens);
 char	*ft_create_array(char **s_input);
 
 #endif

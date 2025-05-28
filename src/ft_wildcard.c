@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 17:57:16 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/27 12:59:07 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/28 12:56:08 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,65 +119,6 @@ int	ft_delete_item(char ***elements, char *delete)
 	*elements = new;
 	return (1);	
 }
-/*
-int	ft_compare_elements(char *str, int flag, char ***elements)
-{
-	int	i;
-	int	check;
-	int	j;
-	int	equal;
-
-	i = 0;
-	check = 0;
-	j = 0;
-	equal = 0;
-	ft_printf("flag es %d\n", flag);
-	ft_printf("str es %s\n", str);
-	while ((*elements)[i])	
-	{
-		if (!flag)
-		{
-			if (ft_strncmp((*elements)[i], str, ft_strlen(str)))
-			{
-				if (!ft_delete_item(elements, (*elements)[i]))
-					return (0);
-				check = 1;
-			}
-		}
-		else
-		{
-			//caso de entre asteriscos
-			while ((*elements)[i][j])
-			{
-				if (flag == 1 && !ft_strncmp(&(*elements)[i][j], str, ft_strlen(str)))
-				{
-					equal = 1;
-					break ;
-				}
-				else if (flag == 2 && !ft_strncmp(&(*elements)[i][j], str, ft_strlen(str) + 1))
-				{
-					ft_printf("sale\n");
-					equal = 1;
-					break ;
-				}
-				j++;
-			}
-			if (!(*elements)[i][j] && !equal)
-			{
-				if (!ft_delete_item(elements, (*elements)[i]))
-					return (0);
-				check = 1;
-			}
-			equal = 0;
-			j = 0;
-		}
-		if (!check)
-			i++;
-		check = 0;
-	}
-	return (1);
-}
-*/
 
 int	ft_get_size(char *input, char c)
 {
@@ -260,7 +201,6 @@ int	ft_check_asterisk(char *input, char ***elements)
 	s_input = ft_split_asterisk(input, '*');
 	if (!s_input || !*s_input)
 		return (0);
-	ft_printf("El split es: \n");
 	while (s_input[i])
 		ft_printf("%s\n", s_input[i++]);
 	i = 0;
@@ -360,60 +300,12 @@ int	ft_check_asterisk(char *input, char ***elements)
 	return (1);
 }
 
-/*
-int	ft_check_asterisk(char *input, int *i, int flag, char ***elements)
-{
-	char	*str;
-	int	start;
-
-	start = 0;
-	str = NULL;
-	//if (*i == 0)
-	//	return (1);
-	if (!flag)
-	{
-		ft_printf("entra en no hay flag\n");
-		start = *i;
-		while (input[start] && input[start] != ' ' && start > 0)
-			start--;
-		str = ft_substr(input, start, *i);
-		ft_printf("str es: %s\n", str);
-		//(*i)++;
-	}
-	else
-	{
-		start = *i;
-		ft_printf("start es %d\ni es %d\n", start, *i);
-		if (!input[start])
-		{
-			start--;
-			flag = 2;
-		}
-		if (input[start] == '*' && start > 0)
-			start--;
-		while (input[start] && input[start] != '*' && start > 0)
-			start--;
-		if (input[start] == '*')
-			start++;
-		ft_printf("start es %d\ni es %d\n", start, *i);
-		str = ft_substr(input, start, *i - start);
-		ft_printf("str %s\n", str);
-	}
-	if (!ft_compare_elements(str, flag, elements))
-		return (0);
-	return (1);
-}
-*/
 int	ft_parse_asterisk(char **input)
 {
 	int	i;
-	int	len;
-	int	j;
 	char	*final_input;
 
-	len = 0;
 	i = 0;
-	j = 0;
 	final_input = NULL;
 	if (!*input)
 		return (1);
@@ -421,33 +313,14 @@ int	ft_parse_asterisk(char **input)
 	{
 		if ((*input)[i] == '*')
 		{
-			len++;
-			i++;
-			while ((*input)[i] == '*')
-				i++;
-		}
-		else
-		{
-			len++;
-			i++;
-		}
-	}
-	final_input = (char *)malloc((len + 1) * sizeof(char *));
-	if (!final_input)
-		return (0);
-	i = 0;
-	while ((*input)[i])
-	{
-		if ((*input)[i] == '*')
-		{
-			final_input[j++] = (*input)[i++];
+			final_input = ft_strjoin_char(final_input, (*input)[i++]);
 			while ((*input)[i] && (*input)[i] == '*')
 				i++;
 		}
 		else
-			final_input[j++] = (*input)[i++];
+			final_input = ft_strjoin_char(final_input, (*input)[i++]);
 	}
-	final_input[j] = '\0';
+	final_input = ft_strjoin_char(final_input, '\0');
 	*input = final_input;
 	return (1);
 }
@@ -457,12 +330,14 @@ char	*ft_expand_wildcard(char *input)
 	char	**elements;
 
 	ft_printf("ENTRAMOS A EXPANDIR WILDCARD \n");
+	ft_printf("EL input es %s\n", input);
 	elements = ft_get_elements();
 	if (!elements)
 		return (ft_free_array(elements), NULL);
+	/*
 	if (!ft_parse_asterisk(&input))
 		return (ft_free_array(elements), NULL);
-	ft_printf("Tras el parseo de asteriscos: %s\n", input);
+		*/
 	if (!ft_strncmp(input, "*", 2))
 		return (ft_create_array(elements));
 	if (!ft_check_asterisk(input, &elements))
@@ -470,27 +345,77 @@ char	*ft_expand_wildcard(char *input)
 	return (ft_create_array(elements));
 }
 
-int	ft_check_wildcard(char **input)
+int	ft_find_asterisk(char *input)
+{
+	char	*asterisk;
+	char	*space;
+
+	asterisk = ft_strchr(input, '*');
+	space = ft_strchr(input, ' ');
+	if (*input == '*' && (input + 1) && (*(input + 1) == '\"' || *(input + 1) == '\''))
+		return (0);
+	if (!space && asterisk)
+		return (1);
+	if (space && !asterisk)
+		return (0);
+	if (asterisk < space)
+		return (1);
+	return (0);
+}
+
+int	ft_check_wildcard(t_token **tokens)
 {
 	int	i;
-	char	**s_input;
-	char	*asterisk;
+	t_token	*tmp;
+	char	*str;
+	t_quote	quote;
+	char	*expanded;
+	char	*str_final;
+	char	*sub;
+	int	start;
 
 	i = 0;
-	s_input = ft_split(*input, ' ');
-	if (!s_input || !*s_input)
-		return (0);
-	while (s_input[i])
+	quote.type = 0;
+	quote.flag = 0;
+	tmp = *tokens;
+	start = 0;
+	sub = NULL;
+	str_final = NULL;
+	while (tmp)
 	{
-		asterisk = ft_strchr(s_input[i], '*');
-		if (asterisk && (!*(asterisk - 1) || *(asterisk - 1) != '\\'))
-			s_input[i] = ft_expand_wildcard(s_input[i]); 
-		if (!s_input[i])
+		str = tmp->str;
+		if (!ft_parse_asterisk(&str))
 			return (0);
-		i++;
+		while (str[i])
+		{
+			if (!str[i - 1] || str[i - 1] != '\\')
+				ft_check_quote(&quote, str[i], &i);
+			if (str[i] == '*' && !quote.flag && (!str[i - 1] || str[i - 1] != '\\'))
+			{
+				start = i;
+				while (str[start - 1] && str[start - 1] != ' ' && start > 0)
+					start--;
+				i++;
+				while (str[i] && str[i] != ' ' && (!str[i - 1] || str[i] != '\\'))
+					i++;
+				ft_printf("i es : %d\n", i);
+				sub = ft_substr(str, start, i - start);
+				ft_printf("sub es %s\n", sub);
+				expanded = ft_expand_wildcard(sub);
+				ft_printf("Expanded es : %s\n", expanded);
+				str_final = ft_strjoin(str_final, expanded);
+				ft_printf("str_final es : %s\n", str_final);
+				free(sub);
+				free(expanded);
+			}
+			if (str[i] && (str[i] != '\'' && str[i] != '\"') && !ft_find_asterisk(&str[i]))
+				str_final = ft_strjoin_char(str_final, str[i]);
+			i++;
+		}
+		i = 0;
+		tmp->str = ft_strdup(str_final);
+		free(str_final);
+		tmp = tmp->next;
 	}
-	*input = ft_create_array(s_input);
-	if (!*input)
-		return (0);
 	return (1);
 }

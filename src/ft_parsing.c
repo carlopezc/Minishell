@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 12:44:53 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/26 18:22:54 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/28 11:07:50 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ int	ft_count_quotes(char *str)
 		return (1);
 	return (0);
 }
-
+/*
 int	ft_strlen_quoted(char *input, int flag)
 {
 	int	i;
@@ -105,42 +105,67 @@ int	ft_strlen_quoted(char *input, int flag)
 	}
 	return (len);
 }
-
+*/
 void	ft_unquote(char **input, int flag)
 {
 	char *unquoted;
 	int	i;
-	int	j;
-	int	len;
+//	int	j;
+	//int	len;
 	int	in_word;
 	int	simp;
+	int	asterisk;
 
 	i = 0;
-	j = 0;
+//	j = 0;
 	in_word = 0;
 	simp = 0;
-	len = ft_strlen_quoted(*input, flag);
-	unquoted = (char *)malloc((len + 1) * sizeof(char));
-	if (!unquoted)
-		return ;
+	asterisk = 0;
+	//len = ft_strlen_quoted(*input, flag);
+	//unquoted = (char *)malloc((len + 1) * sizeof(char));
+	//if (!unquoted)
+		//return ;
+	unquoted = NULL;
 	while ((*input)[i])
 	{
 		if (!(*input)[i - 1] || (*input)[i - 1] != '\\')
 		{
-			if (((*input)[i] == '\'' || (*input)[i] == '\"') && flag && in_word)
+			if (((*input)[i] == '\'' || (*input)[i] == '\"') && (flag || asterisk) && in_word)
 			{
 				in_word = 0;
-				unquoted[j++] = (*input)[i++];
+				unquoted = ft_strjoin_char(unquoted, (*input)[i++]);
 			}
 			else if (((*input)[i] == '\"') && flag && ((ft_strchr(&(*input)[i], ' ')) && (ft_strchr(&(*input)[i + 1], '\"')) && (ft_strchr(&(*input)[i], ' ') < ft_strchr(&(*input)[i + 1], '\"'))))
 			{
-				unquoted[j++] = (*input)[i++];
 				in_word = 1;
+				unquoted = ft_strjoin_char(unquoted, (*input)[i++]);
+			}
+			else if (((*input)[i] == '\"') && ((ft_strchr(&(*input)[i], '*')) && (ft_strchr(&(*input)[i + 1], '\"')) && (ft_strchr(&(*input)[i], '*') < ft_strchr(&(*input)[i + 1], '\"'))))
+			{
+				if (!asterisk)
+					asterisk = 1;
+				else
+					asterisk = 0;
+				in_word = 1;
+				unquoted = ft_strjoin_char(unquoted, (*input)[i++]);
+			}
+			else if (((*input)[i] == '\'') && ((ft_strchr(&(*input)[i], '*')) && (ft_strchr(&(*input)[i + 1], '\'')) && (ft_strchr(&(*input)[i], '*') < ft_strchr(&(*input)[i + 1], '\''))))
+			{
+				if (!asterisk)
+					asterisk = 1;
+				else
+					asterisk = 0;
+				in_word = 1;
+				unquoted = ft_strjoin_char(unquoted, (*input)[i++]);
+				if (simp)
+					simp = 0;
+				else
+					simp = 1;
 			}
 			else if (((*input)[i] == '\'') && flag && ((ft_strchr(&(*input)[i], ' ')) && (ft_strchr(&(*input)[i + 1], '\'')) && (ft_strchr(&(*input)[i], ' ') < ft_strchr(&(*input)[i + 1], '\''))))
 			{
-				unquoted[j++] = (*input)[i++];
 				in_word = 1;
+				unquoted = ft_strjoin_char(unquoted, (*input)[i++]);
 				if (simp)
 					simp = 0;
 				else
@@ -160,21 +185,17 @@ void	ft_unquote(char **input, int flag)
 			else if ((*input)[i] == '\\' || (*input)[i] == ';')
 			{
 				if (simp || ((*input)[i + 1] && ((*input)[i + 1] == '(' || (*input)[i + 1] == ')')))
-					unquoted[j++] = (*input)[i++];
+					unquoted = ft_strjoin_char(unquoted, (*input)[i++]);
 				else
 					i++;
 			}
 			else
-				unquoted[j++] = (*input)[i++];
+				unquoted = ft_strjoin_char(unquoted, (*input)[i++]);
 		}
-		/*
-		else if ((*input)[i] == '\\' && !simp && (!(*input)[i + 1] || ((*input)[i + 1] != '(' && (*input)[i + 1] != ')')))
-			i++;
-			*/
 		else
-			unquoted[j++] = (*input)[i++];
+			unquoted = ft_strjoin_char(unquoted, (*input)[i++]);
 	}
-	unquoted[j] = '\0';
+	unquoted = ft_strjoin_char(unquoted, '\0');
 	*input = unquoted;
 	return ;
 }
@@ -194,10 +215,15 @@ char	*ft_create_array(char **s_input)
 	i++;
 	while (s_input[i])
 	{
-		tmp = ft_strjoin(" ", s_input[i]);
-		input = ft_strjoin(input, tmp);
-		free(tmp);
-		i++;
+		if (*s_input[i])
+		{
+			tmp = ft_strjoin(" ", s_input[i]);
+			input = ft_strjoin(input, tmp);
+			free(tmp);
+			i++;
+		}
+		else
+			i++;
 	}
 	return (input);
 }
@@ -233,11 +259,7 @@ void	ft_variable(char **input, t_minishell **minishell)
 					return ;
 				}
 				else
-				{
 					final = ft_strjoin(final, ft_expand(*input, &i, (*minishell)->env));
-					/*if ((*input)[i + 1] && ((*input)[i + 1] != '\'' && (*input)[i + 1] != '\"'))
-						i--;*/
-				}
 			}
 			else
 			{
@@ -247,10 +269,7 @@ void	ft_variable(char **input, t_minishell **minishell)
 			}
         	}
 		else
-		{
-			final = ft_strjoin_char(final, (*input)[i]);
-			i++;
-		}
+			final = ft_strjoin_char(final, (*input)[i++]);
 	}
 	*input = final;
 	return ;
@@ -267,8 +286,9 @@ char	*ft_quit_quotes(char **s_input, t_minishell **minishell)
 	while (s_input[i])
 	{
 		ft_variable(&s_input[i], minishell);
+		//en unquote dejo las comillas en los asteriscos y luego en la wildcard los quito, ademas que en los export y env que su valor tenga espacio tambien los tengo que dejar
 		ft_unquote(&s_input[i], flag);
-		if (!ft_strncmp(s_input[i], "export", 7))
+		if (!ft_strncmp(s_input[i], "export", 7) || !ft_strncmp(s_input[i], "env", 4))
 			flag = 1;
 		if (ft_check_operator(s_input[i]))
 			flag = 0;
@@ -277,6 +297,7 @@ char	*ft_quit_quotes(char **s_input, t_minishell **minishell)
 	input = ft_create_array(s_input);
 	return (input);
 }
+
 int	ft_quit_brackets(t_token *token, int *open, int *close)
 {
 	int	to_quit;
@@ -529,8 +550,6 @@ int	ft_add_bracket_token(t_token **token)
 
 	if (!ft_manage_brackets(*token))
 		return (0);
-	ft_printf("\nTRAS MANAGE BRACKETS\n");
-	ft_print_tokens(*token);
 	tmp = *token;
 	if (!tmp)
 		return (1);
@@ -588,8 +607,8 @@ int	ft_parsing(char **input, t_minishell **minishell)
 	char	*src;
 	char	**s_input;
 
-	if (!input || !*input)
-		return (0);
+	if (!*input | !(*input)[0])
+		return (1);
 	src = *input;
 	if (!ft_count_quotes(src))
 		return (ft_printf("Quotes not closed\n"), 0);
@@ -599,9 +618,7 @@ int	ft_parsing(char **input, t_minishell **minishell)
 	if (!s_input || !*s_input)
 		return (0);
 	*input = ft_quit_quotes(s_input, minishell);
-	if (!*input)
-		return (0);
-	ft_check_wildcard(input);
+	//ft_check_wildcard(input);
 	if (!*input)
 		return (0);
 	return (1);

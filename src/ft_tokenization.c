@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/22 17:51:35 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/27 18:12:08 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -220,7 +220,7 @@ t_token_type	ft_is_operator(char **value, char *input, int *i)
 	int	flag;
 
 	flag = 0;
-	if ((*(input + *i) == '('))
+	if (*(input + *i) == '(')
 	{
 		flag = 1;
 		(*i)++;

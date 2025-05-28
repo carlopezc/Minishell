@@ -6,7 +6,7 @@
 #    By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/27 14:17:48 by lbellmas          #+#    #+#              #
-#    Updated: 2024/11/28 10:51:15 by lbellmas         ###   ########.fr        #
+#    Updated: 2025/05/28 18:09:40 by carlopez         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -38,7 +38,7 @@ all: $(NAME)
 -include $(DEPS)
 
 $(OBJS): $(OBJDIR)/%.o : $(SRCDIR)/%.c | $(OBJDIR) $(DEPSDIR)
-	@printf "%-42b%b" "$(PURPLE)$(<):" "$(BLUE)$(@F)$(RESET)\n"
+	@: printf "%-42b%b" "$(PURPLE)$(<):" "$(BLUE)$(@F)$(RESET)\n"
 	@$(CC) $(CFLAGS) -c $< -o $@
 	@mv objs/*.d deps/
 
@@ -49,22 +49,22 @@ $(DEPSDIR):
 	@mkdir $(DEPSDIR)
 
 $(LIBFT):
-	@printf "%b" "$(BLUE)$(@F)$(RESET)\n"
+	@: printf "%b" "$(BLUE)$(@F)$(RESET)\n"
 	@$(MAKE) --silent -C $(LIBFTDIR) 
 
 $(NAME): $(OBJS) $(LIBFT) 
-	@printf "%-42b%b" "$(PURPLE)$(<):" "$(BLUE)$(@F)$(RESET)\n"
+	@: printf "%-42b%b" "$(PURPLE)$(<):" "$(BLUE)$(@F)$(RESET)\n"
 	@cp $(LIBFT) $(NAME)
 	@$(AR) $(ARFLAGS) $(NAME) $(OBJS)
 
 clean:
-	@printf "%b" "$(BLUE)$(@)ing...$(RESET)\n"
+	@: printf "%b" "$(BLUE)$(@)ing...$(RESET)\n"
 	@rm -rf $(OBJDIR)
 	@rm -rf $(DEPSDIR)
 	@$(MAKE) -C $(LIBFTDIR) clean --silent
 
 fclean: clean
-	@printf "%b" "$(BLUE)$(@)ing...$(RESET)\n"
+	@: printf "%b" "$(BLUE)$(@)ing...$(RESET)\n"
 	@rm -rf $(NAME)
 	@$(MAKE) -C $(LIBFTDIR) fclean --silent
 

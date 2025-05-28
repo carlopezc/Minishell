@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/27 18:12:08 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/28 17:15:25 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -540,22 +540,27 @@ int	ft_check_duplicated(char *str, t_env **env, t_env **undefined)
 			if (value)
 				ft_change_value(str, &tmp);
 			ft_safe_free((void **)&name_to_add);
+			//ft_safe_free((void **)&value);
 			return (1);
 		}
 		tmp = tmp->next;
 	}
-	tmp = *undefined;
-	while (tmp)
+	if (undefined)
 	{
-		if (!ft_strncmp(name_to_add, tmp->name, ft_max_strlen(name_to_add, tmp->name)))
+		tmp = *undefined;
+		while (tmp)
 		{
-			ft_free_node(tmp, undefined);
-			ft_safe_free((void **)&name_to_add);
-			return (0);
+			if (!ft_strncmp(name_to_add, tmp->name, ft_max_strlen(name_to_add, tmp->name)))
+			{
+				ft_free_node(tmp, undefined);
+				ft_safe_free((void **)&name_to_add);
+				return (0);
+			}
+			tmp = tmp->next;
 		}
-		tmp = tmp->next;
 	}
 	ft_safe_free((void **)&name_to_add);
+	//ft_safe_free((void **)&value);
 	return (0);
 }
 

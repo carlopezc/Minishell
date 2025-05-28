@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/05/22 16:56:08 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/05/28 13:56:43 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -258,6 +258,7 @@ void	ft_env(t_minishell *shell, char *cmd)
  
  	i = 0;
 	flag = 0;
+	ft_printf("Entra en env\n");
 	var = ft_split(cmd, ' ');
 	if (!var)
 		return ;
@@ -268,6 +269,7 @@ void	ft_env(t_minishell *shell, char *cmd)
 	env_tmp = ft_strdup_env(shell->env);
  	while (var[i])
  	{
+		ft_printf("var es : %s\n", var[i]);
  		if (ft_strchr(var[i], '='))
  		{
 			if (!ft_check_duplicated(var[i], &env_tmp, NULL))
@@ -276,17 +278,9 @@ void	ft_env(t_minishell *shell, char *cmd)
 				ft_connect_node(&env_tmp, node);
 			}
 			flag = 1;
-			
-			//Dos opciones:
-			//		1. La declaracion de la variable o cambio de valor va antes de env
-			//			En este caso declaramos la variable en primera linea
-			//		2. La declaracion de la variable o cambio de valor va despues de env
-			//			En este caso declaramos la variable en ultima line
-			//En ambos casos son variables temporales por lo que las metemos en env tmp
  		}
 		if (!flag)
 		{
-			//hay que acabar el programa
 			ft_printf("Wrong varibale declaration format\n");
 			return ;
 		}
@@ -448,7 +442,7 @@ void	ft_export(t_minishell *shell, char *cmd)
 			if (!ft_check_duplicated(var[i], &shell->env, &shell->undefined_var))
 			{
 				node = ft_create_node(ft_get_name(var[i]), ft_get_value(var[i]));
-				ft_connect_node(&shell->undefined_var, node);
+				ft_connect_node(&shell->env, node);
 			}
 		}
 		flag = 0;

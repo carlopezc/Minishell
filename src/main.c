@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:15:05 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/28 11:24:18 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/28 17:28:29 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ int	ft_main_loop(t_minishell **minishell)
 			add_history(input);
 		if (!ft_process_input(minishell, input))
 		{
-			//ft_safe_free((void *)input);
+			ft_safe_free((void *)input);
 			//en algun lado estoy guardando input en vez de duplicarlo porque me peta al liberar ahora
 			return (ft_free_minishell(minishell), ft_printf("Error in process input \n"), -1);
 		}
@@ -112,7 +112,7 @@ int	ft_main_loop(t_minishell **minishell)
 			return (ft_printf("Error in wildcard\n"), -1);
 		ft_printf("\nTOKENS FINALES: \n");
 		ft_print_tokens((*minishell)->tokens);
-		//ft_executor(*minishell);
+		ft_executor(*minishell);
 		ft_safe_free((void **)&input);
 		input = NULL;
 		ft_free_tokens(minishell);

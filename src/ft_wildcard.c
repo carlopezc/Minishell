@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 17:57:16 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/28 13:26:39 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/28 17:12:50 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -260,7 +260,6 @@ int	ft_check_asterisk(char *input, char ***elements)
 				}
 				if (!(*elements)[j][q] && !flag)
 				{
-					ft_printf("Borra\n");
 					if (!ft_delete_item(elements, (*elements)[j]))
 						return (0);
 					flag = 1;
@@ -391,6 +390,7 @@ int	ft_check_wildcard(t_token **tokens)
 		i = 0;
 		tmp->str = ft_strdup(str_final);
 		free(str_final);
+		str_final = NULL;
 		tmp = tmp->next;
 	}
 	return (1);

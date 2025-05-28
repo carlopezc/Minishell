@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 12:44:53 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/28 11:07:50 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/28 17:12:06 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -618,7 +618,6 @@ int	ft_parsing(char **input, t_minishell **minishell)
 	if (!s_input || !*s_input)
 		return (0);
 	*input = ft_quit_quotes(s_input, minishell);
-	//ft_check_wildcard(input);
 	if (!*input)
 		return (0);
 	return (1);

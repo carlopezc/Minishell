@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 17:57:16 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/28 12:56:08 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/28 13:26:39 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -197,49 +197,34 @@ int	ft_check_asterisk(char *input, char ***elements)
 	j = 0;
 	q = 0;
 	flag = 0;
-	ft_printf("Entra en check asterisk\n");
 	s_input = ft_split_asterisk(input, '*');
 	if (!s_input || !*s_input)
 		return (0);
-	while (s_input[i])
-		ft_printf("%s\n", s_input[i++]);
-	i = 0;
-	ft_printf("Entra ya en el bucle para comprobar\n");
 	while ((*elements)[j])
 	{
-		ft_printf("A comprobar: %s\n", (*elements)[j]);
 		while (s_input[i])
 		{
 			//caso en que solo hay un asterisco
-			ft_printf("Con: %s\n", s_input[i]);
 			if (!ft_strncmp(s_input[i], "*", 2))
-			{
-				ft_printf("Entra en asterisco solo\n");
 				i++;
-			}
 			else if (ft_strchr(s_input[i], '*'))
 			{
-				ft_printf("Entra en asterisco y letras\n");
 				while ((*elements)[j][q])
 				{
 					if (i == 0)
 					{
-						ft_printf("Entra en i = 0\n");
 						if (!ft_strncmp(&(*elements)[j][0], s_input[i], ft_strlen(s_input[i]) - 1))
 						{
-							ft_printf("Encuentra coincidencia\n");
 							q = q + ft_strlen(s_input[i]) - 1;
 							flag = 1;
 							break ;
 						}
 						flag = -1;
-						ft_printf("Sale\n");
 						break ;
 						//primero, tiene que empezar con las letras
 					}
 					if (!ft_strncmp(&(*elements)[j][q], s_input[i], ft_strlen(s_input[i]) - 1))
 					{
-						ft_printf("Encuentra coincidencia\n");
 						q = q + ft_strlen(s_input[i]) - 1;
 						flag = 1;
 						break ;
@@ -250,7 +235,6 @@ int	ft_check_asterisk(char *input, char ***elements)
 				}
 				if ((!((*elements)[j][q]) && !flag) || flag == -1)
 				{	
-					ft_printf("Borra\n");
 					if (!ft_delete_item(elements, (*elements)[j]))
 						return (0);
 					flag = 1;
@@ -265,7 +249,6 @@ int	ft_check_asterisk(char *input, char ***elements)
 			}
 			else
 			{
-				ft_printf("Entra en solo letras\n");
 				while ((*elements)[j][q])
 				{
 					if (!ft_strncmp(&(*elements)[j][q], s_input[i], ft_strlen(s_input[i]) + 1))
@@ -290,7 +273,6 @@ int	ft_check_asterisk(char *input, char ***elements)
 			}
 			flag = 0;
 		}
-		ft_printf("Sale del bucle s_input\n");
 		i = 0;
 		q = 0;
 		if (flag != 1)
@@ -325,23 +307,19 @@ int	ft_parse_asterisk(char **input)
 	return (1);
 }
 
-char	*ft_expand_wildcard(char *input)
+char	*ft_expand_wildcard(char *input, t_token_type type)
 {
 	char	**elements;
 
-	ft_printf("ENTRAMOS A EXPANDIR WILDCARD \n");
-	ft_printf("EL input es %s\n", input);
 	elements = ft_get_elements();
 	if (!elements)
 		return (ft_free_array(elements), NULL);
-	/*
-	if (!ft_parse_asterisk(&input))
-		return (ft_free_array(elements), NULL);
-		*/
 	if (!ft_strncmp(input, "*", 2))
 		return (ft_create_array(elements));
 	if (!ft_check_asterisk(input, &elements))
 		return (NULL);
+	if ((type == REDIR_IN || type == REDIR_OUT) && (ft_arraylen(elements) > 1))
+		return (ft_printf("Error in files to redirect\n"), NULL);
 	return (ft_create_array(elements));
 }
 
@@ -398,13 +376,11 @@ int	ft_check_wildcard(t_token **tokens)
 				i++;
 				while (str[i] && str[i] != ' ' && (!str[i - 1] || str[i] != '\\'))
 					i++;
-				ft_printf("i es : %d\n", i);
 				sub = ft_substr(str, start, i - start);
-				ft_printf("sub es %s\n", sub);
-				expanded = ft_expand_wildcard(sub);
-				ft_printf("Expanded es : %s\n", expanded);
+				expanded = ft_expand_wildcard(sub, tmp->type);
+				if (!expanded)
+					return (0);
 				str_final = ft_strjoin(str_final, expanded);
-				ft_printf("str_final es : %s\n", str_final);
 				free(sub);
 				free(expanded);
 			}

@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/05/28 21:06:01 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/29 15:48:29 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -258,7 +258,6 @@ void	ft_env(t_minishell *shell, char *cmd)
  
  	i = 0;
 	flag = 0;
-	ft_printf("Entra en env\n");
 	var = ft_split(cmd, ' ');
 	if (!var)
 		return ;
@@ -269,7 +268,6 @@ void	ft_env(t_minishell *shell, char *cmd)
 	env_tmp = ft_strdup_env(shell->env);
  	while (var[i])
  	{
-		ft_printf("var es : %s\n", var[i]);
  		if (ft_strchr(var[i], '='))
  		{
 			if (!ft_check_duplicated(var[i], &env_tmp, NULL))
@@ -304,7 +302,6 @@ void	ft_print_export(t_env *export)
 			ft_printf("declare -x %s=\"\"\n", tmp->name);
 		else
 		{
-			//Super chorra hay que cambairlo
 			if (!(tmp->name[0] == '_' && tmp->name[1] == '\0'))
 				ft_printf("declare -x %s=\"%s\"\n", tmp->name, tmp->value);
 		}

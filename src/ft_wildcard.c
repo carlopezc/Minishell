@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 17:57:16 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/28 21:09:38 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/29 15:47:03 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -366,7 +366,7 @@ int	ft_check_wildcard(t_token **tokens)
 		while (str[i])
 		{
 			if (i > 0 && (!str[i - 1] || str[i - 1] != '\\'))
-				ft_check_quote(&quote, str[i], &i);
+				ft_check_quote(&quote, str[i]);
 			if (str[i] == '*' && !quote.flag && (i > 0 && (!str[i - 1] || str[i - 1] != '\\')))
 			{
 				start = i;

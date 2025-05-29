@@ -6,125 +6,24 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 12:44:53 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/28 21:08:17 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/29 18:46:20 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
 
-int	ft_count_brackets(char *str)
-{
-	int 	i;
-	int	o_bracket;
-	int	c_bracket;
-
-	o_bracket = 0;
-	c_bracket = 0;
-	i = 0;
-	while (str[i])
-	{
-		if (str[i] == '(' /*&& (!str[i - 1] || str[i - 1] != '\\')*/)
-		{
-			/*
-			if (str[i + 1] && str[i + 1] == '<')
-				return (ft_printf("parse error near blabla\n"), 0);
-				*/
-			o_bracket++;
-		}
-		else if (str[i] == ')'/* && (!str[i - 1] || str[i - 1] != '\\')*/)
-			c_bracket++;
-		i++;
-	}
-	if (o_bracket == c_bracket)
-		return (1);
-	return (0);
-}
-int	ft_count_quotes(char *str)
-{
-	int	i;
-	int	double_quotes;
-	int	simple_quotes;
-
-	i = 0;
-	simple_quotes = 0;
-	double_quotes = 0;
-	while (str[i])
-	{
-		if (str[i] == '\"' || str[i] == '\'')
-		{
-			if (!str[i - 1] || (str[i - 1] && str[i - 1] != '\\'))
-			{
-				if (str[i] == '\"')
-					double_quotes++;
-				else
-					simple_quotes++;
-			}
-		}
-		i++;
-	}
-	if (!(double_quotes % 2) && !(simple_quotes % 2))
-		return (1);
-	return (0);
-}
-/*
-int	ft_strlen_quoted(char *input, int flag)
-{
-	int	i;
-	int	len;
-	int	simp;
-
-	i = 0;
-	len = 0;
-	simp = 0;
-	while (input[i])
-	{
-		if (input[i] == '\\' && !simp)
-			i++;
-		else if (input[i] == '\'' || input[i] == '\"')
-		{
-			if (input[i] == '\'' && (!input[i - 1] || input[i - 1] != '\\'))
-			{
-				if (simp)
-					simp = 0;
-				else
-					simp = 1;
-			}
-			if (input[i - 1] && input[i - 1] == '\\')
-				len++;
-			else if (ft_strchr(&input[i], ' ') && flag)
-				len += 2;
-			i++;
-		}
-		else if (input[i] == ';' && !simp && (!input[i - 1] || input[i - 1] != '\\'))
-			i++;
-		else
-		{
-			len++;
-			i++;
-		}
-	}
-	return (len);
-}
-*/
 void	ft_unquote(char **input, int flag)
 {
-	char *unquoted;
-	int	i;
-//	int	j;
-	//int	len;
-	int	in_word;
-	int	simp;
-	int	asterisk;
+	char	*unquoted;
+	int		i;
+	int		in_word;
+	int		simp;
+	int		asterisk;
 
 	i = 0;
-//	j = 0;
 	in_word = 0;
 	simp = 0;
 	asterisk = 0;
-	//len = ft_strlen_quoted(*input, flag);
-	//unquoted = (char *)malloc((len + 1) * sizeof(char));
-	//if (!unquoted)
-		//return ;
 	unquoted = NULL;
 	while ((*input)[i])
 	{
@@ -204,7 +103,7 @@ char	*ft_create_array(char **s_input)
 {
 	char	*input;
 	char	*tmp;
-	int	i;
+	int		i;
 
 	i = 0;
 	input = NULL;
@@ -230,9 +129,9 @@ char	*ft_create_array(char **s_input)
 
 void	ft_variable(char **input, t_minishell **minishell)
 {
-	char *dollar;
-	t_quote quote;
-	int	i;
+	char	*dollar;
+	t_quote	quote;
+	int		i;
 	char	*final;
 
 	quote.flag = 0;
@@ -247,9 +146,9 @@ void	ft_variable(char **input, t_minishell **minishell)
 	while ((*input)[i])
 	{
 		if (!(*input)[i - 1] || ((*input)[i - 1] && (*input)[i - 1] != '\\'))
-			ft_check_quote(&quote, (*input)[i], &i);
- 		if ((*input)[i] == '$' && (quote.type != '\'' && (!(*input)[i - 1] || ((*input)[i - 1] && (*input)[i - 1] != '\\'))))
-        	{
+			ft_check_quote(&quote, (*input)[i]);
+		if ((*input)[i] == '$' && (quote.type != '\'' && (!(*input)[i - 1] || ((*input)[i - 1] && (*input)[i - 1] != '\\'))))
+		{
 			if ((!(*input)[i - 1]) || ((*input)[i - 1] && (*input)[i - 1] != '\\'))
 			{
 				i++;
@@ -267,7 +166,7 @@ void	ft_variable(char **input, t_minishell **minishell)
 				if ((*input)[i + 1] && ((*input)[i + 1] != '\'' && (*input)[i + 1] != '\"'))
 					i--;
 			}
-        	}
+		}
 		else
 			final = ft_strjoin_char(final, (*input)[i++]);
 	}
@@ -277,16 +176,15 @@ void	ft_variable(char **input, t_minishell **minishell)
 
 char	*ft_quit_quotes(char **s_input, t_minishell **minishell)
 {
-	int	i;
-	char *input;
-	int	flag;
+	int		i;
+	char	*input;
+	int		flag;
 
 	i = 0;
 	flag = 0;
 	while (s_input[i])
 	{
 		ft_variable(&s_input[i], minishell);
-		//en unquote dejo las comillas en los asteriscos y luego en la wildcard los quito, ademas que en los export y env que su valor tenga espacio tambien los tengo que dejar
 		ft_unquote(&s_input[i], flag);
 		if (!ft_strncmp(s_input[i], "export", 7) || !ft_strncmp(s_input[i], "env", 4))
 			flag = 1;
@@ -300,11 +198,11 @@ char	*ft_quit_quotes(char **s_input, t_minishell **minishell)
 
 int	ft_quit_brackets(t_token *token, int *open, int *close)
 {
-	int	to_quit;
-	char *new_value;
-	char *value;
-	int	i;
-	int	j;
+	int		to_quit;
+	char	*new_value;
+	char	*value;
+	int		i;
+	int		j;
 
 	if (*open > *close)
 		to_quit = *close;
@@ -346,42 +244,10 @@ int	ft_quit_brackets(t_token *token, int *open, int *close)
 	return (1);
 }
 
-int	ft_check_brackets(t_token *token)
-{
-	char	*value;
-	int	i;
-	int	open;
-	int close;
-
-	value = token->str;
-	i = 0;
-	open = 0;
-	close = 0;
-	while (value[i] && (value[i] == '(' && (!value[i - 1] || value[i - 1] != '\\')))
-	{
-		i++;
-		open++;
-	}
-	while (value[i] && (value[i] != '(' && value[i] != ')'))
-		i++;
-	while (value[i] && (value[i] == ')' && (!value[i - 1] || value[i - 1] != '\\')))
-	{
-		i++;
-		close++;
-	}
-	while (value[i] && value[i] == ' ')
-		i++;
-	if (close && value[i])
-		return (ft_printf("parse error near blabla \n"), 0);
-	else if (open && close)
-		ft_quit_brackets(token, &open, &close);
-	return (1);
-}
-
 int	ft_quit_brckt_dup(t_token *tmp, char c)
 {
-	int	i;
-	char *str;
+	int		i;
+	char	*str;
 
 	i = 0;
 	str = tmp->str;
@@ -405,76 +271,9 @@ int	ft_quit_brckt_dup(t_token *tmp, char c)
 	return (1);
 }
 
-int	ft_check_next(t_token *tokens, int o_brckt)
-{
-	t_token	*tmp;
-	int	c_brckt;
-	int	i;
-
-	tmp = tokens;
-	c_brckt = 0;
-	i = 0;
-	while (tmp)
-	{
-		while ((tmp->str)[i])
-		{
-			if ((tmp->str)[i] && (tmp->str)[i] == ')' && ((!(tmp->str)[i - 1] || (tmp->str)[i - 1] != '\\')))
-				c_brckt++;
-			i++;
-		}
-		if (c_brckt == o_brckt)
-		{
-			if (!ft_quit_brckt_dup(tmp, ')'))
-				return (0);
-			return (2);
-		}
-		c_brckt = 0;
-		i = 0;
-		tmp = tmp->next;
-	}
-	return (1);
-}
-
-int	ft_last_check(t_token *tokens)
-{
-	t_token *tmp;
-	int o_brckt;
-	int	i;
-	int	res;
-
-	tmp = tokens;
-	o_brckt = 0;
-	i = 0;
-	res = 0;
-	while (tmp)
-	{
-		while ((tmp->str)[i])
-		{
-			if ((tmp->str)[i] && (tmp->str)[i] == '(' && ((!(tmp->str)[i - 1] || (tmp->str)[i - 1] != '\\')))
-				o_brckt++;
-			i++;
-		}
-		if (o_brckt > 1)
-		{
-			res = ft_check_next(tokens, o_brckt);
-			if (res == 0)
-				return (0);
-			else if (res == 2)
-			{
-				if (!ft_quit_brckt_dup(tmp, '('))
-					return (0);
-			}
-		}
-		o_brckt = 0;
-		i = 0;
-		tmp = tmp->next;
-	}
-	return (1);
-}
-
 int	ft_manage_brackets(t_token *tokens)
 {
-	t_token *tmp;
+	t_token	*tmp;
 
 	tmp = tokens;
 	while (tmp)
@@ -492,7 +291,7 @@ void	ft_quit_first_last(t_token **token)
 {
 	t_token	*tmp;
 	t_token	*next;
-	t_token *prev;
+	t_token	*prev;
 
 	next = *token;
 	*token = next->next;
@@ -508,14 +307,13 @@ void	ft_quit_first_last(t_token **token)
 	free(tmp);
 	prev->next = NULL;
 	return ;
-	//no se si puedo borrar el type
 }
 
 void	ft_last(t_token **token)
 {
 	t_token	*tmp;
-	int	o_bracket;
-	int	c_bracket;
+	int		o_bracket;
+	int		c_bracket;
 
 	tmp = *token;
 	o_bracket = 0;
@@ -542,11 +340,11 @@ int	ft_add_bracket_token(t_token **token)
 {
 	t_token	*tmp;
 	char	*str;
-	int	i;
-	int	start;
+	int		i;
+	int		start;
 	char	*cpy;
-	t_token *new_token;
-	t_token *prev;
+	t_token	*new_token;
+	t_token	*prev;
 
 	if (!ft_manage_brackets(*token))
 		return (0);
@@ -614,7 +412,7 @@ int	ft_parsing(char **input, t_minishell **minishell)
 		return (ft_printf("Quotes not closed\n"), 0);
 	if (!ft_count_brackets(src))
 		return (ft_printf("Brackets not closed\n"), 0);
-	s_input = ft_split_cmd(*input, ' '); 
+	s_input = ft_split_cmd(*input, ' ');
 	if (!s_input || !*s_input)
 		return (0);
 	*input = ft_quit_quotes(s_input, minishell);

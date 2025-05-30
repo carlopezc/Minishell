@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 16:15:04 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/30 11:36:21 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/30 15:41:02 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ int	ft_init_minishell(t_minishell **minishell, char **env)
 	(*minishell)->env_tmp = NULL;
 	(*minishell)->undefined_var = NULL;
 	(*minishell)->export = NULL;
+	(*minishell)->status = 0;
 	if (env && *env)
 	{
 		(*minishell)->env = ft_create_env(env);

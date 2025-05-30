@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 16:36:42 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/29 16:41:24 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/30 16:47:50 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,10 @@ char	*ft_get_value(char *str)
 	int		i;
 	char	*value;
 	char	*equal;
+	char	*tmp;
 
 	i = 0;
-	value = NULL;
+	tmp = NULL;
 	equal = ft_strchr(str, '=');
 	if (!equal)
 		return (NULL);
@@ -42,13 +43,18 @@ char	*ft_get_value(char *str)
 	else
 	{
 		i++;
+		value = ft_strdup("");
 		while (equal[i])
 			value = ft_strjoin_char(value, equal[i++]);
 	}
 	if ((value[0] == '\"' || value[0] == '\'')
 		&& ((value[ft_strlen(value) - 1] == '\"')
 			|| (value[ft_strlen(value) - 1] == '\'')))
-		value = ft_substr(value, 1, ft_strlen(value) - 2);
+	{
+		tmp = ft_substr(value, 1, ft_strlen(value) - 2);
+		ft_safe_free((void **)&value);
+		value = tmp;
+	}
 	return (value);
 }
 

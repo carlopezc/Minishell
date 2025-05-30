@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/30 15:00:38 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/30 16:50:25 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,8 @@ char	*ft_strjoin_char(char *str, char c)
 	int	i;
 	char *final;
 
-	if (!str || !*str)
-		i = 0;
-	else
+	i = 0;
+	if (str)
 		i = ft_strlen(str);
 	final = (char *)malloc((i + 2) * sizeof(char));
 	if (!final)
@@ -32,7 +31,7 @@ char	*ft_strjoin_char(char *str, char c)
 	}
 	final[i++] = c;
 	final[i] = '\0';
-	free(str);
+	ft_safe_free((void **)&str);
 	return (final);
 }
 

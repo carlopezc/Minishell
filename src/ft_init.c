@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 16:15:04 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/30 15:41:02 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/30 15:54:10 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ int	ft_init_minishell(t_minishell **minishell, char **env)
 	{
 		(*minishell)->env = ft_create_env(env);
 		if (!(*minishell)->env)
-			return (free(*minishell),
+			return (ft_free_minishell(minishell),
 				ft_printf("Error creating environment \n"), 0);
 		(*minishell)->export = ft_create_env(env);
 	}

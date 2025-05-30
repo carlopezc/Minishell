@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/05/30 15:14:17 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/30 17:24:06 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -445,7 +445,7 @@ void	ft_export(t_minishell *shell, char *cmd)
 			return ;
 		if (ft_strchr(var[i], '='))
 		{
-			if (!ft_check_duplicated(var[i], &shell->export, &shell->undefined_var))
+			if (!ft_check_duplicated(var[i], &shell->env, &shell->undefined_var))
 			{
 				node = ft_create_node(ft_get_name(var[i]), ft_get_value(var[i]));
 				ft_connect_node(&shell->env, node);
@@ -456,7 +456,7 @@ void	ft_export(t_minishell *shell, char *cmd)
 		{	
 			if (!ft_check_duplicated(var[i], &shell->env, &shell->undefined_var))
 			{
-				node = ft_create_node(ft_get_name(var[i]), ft_get_value(var[i]));
+				node = ft_create_node(ft_get_name(var[i]), NULL);
 				ft_connect_node(&shell->undefined_var, node);
 			}
 		}
@@ -1055,8 +1055,10 @@ t_token	*ft_analisis_comands(t_pipex *pipex, t_minishell *shell, t_token **save)
 	if (ft_strncmp("exit", (*save)->str, 5) == 0)
 		exit(0);
 	tmp = *save;
-	if ((*save)->type == COMMAND || (*save)->type == EXEC || !ft_strncmp("pwd", (*save)->str, 3) || !ft_strncmp("echo", (*save)->str, 4) || (ft_strncmp("cd", (*save)->str, 2) || ((!ft_strncmp("env", (*save)->str, 3) && ft_strncmp("env ", (*save)->str, 4)) || (!ft_strncmp("export", (*save)->str, 6) && ft_strncmp("export ", (*save)->str, 7)))))
+	if ((*save)->type == COMMAND || (*save)->type == EXEC || !ft_strncmp("pwd", (*save)->str, 3) || !ft_strncmp("echo", (*save)->str, 4) || ((!ft_strncmp("env", (*save)->str, 3) && ft_strncmp("env ", (*save)->str, 4)) || (!ft_strncmp("export", (*save)->str, 6) && ft_strncmp("export ", (*save)->str, 7))))
 	{
+		if (ft_strncmp("cd", (*save)->str, 2) == 0)
+			return (tmp);
 		while (*save && (*save)->type != PIPE && (*save)->type != AND && (*save)->type != OR)
 			*save = (*save)->next;
 		if (*save && (*save)->type == PIPE)

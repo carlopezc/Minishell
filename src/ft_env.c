@@ -6,45 +6,11 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 16:16:23 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/30 11:32:02 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/30 17:03:38 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
-
-t_env	*ft_create_node(char *name, char *value)
-{
-	t_env	*node;
-
-	if (!name)
-		return (NULL);
-	node = (t_env *)malloc(sizeof(t_env));
-	if (!node)
-		return (NULL);
-	node->name = name;
-	if (!value)
-		node->value = NULL;
-	else
-		node->value = value;
-	node->next = NULL;
-	return (node);
-}
-
-void	ft_connect_node(t_env **env, t_env *node)
-{
-	t_env	*tmp;
-
-	if (!*env)
-	{
-		*env = node;
-		return ;
-	}
-	tmp = *env;
-	while (tmp && tmp->next)
-		tmp = tmp->next;
-	tmp->next = node;
-	return ;
-}
 
 char	**ft_create_array_env(t_env *env)
 {
@@ -75,6 +41,17 @@ char	**ft_create_array_env(t_env *env)
 	return (env_array);
 }
 
+static char	*ft_create_env2(char *env)
+{
+	char	*tmp;
+	char	*value;
+	
+	tmp = ft_get_value(env);
+	value = ft_itoa(ft_atoi(tmp) + 1);
+	ft_safe_free((void **)&tmp);
+	return (value);
+}
+
 t_env	*ft_create_env(char **env_array)
 {
 	t_env	*env;
@@ -91,10 +68,12 @@ t_env	*ft_create_env(char **env_array)
 	{
 		name = ft_get_name(env_array[i]);
 		if (!ft_strncmp(name, "SHLVL", ft_max_strlen(name, "SHLVL")))
-			value = ft_itoa(ft_atoi(ft_get_value(env_array[i])) + 1);
+			value = ft_create_env2(env_array[i]);
 		else
 			value = ft_get_value(env_array[i]);
 		node = ft_create_node(ft_strdup(name), ft_strdup(value));
+		ft_safe_free((void **)&value);
+		ft_safe_free((void **)&name);
 		if (!node)
 			return (ft_printf("Error creating environment node\n"), NULL);
 		ft_connect_node(&env, node);

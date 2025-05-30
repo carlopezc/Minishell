@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/05/30 15:01:00 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/05/30 16:36:01 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -429,25 +429,50 @@ int	ft_check_name(char *var)
 	return (1);
 }
 
+static int	ft_export2(char **var, t_env *node, t_minishell *shell, int i)
+{
+	int	flag;
+
+	flag = 0;
+	if (!ft_check_name(var[i]))
+		return (-1);
+	if (ft_strchr(var[i], '='))
+	{
+		if (!ft_check_duplicated(var[i], &shell->export, &shell->undefined_var))
+		{
+			node = ft_create_node(ft_get_name(var[i]), ft_get_value(var[i]));
+			ft_connect_node(&shell->env, node);
+			flag = 1;
+		}
+	}
+	if (!flag)
+	{	
+		if (!ft_check_duplicated(var[i], &shell->env, &shell->undefined_var))
+		{
+			node = ft_create_node(ft_get_name(var[i]), ft_get_value(var[i]));
+			ft_connect_node(&shell->undefined_var, node);
+		}
+	}
+	i++;
+	return (i);
+}
+
 void	ft_export(t_minishell *shell, char *cmd)
 {
 	int	i;
-	int flag;
 	char **var;
 	t_env *node;
 
 	var = ft_split(cmd, ' ');
+	node = NULL;
 	if (!var)
 		return ;
 	i = 0;
-	flag = 0;
- 	// NOMBRES VÁLIDOS:
-	// Tiene que comenzar con caracter o con guion bajo
-	// En el resto del nombre puede contener caracteres guiones bajos y números NADA MAS
-	// Para el valor no hay restricciones, cualquier simbolo, emoji, caracter etc, cuidado con caracteres especiales escaparlos, o entre comillas simples
 	if (!ft_strncmp(var[i], "export", ft_max_strlen(var[i], "export")) && !var[++i])
 		return (ft_sort_list(shell->export), ft_print_export(shell->export));
-	while (var[i])
+	while (i < 0 && var[i])
+		i = ft_export2(var, node, shell, i);
+	/*while (var[i])
 	{
 		if (!ft_check_name(var[i]))
 			return ;
@@ -470,7 +495,7 @@ void	ft_export(t_minishell *shell, char *cmd)
 		}
 		flag = 0;
 		i++;
-	}
+	}*/
 	ft_merge_lists(&shell, shell->env, shell->undefined_var);
 	ft_sort_list(shell->export);
 	ft_print_export(shell->export);
@@ -491,7 +516,6 @@ void	ft_echo(char *cmd)
 
 void	ft_remove_var(t_minishell **shell, t_env *node, t_env **list)
 {
-
 	t_env *tmp;
 
 	tmp = *list;
@@ -584,21 +608,13 @@ void	ft_pre_exec_command(t_pipex *pipex, t_token *cmd, t_minishell *shell)
 	{
 		temp = ft_strjoin("/", pipex->command[0]);
 		path_command = ft_strjoin(pipex->path, temp);
-		//ft_printf("ft_pre_exec_command: %p\n", temp);
 		ft_safe_free((void **)&temp);
-		//ft_printf("%s\n", path_command);
 		command = pipex->command;
 	}
 	if (pipex->path)
-	{
-		//ft_printf("ft_pre_exec_command: %p\n", pipex->path);
 		ft_safe_free((void **)&pipex->path);
-	}
 	env = ft_create_array_env(shell->env);
 	ft_free_minishell(&shell);
-//	ft_printf("Pre exec command: \n");
-//	ft_printf("Ruta buena : %s\n", getcwd(NULL, 0));
-//	ft_print_array(env);
 	execve(path_command, command, env);
 }
 
@@ -683,14 +699,43 @@ void	ft_docs_in(t_pipex *pipex)
 	}
 }
 
-void	ft_docs_out(t_pipex *pipex)
+static void	ft_get_docs_out(t_pipex *pipex, int tmp_pipe[2])
 {
+	char	*trash;
 	char	*str;
-	char	*trash = ft_strdup("");
-	int	tmp_pipe[2];
-	int	p;
+	int		p;
 
 	p = 0;
+	trash = ft_strdup("");
+	str = get_next_line(tmp_pipe[0]);
+	while (str)
+	{
+		trash = ft_strjoin(trash, str);
+		free(str);
+		str = get_next_line(tmp_pipe[0]);
+	}
+	if (pipex->pipe[1][1])
+	{
+		close(pipex->pipe[1][0]);
+		dup2(pipex->pipe[1][1], 1);
+		close(pipex->pipe[1][1]);
+		ft_printf("%s", trash);
+	}
+	while (pipex->docs_out[p])
+	{
+		dup2(pipex->docs_out[p], 1);
+		close(pipex->docs_out[p]);
+		ft_printf("%s", trash);
+		p++;
+	}
+	free(trash);
+	exit(0);
+}
+
+void	ft_docs_out(t_pipex *pipex)
+{
+	int	tmp_pipe[2];
+
 	pipe(tmp_pipe);
 	pipex->pid = fork();
 	if (pipex->pid == 0)
@@ -703,30 +748,21 @@ void	ft_docs_out(t_pipex *pipex)
 	{
 		close(tmp_pipe[1]);
 		waitpid(pipex->pid, NULL, 0);
-		str = get_next_line(tmp_pipe[0]);
-		while (str)
-		{
-			trash = ft_strjoin(trash, str);
-			free(str);
-			str = get_next_line(tmp_pipe[0]);
-		}
-		if (pipex->pipe[1][1])
-		{
-			close(pipex->pipe[1][0]);
-			dup2(pipex->pipe[1][1], 1);
-			close(pipex->pipe[1][1]);
-			ft_printf("%s", trash);
-		}
-		while (pipex->docs_out[p])
-		{
-			dup2(pipex->docs_out[p], 1);
-			close(pipex->docs_out[p]);
-			ft_printf("%s", trash);
-			p++;
-		}
-		free(trash);
-		exit(0);
+		ft_get_docs_out(pipex, tmp_pipe);
 	}
+}
+
+static void	ft_docs_out_true(t_pipex *pipex)
+{
+	if (ft_check_docs(pipex->docs_out) == -1)
+		exit (1);
+	if (pipex->docs_out[1] == 0 && pipex->pipe[1][1] == 0)
+	{
+		dup2(pipex->docs_out[0], 1);
+		close(pipex->docs_out[0]);
+	}
+	else
+		ft_docs_out(pipex);
 }
 
 void	ft_exec(t_minishell *shell, t_pipex *pipex, t_token *save)
@@ -740,59 +776,7 @@ void	ft_exec(t_minishell *shell, t_pipex *pipex, t_token *save)
 	else if (pipex->docs_in || pipex->pipe[0][0] || pipex->heredoc)
 		ft_docs_in(pipex);
 	if (pipex->docs_out)
-	{
-		if (ft_check_docs(pipex->docs_out) == -1)
-			exit (1);
-		if (pipex->docs_out[1] == 0 && pipex->pipe[1][1] == 0)
-		{
-			dup2(pipex->docs_out[0], 1);
-			close(pipex->docs_out[0]);
-		}
-		else
-		{
-			ft_docs_out(pipex);
-		/*	char	*str;
-			char	*trash = ft_strdup("");
-			int	tmp_pipe[2];
-			int	p = 0;
-			pipe(tmp_pipe);
-			pipex->pid = fork();
-			if (pipex->pid == 0)
-			{
-				close(tmp_pipe[0]);
-				dup2(tmp_pipe[1], 1);
-				close(tmp_pipe[1]);
-			}
-			else
-			{
-				close(tmp_pipe[1]);
-				waitpid(pipex->pid, NULL, 0);
-				str = get_next_line(tmp_pipe[0]);
-				while (str)
-				{
-					trash = ft_strjoin(trash, str);
-					free(str);
-					str = get_next_line(tmp_pipe[0]);
-				}
-				if (pipex->pipe[1][1])
-				{
-					close(pipex->pipe[1][0]);
-					dup2(pipex->pipe[1][1], 1);
-					close(pipex->pipe[1][1]);
-					ft_printf("%s", trash);
-				}
-				while (pipex->docs_out[p])
-				{
-					dup2(pipex->docs_out[p], 1);
-					close(pipex->docs_out[p]);
-					ft_printf("%s", trash);
-					p++;
-				}
-				free(trash);
-				exit(0);
-			}*/
-		}
-	}
+		ft_docs_out_true(pipex);
 	else if (pipex->pipe[1][1])
 	{
 		close(pipex->pipe[1][0]);
@@ -832,21 +816,13 @@ static int	ft_good_path(char *path, t_pipex **pipex, char **split, int p)
 	return (1);
 }
 
-int	ft_path(t_env **env, t_pipex **pipex, char *cmd)
+int	ft_path2(t_pipex **pipex, char **split, char *cmd)
 {
-	char	**split;
-	char	*temp;
-	char	*path;
-	int		p;
+	char *path;
+	int	p;
 	int	res;
+	char *temp;
 
-	if (!env || !*env)
-		return (0);
-	if ((*pipex)->path)
-		ft_safe_free((void **)&(*pipex)->path);
-	split = ft_split(ft_find_path(env), ':');
-	if (!split)
-		return (0);
 	p = 0;
 	while (split[p])
 	{
@@ -858,16 +834,27 @@ int	ft_path(t_env **env, t_pipex **pipex, char *cmd)
 			res = ft_good_path(path, pipex, split, p);
 			ft_free_array(split);
 			ft_safe_free((void **)&path);
-			split = NULL;
 			return (res);
 		}
 		ft_safe_free((void **)&path);
 		p++;
 	}
-	(*pipex)->path = NULL;
-	ft_free_array(split);
-	split = NULL;
-	return (0);
+	write (2, "command not found\n", 18);
+	return (ft_free_array(split), 0);
+}
+
+int	ft_path(t_env **env, t_pipex **pipex, char *cmd)
+{
+	char	**split;
+
+	if (!env || !*env)
+		return (0);
+	if ((*pipex)->path)
+		ft_safe_free((void **)&(*pipex)->path);
+	split = ft_split(ft_find_path(env), ':');
+	if (!split)
+		return (0);
+	return (ft_path2(pipex, split, cmd));
 }
 
 void	ft_free_pipex(t_pipex *pipex)

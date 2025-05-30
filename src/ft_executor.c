@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/05/30 13:50:55 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/05/30 15:01:00 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -675,11 +675,57 @@ void	ft_docs_in(t_pipex *pipex)
 	else
 	{
 		close(tmp_pipe[1]);
-		dup2(tmp_pipe[0], 0);
-		close(tmp_pipe[0]);
 		close(pipex->pipe[0][0]);
 		close(pipex->pipe[0][1]);
 		waitpid(pipex->pid, NULL, 0);
+		dup2(tmp_pipe[0], 0);
+		close(tmp_pipe[0]);
+	}
+}
+
+void	ft_docs_out(t_pipex *pipex)
+{
+	char	*str;
+	char	*trash = ft_strdup("");
+	int	tmp_pipe[2];
+	int	p;
+
+	p = 0;
+	pipe(tmp_pipe);
+	pipex->pid = fork();
+	if (pipex->pid == 0)
+	{
+		close(tmp_pipe[0]);
+		dup2(tmp_pipe[1], 1);
+		close(tmp_pipe[1]);
+	}
+	else
+	{
+		close(tmp_pipe[1]);
+		waitpid(pipex->pid, NULL, 0);
+		str = get_next_line(tmp_pipe[0]);
+		while (str)
+		{
+			trash = ft_strjoin(trash, str);
+			free(str);
+			str = get_next_line(tmp_pipe[0]);
+		}
+		if (pipex->pipe[1][1])
+		{
+			close(pipex->pipe[1][0]);
+			dup2(pipex->pipe[1][1], 1);
+			close(pipex->pipe[1][1]);
+			ft_printf("%s", trash);
+		}
+		while (pipex->docs_out[p])
+		{
+			dup2(pipex->docs_out[p], 1);
+			close(pipex->docs_out[p]);
+			ft_printf("%s", trash);
+			p++;
+		}
+		free(trash);
+		exit(0);
 	}
 }
 
@@ -704,7 +750,8 @@ void	ft_exec(t_minishell *shell, t_pipex *pipex, t_token *save)
 		}
 		else
 		{
-			char	*str;
+			ft_docs_out(pipex);
+		/*	char	*str;
 			char	*trash = ft_strdup("");
 			int	tmp_pipe[2];
 			int	p = 0;
@@ -743,7 +790,7 @@ void	ft_exec(t_minishell *shell, t_pipex *pipex, t_token *save)
 				}
 				free(trash);
 				exit(0);
-			}
+			}*/
 		}
 	}
 	else if (pipex->pipe[1][1])
@@ -905,20 +952,8 @@ int	ft_subint_in(t_pipex *pipex, int add)
 	return (count);
 }
 
-t_token *ft_redir(t_token *save, t_token_type type, t_pipex *pipex)
+static	int ft_redir3(t_pipex *pipex, t_token_type type, int count)
 {
-	t_token *temp;
-	int	count;
-
-
-	temp = save;
-	count = 1;
-	while (temp && temp->type == type)
-	{
-		count++;
-		temp = temp->next;
-	}
-	temp = save;
 	if (type == REDIR_IN && pipex->docs_in)
 		count = ft_subint_in(pipex, count);
 	else if (type != REDIR_IN && pipex->docs_out)
@@ -935,6 +970,23 @@ t_token *ft_redir(t_token *save, t_token_type type, t_pipex *pipex)
 	}
 	if (!pipex->docs_in && !pipex->docs_out)
 		exit(0);
+	return (count);
+}
+
+t_token *ft_redir(t_token *save, t_token_type type, t_pipex *pipex)
+{
+	t_token *temp;
+	int	count;
+
+	temp = save;
+	count = 1;
+	while (temp && temp->type == type)
+	{
+		count++;
+		temp = temp->next;
+	}
+	temp = save;
+	count = ft_redir3(pipex, type, count);
 	save = ft_redir2(pipex, save, type, count);
 	while (temp && temp->type == type)
 	{

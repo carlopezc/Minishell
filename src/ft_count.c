@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 18:28:50 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/29 18:30:14 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/30 11:50:07 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,10 @@ int	ft_count_brackets(char *str)
 	i = 0;
 	while (str[i])
 	{
-		if (str[i] == '(' && (i > 0 && (!str[i - 1] || str[i - 1] != '\\')))
+		if (str[i] == '(' /*&& (i > 0 && (!str[i - 1] || str[i - 1] != '\\'))*/)
 			o_bracket++;
-		else if (str[i] == ')' && (i > 0
-				&& (!str[i - 1] || str[i - 1] != '\\')))
+		else if (str[i] == ')'/* && (i > 0
+				&& (!str[i - 1] || str[i - 1] != '\\'))*/)
 			c_bracket++;
 		i++;
 	}

@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/27 17:47:17 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/03/27 17:55:39 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/05/30 11:58:19 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 void	ft_clear_split(char **split)
 {
-	int 	p;
+	int	p;
 
 	if (!split)
 		return ;

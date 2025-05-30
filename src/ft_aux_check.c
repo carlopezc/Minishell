@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 18:31:30 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/29 18:40:54 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/30 13:30:14 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,8 @@ int	ft_check_brackets(t_token *token)
 	}
 	while (value[i] && (value[i] != '(' && value[i] != ')'))
 		i++;
+	if (value[i] && value[i] == '(' && (!value[i - 1] || value[i - 1] != '\\'))
+		return (ft_printf("syntax error near unsexpected token blabla\n"), 0);
 	while (value[i] && (value[i] == ')'
 			&& (!value[i - 1] || value[i - 1] != '\\')))
 	{
@@ -109,7 +111,7 @@ int	ft_check_brackets(t_token *token)
 	while (value[i] && value[i] == ' ')
 		i++;
 	if (close && value[i])
-		return (ft_printf("parse error near blabla \n"), 0);
+		return (ft_printf("syntax error near unsexpected token blabla\n"), 0);
 	else if (open && close)
 		ft_quit_brackets(token, &open, &close);
 	return (1);

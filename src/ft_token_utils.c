@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 16:26:52 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/29 16:28:44 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/30 12:12:32 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,9 +56,8 @@ void	ft_connect_token(t_token **tokens, t_token *new, t_token *prev)
 		return ;
 	if (!prev)
 	{
-		save = *tokens;
+		new->next = *tokens;
 		*tokens = new;
-		new->next = save;
 		return ;
 	}
 	while (tmp)

@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 16:15:04 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/29 18:01:47 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/30 11:36:21 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	ft_init_quote(t_quote *quote)
 {
-	if (*quote)
+	if (quote)
 	{
 		quote->type = 0;
 		quote->flag = 0;

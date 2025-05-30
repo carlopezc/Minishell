@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 09:31:50 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/05/29 18:02:24 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/30 14:04:27 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,7 @@ int	ft_cpy(char const *s, char **word, char c, int count)
 			if (i > 0 && (!s[i - 1] || s[i - 1] != '\\'))
 				ft_check_quote(&quote, s[i]);
 		}
+		ft_printf("word[p] es : %s\n", word[p]);
 	}
 	word[p] = NULL;
 	return (1);
@@ -93,5 +94,9 @@ char	**ft_split_cmd(char const *s, char c)
 		return (NULL);
 	if (!ft_cpy(s, word, c, count))
 		return (NULL);
+	int	i;
+	i = 0;
+	while (word[i])
+		ft_printf("%s\n", word[i++]);
 	return (word);
 }

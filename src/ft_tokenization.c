@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/29 17:51:28 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/30 15:00:38 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -195,5 +195,3 @@ int	ft_check_duplicated(char *str, t_env **env, t_env **undefined)
 	ft_safe_free((void **)&value);
 	return (0);
 }
-
-

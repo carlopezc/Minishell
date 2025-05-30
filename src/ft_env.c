@@ -6,11 +6,11 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 16:16:23 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/29 17:50:48 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/30 11:32:02 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../header/ft_minsihell.h"
+#include "../header/ft_minishell.h"
 
 t_env	*ft_create_node(char *name, char *value)
 {

@@ -6,13 +6,13 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 16:00:47 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/29 18:48:30 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/30 11:37:44 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
 
-char	*aux_token_to_str(t_token type)
+char	*aux_token_to_str(t_token_type type)
 {
 	if (type == REDIR_IN)
 		return ("REDIR_IN");

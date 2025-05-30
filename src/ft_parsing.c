@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 12:44:53 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/29 18:46:20 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/30 14:56:56 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void	ft_unquote(char **input, int flag)
 	unquoted = NULL;
 	while ((*input)[i])
 	{
-		if (i > 0 && (!(*input)[i - 1] || (*input)[i - 1] != '\\'))
+		if (!i || (!(*input)[i - 1] || (*input)[i - 1] != '\\'))
 		{
 			if (((*input)[i] == '\'' || (*input)[i] == '\"') && (flag || asterisk) && in_word)
 			{
@@ -154,7 +154,7 @@ void	ft_variable(char **input, t_minishell **minishell)
 				i++;
 				if ((*input)[i] == '?')
 				{
-					ft_printf("Aqui ira el codigo de salida\n");
+					ft_printf("%d\n", (*minishell)->status);
 					return ;
 				}
 				else
@@ -186,7 +186,7 @@ char	*ft_quit_quotes(char **s_input, t_minishell **minishell)
 	{
 		ft_variable(&s_input[i], minishell);
 		ft_unquote(&s_input[i], flag);
-		if (!ft_strncmp(s_input[i], "export", 7) || !ft_strncmp(s_input[i], "env", 4))
+		if (!ft_strncmp(s_input[i], "export", 7) || !ft_strncmp(s_input[i], "env", 4) || !ft_strncmp(s_input[i], "echo", 5))
 			flag = 1;
 		if (ft_check_operator(s_input[i]))
 			flag = 0;
@@ -194,97 +194,6 @@ char	*ft_quit_quotes(char **s_input, t_minishell **minishell)
 	}
 	input = ft_create_array(s_input);
 	return (input);
-}
-
-int	ft_quit_brackets(t_token *token, int *open, int *close)
-{
-	int		to_quit;
-	char	*new_value;
-	char	*value;
-	int		i;
-	int		j;
-
-	if (*open > *close)
-		to_quit = *close;
-	else
-		to_quit = *open;
-	*open -= to_quit;
-	*close -= to_quit;
-	value = token->str;
-	i = 0;
-	j = 0;
-	new_value = NULL;
-	j = to_quit;
-	while (value[i] == '(' && (!value[i - 1] || value[i - 1] != '\\') && j)
-	{
-		j--;
-		i++;
-	}
-	j = to_quit;
-	while (value[i] && (value[i] != ')' || (value[i - 1] && value[i - 1] == '\\')))
-	{
-		new_value = ft_strjoin_char(new_value, value[i]);
-		if (!new_value)
-			return (0);
-		i++;
-	}
-	while (value[i] == ')' && (!value[i - 1] || value[i - 1] != '\\') && j)
-	{
-		j--;
-		i++;
-	}
-	while (value[i])
-	{
-		new_value = ft_strjoin_char(new_value, value[i]);
-		if (!new_value)
-			return (0);
-		i++;
-	}
-	token->str = new_value;
-	return (1);
-}
-
-int	ft_quit_brckt_dup(t_token *tmp, char c)
-{
-	int		i;
-	char	*str;
-
-	i = 0;
-	str = tmp->str;
-	if (c == '(')
-	{
-		while (str[i + 1] && str[i + 1] == c)
-			i++;
-		str = ft_substr(str, i, ft_strlen(str) - i);
-		tmp->str = str;
-	}
-	else if (c == ')')
-	{
-		while (str[i] && (str[i] != c || (str[i - 1] && str[i - 1] == '\\')))
-			i++;
-		if (str[i] && str[i] == c)
-			str = ft_substr(str, 0, i + 1);
-		tmp->str = str;
-	}
-	if (!str)
-		return (0);
-	return (1);
-}
-
-int	ft_manage_brackets(t_token *tokens)
-{
-	t_token	*tmp;
-
-	tmp = tokens;
-	while (tmp)
-	{
-		if (!ft_check_brackets(tmp))
-			return (0);
-		tmp = tmp->next;
-	}
-	if (!ft_last_check(tokens))
-		return (0);
-	return (1);
 }
 
 void	ft_quit_first_last(t_token **token)

@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 11:34:56 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/04/14 19:06:22 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/05/30 12:11:17 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ char	*ft_strdup(const char *s)
 {
 	char	*p;
 	size_t	len;
-	int 	i;
+	int		i;
 
 	i = 0;
 	if (!s)

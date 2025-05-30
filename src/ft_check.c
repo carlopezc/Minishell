@@ -6,13 +6,13 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 16:05:18 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/29 18:10:52 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/30 11:31:01 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
 
-t_token_type	ft_is_operator_aux_aux(char **value, char *input, int *i)
+t_token_type	ft_is_operator_aux_aux(char **value, char *input, int *i, int flag)
 {
 	if (!ft_strncmp(input + *i, "|", 1))
 	{
@@ -31,7 +31,7 @@ t_token_type	ft_is_operator_aux_aux(char **value, char *input, int *i)
 	return (NOT_SET);
 }
 
-t_token_type	ft_is_operator_aux(char **value, char *input, int *i)
+t_token_type	ft_is_operator_aux(char **value, char *input, int *i, int flag)
 {
 	if (!ft_strncmp(input + *i, ">>", 2))
 	{
@@ -57,7 +57,7 @@ t_token_type	ft_is_operator_aux(char **value, char *input, int *i)
 			*value = ft_strjoin("(", *value);
 		return (REDIR_IN);
 	}
-	return (ft_is_operator_aux_aux(value, input, i));
+	return (ft_is_operator_aux_aux(value, input, i, flag));
 }
 
 t_token_type	ft_is_operator(char **value, char *input, int *i)
@@ -84,7 +84,7 @@ t_token_type	ft_is_operator(char **value, char *input, int *i)
 			*value = ft_strjoin("(", *value);
 		return (HEREDOC);
 	}
-	return (ft_is_operator_aux(value, input, i));
+	return (ft_is_operator_aux(value, input, i, flag));
 }
 
 void	ft_check_quote(t_quote *quote, char c)

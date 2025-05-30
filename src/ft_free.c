@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 15:52:48 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/30 15:46:37 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/30 15:49:55 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,10 +111,7 @@ void	ft_free_minishell(t_minishell **minishell)
 		(*minishell)->tokens = NULL;
 	}
 	if ((*minishell)->env)
-	{
 		ft_free_env(&(*minishell)->env);
-		ft_printf("Borrando env\n");
-	}
 	if ((*minishell)->export)
 		ft_free_env(&(*minishell)->export);
 	if ((*minishell)->undefined_var)

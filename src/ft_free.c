@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 15:52:48 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/30 15:49:55 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/30 17:50:18 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,8 +76,8 @@ void	ft_free_node(t_env *node, t_env **list)
 	{
 		ft_safe_free((void **)&tmp->name);
 		ft_safe_free((void **)&tmp->value);
-		list = NULL;
 		*list = NULL;
+		list = NULL;
 		return (ft_safe_free((void **)&tmp));
 	}
 	while (tmp)

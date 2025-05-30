@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/05/29 13:49:55 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/05/30 13:50:55 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -854,7 +854,10 @@ static t_token	*ft_redir2(t_pipex *pipex, t_token *save, t_token_type type, int 
 		else if (type == APPEND)
 			pipex->docs_out[count] = open(save->str, O_WRONLY | O_APPEND | O_CREAT, 0777);
 		else
+		{
+			unlink(save->str);
 			pipex->docs_out[count] = open(save->str, O_WRONLY | O_CREAT, 0777);
+		}
 		count++;
 		save = save->next;
 	}
@@ -959,6 +962,8 @@ t_pipex	*ft_init_pipex()
 	pipex->brackets_count = 0;
 	pipex->heredoc = 0;
 	pipex->pipe[0][0] = 0;
+	pipex->pipe[0][1] = 0;
+	pipex->pipe[1][0] = 0;
 	pipex->pipe[1][1] = 0;
 	return (pipex);
 }
@@ -1078,7 +1083,7 @@ t_token	*ft_and(t_pipex *pipex, t_minishell *shell, t_token *save)
 	}
 	if (shell->status != 0)
 	{
-		while (save && (save->type != AND || pipex->brackets_count != brackets) && (save->type != OR || brackets != pipex->brackets_count))
+		while (save && (save->type != AND || pipex->brackets_count <= brackets) && (save->type != OR || brackets != pipex->brackets_count))
 		{
 			if (save->type == O_BRACKET)
 				pipex->brackets_count += 1;
@@ -1133,6 +1138,21 @@ t_token	*ft_killchilds(t_pipex *pipex, t_minishell *shell, t_token *save)
 	return (ft_terminator(pipex), NULL);
 }
 
+static t_token *ft_executor2(t_pipex *pipex, t_token *save, t_minishell *shell, t_token *tmp)
+{
+	if (save->type == COMMAND || save->type == BUILTIN || save->type == EXEC)
+		tmp = ft_analisis_comands(pipex, shell, &save);
+	while (pipex->pid == 0 && save && (save->type == REDIR_IN || save->type == REDIR_OUT || save->type == HEREDOC || save->type == APPEND))
+		save = ft_analisis_redir(save, pipex);
+	save = ft_exectime(pipex, shell, tmp, save);
+	if (save && save->type == C_BRACKET)
+	{
+		pipex->brackets_count -= 1;
+		save = save->next;
+	}
+	return (save);
+}
+
 int	ft_executor(t_minishell *shell)
 {
 	t_token	*save;
@@ -1145,24 +1165,13 @@ int	ft_executor(t_minishell *shell)
 	{
 		while (save && save->type != AND && save->type != OR)
 		{
-			if (save && save->type == O_BRACKET)
+			while (save && save->type == O_BRACKET)
 			{
 				pipex->brackets_count += 1;
 				save = save->next;
 			}
 			while (save && save->type != PIPE && save->type != AND && save->type != OR)//(save && save->type != AND && save->type != OR)
-			{
-				if (save->type == COMMAND || save->type == BUILTIN || save->type == EXEC)
-					tmp = ft_analisis_comands(pipex, shell, &save);
-				while (pipex->pid == 0 && save && (save->type == REDIR_IN || save->type == REDIR_OUT || save->type == HEREDOC || save->type == APPEND))
-					save = ft_analisis_redir(save, pipex);
-				save = ft_exectime(pipex, shell, tmp, save);
-				if (save && save->type == C_BRACKET)
-				{
-					pipex->brackets_count -= 1;
-					save = save->next;
-				}
-			}
+				save = ft_executor2(pipex, save, shell, tmp);
 			if (save && save->type == PIPE)
 				save = save->next;
 			ft_arrange_fd(pipex);

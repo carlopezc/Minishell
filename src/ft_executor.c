@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/05/30 16:36:01 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/05/30 20:49:53 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,19 +65,39 @@ int	ft_check_cd(char *file, char *pwd)
 
 void	ft_errase_pwd(t_minishell *shell)
 {
-	int	c;
+	int		c;
 	t_env *env;
 
 	env = shell->env;
 	while (env && ft_strncmp(env->name, "PWD", 3))
 		env = env->next;
-	if (!env)
+	if (!env || ft_strncmp("/", env->value, 2) == 0)
 		return ;
 	c = ft_strlen(env->value) - 1;
 	while (env->value[c] != '/')
+	{
+		if (c == 0)
+			return ;
 		env->value[c--] = '\0';
+	}
 	if (env->value[c] != '=' && env->value[c -1] != '=')
 		env->value[c] = '\0';
+}
+
+char	*ft_errase_route(char *route)
+{
+	int	c;
+
+	c = ft_strlen(route) - 1;
+	while (route[c] != '/')
+	{
+		if (c == 0)
+			return (route);
+		route[c--] = '\0';
+	}
+	if (route[c] != '=' && route[c -1] != '=')
+		route[c] = '\0';
+	return (route);
 }
 
 void	ft_add_node(t_env **list, t_env *prev, t_env *node)
@@ -119,8 +139,8 @@ char	*ft_correct_cd(char *path)
 {
 	char	*dots;
 	char	*first;
-	int	p;
-	int i;
+	int		p;
+	int 	i;
 
 	p = 4;
 	i = 1;
@@ -136,67 +156,69 @@ char	*ft_correct_cd(char *path)
 		return (path);
 	i = 0;
 	while (dots[p])
-	{
-		(first[i]) = (dots[p]);
-		p++;
-		i++;
-	}
+		(first[i++]) = (dots[p++]);
 	first[i] = '\0';
 	return (path);
 }
 
-void	ft_cd(t_minishell *shell, char *cmd)
+void	ft_cd_home(t_minishell *shell)
 {
-	char	*temp;
-	char	*join;
-
+	t_env	*node;
 	t_env	*pwd;
-	t_env 	*home;
-	t_env *node;
+	t_env	*home;
 
-	node = NULL;
 	home = NULL;
+	node = NULL;
 	pwd = shell->env;
 	while (pwd && pwd->next && ft_strncmp((pwd->next)->name, "PWD", ft_max_strlen("PWD", (pwd->next)->name)))
 		pwd = pwd->next;
-	if (!ft_strncmp(cmd, "cd", 3) || !(ft_strncmp(cmd, "cd ~", 5)))
+	if (!pwd || !pwd->next)
+		return ;
+	home = shell->env;
+	while (home && ft_strncmp(home->name, "HOME", ft_max_strlen("HOME", home->name)))
+		home = home->next;
+	if (!home)
+		return ;
+	ft_old_pwd(&shell->env, pwd->next);
+	node = ft_create_node(ft_strdup("PWD"), ft_strdup(home->value));
+	ft_add_node(&shell->env, pwd, node);
+	chdir(home->value);
+	return ;
+}
+
+static	void ft_cd_route(t_minishell *shell, char *cmd)
+{
+	t_env	*pwd;
+	t_env	*node;
+	char	*tmp;
+
+	pwd = shell->env;
+	while (pwd && pwd->next && ft_strncmp((pwd->next)->name, "PWD", ft_max_strlen("PWD", (pwd->next)->name)))
+		pwd = pwd->next;
+	if (!pwd)
+		return ;
+	if (access(cmd + 3, F_OK) == 0)
 	{
-		//avanza hasta que encuentra el pwd
-		while (pwd && pwd->next && ft_strncmp((pwd->next)->name, "PWD", ft_max_strlen("PWD", (pwd->next)->name)))
-			pwd = pwd->next;
-		if (!pwd || !pwd->next)
-			return ;
-		//busca el home
-		home = shell->env;
-		while (/*(u_cpy == p_cpy) ||*/ home && ft_strncmp(home->name, "HOME", ft_max_strlen("HOME", home->name)))
-			home = home->next;
-		if (!home)
-			return ;
 		ft_old_pwd(&shell->env, pwd->next);
-		node = ft_create_node(ft_strdup("PWD"), ft_strdup(home->value));
+		tmp = ft_strdup(cmd + 3);
+		while (ft_strnstr(tmp, "../", ft_strlen(tmp)))
+			tmp = ft_correct_cd(tmp);
+		if (ft_strnstr(tmp, "..", ft_strlen(tmp)))
+			tmp = ft_errase_route(tmp);
+		node = ft_create_node(ft_strdup("PWD"), tmp);
 		ft_add_node(&shell->env, pwd, node);
-		chdir(home->value);
+		chdir(cmd + 3);
 		return ;
 	}
-	if (*(cmd + 3) == '/')
-	{
-		pwd = shell->env;
-		while (pwd && pwd->next && ft_strncmp((pwd->next)->name, "PWD", ft_max_strlen("PWD", (pwd->next)->name)))
-			pwd = pwd->next;
-		if (!pwd)
-			return ;
-		if (access(cmd + 3, F_OK) == 0)
-		{
-			ft_old_pwd(&shell->env, pwd->next);
-			node = ft_create_node(ft_strdup("PWD"), ft_strdup(cmd + 3));
-			ft_add_node(&shell->env, pwd, node);
-			chdir(cmd + 3);
-			return ;
-		}
-		else
-			return ;
-	}
-	ft_old_pwd(&shell->env, pwd ->next);
+	else
+		return ;
+}
+
+char	*ft_cd_erraser(t_minishell *shell, char *cmd)
+{
+	t_env	*pwd;
+	char	*temp;
+
 	if (!ft_strncmp(ft_strchr(cmd, ' ') + 1, "..", 2))
 	{
 		pwd = shell->env;
@@ -209,35 +231,65 @@ void	ft_cd(t_minishell *shell, char *cmd)
 			ft_errase_pwd(shell);
 			temp = ft_strchr(temp + 1, '/');
 		}
-
 	}
 	else
-		temp = ft_strchr(cmd, ' ');
-	if (temp)
+		return (ft_strchr(cmd, ' '));
+	if (access(pwd->next->value, F_OK) != 0)
 	{
-		pwd = shell->env;
-		while (pwd && pwd->next && ft_strncmp((pwd->next)->name, "PWD", ft_max_strlen("PWD", (pwd->next)->name)))
-			pwd = pwd->next;
-		if (!pwd)
-			return ;
-		if (!ft_check_cd(temp + 1, (pwd->next)->value))
-			return ;
-		join = ft_strjoin((pwd->next)->value, "/");
-		temp = ft_strjoin(join, temp + 1);
-		if (temp[ft_strlen(temp) - 1] == '/')
-			temp[ft_strlen(temp) - 1] = '\0';
-		while (ft_strnstr(temp, "../", ft_strlen(temp)))
-			temp = ft_correct_cd(temp);
-		node = ft_create_node(ft_strdup("PWD"), temp);
-		ft_add_node(&shell->env, pwd, node);
+		ft_cd_home(shell);
+		return (NULL);
 	}
+	return (temp);
+}
+
+void	ft_cd_add(t_minishell *shell, char *temp)
+{
+	t_env	*pwd;
+	t_env	*node;
+	char	*join;
+
+	pwd = shell->env;
+	while (pwd && pwd->next && ft_strncmp((pwd->next)->name, "PWD", ft_max_strlen("PWD", (pwd->next)->name)))
+		pwd = pwd->next;
+	if (!pwd)
+		return ;
+	if (!ft_check_cd(temp + 1, (pwd->next)->value))
+		return ;
+	join = ft_strjoin((pwd->next)->value, "/");
+	temp = ft_strjoin(join, temp + 1);
+	if (temp[ft_strlen(temp) - 1] == '/')
+		temp[ft_strlen(temp) - 1] = '\0';
+	while (ft_strnstr(temp, "../", ft_strlen(temp)))
+		temp = ft_correct_cd(temp);
+	node = ft_create_node(ft_strdup("PWD"), temp);
+	ft_add_node(&shell->env, pwd, node);
+}
+
+void	ft_cd(t_minishell *shell, char *cmd)
+{
+	char	*temp;
+	t_env	*pwd;
+
+	pwd = shell->env;
+	while (pwd && pwd->next && ft_strncmp((pwd->next)->name, "PWD", ft_max_strlen("PWD", (pwd->next)->name)))
+		pwd = pwd->next;
+	if (!ft_strncmp(cmd, "cd", 3) || !(ft_strncmp(cmd, "cd ~", 5)))
+		return (ft_cd_home(shell));
+	if (!(ft_strncmp(cmd, "cd ~", 4)))
+	{
+		ft_cd_home(shell);
+		if (ft_strlen(cmd) > 4)
+			cmd = ft_strjoin("cd ", cmd + 5);
+	}
+	if (*(cmd + 3) == '/')
+		return (ft_cd_route(shell, cmd));
+	ft_old_pwd(&shell->env, pwd->next);
+	temp = ft_cd_erraser(shell, cmd);
+	if (temp)
+		ft_cd_add(shell, temp);
 	if (!pwd->next->value || pwd->next->value[0] == '\0')
 		pwd->next->value = ft_strdup("/");
 	chdir(pwd->next->value);
-	//shell->env[p] = ft_strdup(shell->env[p]);
-	//free(shell->env[p]);
-//	shell->env[p] = ft_strjoin(temp, "\n");
-//	free(temp);
 }
 
 void	ft_pwd(t_minishell *shell)
@@ -248,7 +300,7 @@ void	ft_pwd(t_minishell *shell)
 	while (env && ft_strncmp(env->name, "PWD", 3))
 		env = env->next;
 	if (!env)
-		ft_printf("te cagas\n");
+		ft_printf("no env\n");
 	ft_printf("%s\n", ft_strchr(env->value, '/'));
 	return ;
 }
@@ -265,51 +317,45 @@ void	ft_print_env(t_env *env)
 	return ;
 }
 
+static int	ft_env2(char **var, int i, t_env *env_tmp)
+{
+	int	flag;
+	t_env	*node;
+
+	flag = 0;
+	if (ft_strchr(var[i], '='))
+ 	{
+		if (!ft_check_duplicated(var[i], &env_tmp, NULL))
+		{
+			node = ft_create_node(ft_get_name(var[i]), ft_get_value(var[i]));
+			ft_connect_node(&env_tmp, node);
+		}
+		flag = 1;
+ 	}
+	if (!flag)
+	{
+		ft_printf("Wrong varibale declaration format\n");
+		return (-1);
+	}
+ 	i++;
+	return (i);
+}
+
 void	ft_env(t_minishell *shell, char *cmd)
 {
  	int	i;
-	int	flag;
-	t_env	*node;
 	char	**var;
 	t_env *env_tmp;
  
  	i = 0;
-	flag = 0;
 	var = ft_split(cmd, ' ');
 	if (!var)
 		return ;
-	//Input es env unicamente
 	if (!ft_strncmp(var[i], "env", ft_max_strlen(var[i], "env")) && !var[++i])
 		return (ft_print_env(shell->env));
-	//En BASH al declarar variables temporales (con env) puedo nombrar las variables como quiera
 	env_tmp = ft_strdup_env(shell->env);
- 	while (var[i])
- 	{
- 		if (ft_strchr(var[i], '='))
- 		{
-			if (!ft_check_duplicated(var[i], &env_tmp, NULL))
-			{
-				node = ft_create_node(ft_get_name(var[i]), ft_get_value(var[i]));
-				ft_connect_node(&env_tmp, node);
-			}
-			flag = 1;
-			
-			//Dos opciones:
-			//		1. La declaracion de la variable o cambio de valor va antes de env
-			//			En este caso declaramos la variable en primera linea
-			//		2. La declaracion de la variable o cambio de valor va despues de env
-			//			En este caso declaramos la variable en ultima line
-			//En ambos casos son variables temporales por lo que las metemos en env tmp
- 		}
-		if (!flag)
-		{
-			//hay que acabar el programa
-			ft_printf("Wrong varibale declaration format\n");
-			return ;
-		}
-		flag = 0;
- 		i++;
- 	}
+ 	while (i != -1 && var[i])
+		i = ft_env2(var, i, env_tmp);
 	ft_print_env(env_tmp);
 	return ;
  }
@@ -428,17 +474,16 @@ int	ft_check_name(char *var)
 	}
 	return (1);
 }
-
 static int	ft_export2(char **var, t_env *node, t_minishell *shell, int i)
 {
-	int	flag;
+	int flag;
 
 	flag = 0;
 	if (!ft_check_name(var[i]))
 		return (-1);
 	if (ft_strchr(var[i], '='))
 	{
-		if (!ft_check_duplicated(var[i], &shell->export, &shell->undefined_var))
+		if (!ft_check_duplicated(var[i], &shell->env, &shell->undefined_var))
 		{
 			node = ft_create_node(ft_get_name(var[i]), ft_get_value(var[i]));
 			ft_connect_node(&shell->env, node);
@@ -449,12 +494,11 @@ static int	ft_export2(char **var, t_env *node, t_minishell *shell, int i)
 	{	
 		if (!ft_check_duplicated(var[i], &shell->env, &shell->undefined_var))
 		{
-			node = ft_create_node(ft_get_name(var[i]), ft_get_value(var[i]));
+			node = ft_create_node(ft_get_name(var[i]), NULL);
 			ft_connect_node(&shell->undefined_var, node);
 		}
 	}
-	i++;
-	return (i);
+	return (i + 1);
 }
 
 void	ft_export(t_minishell *shell, char *cmd)
@@ -463,39 +507,15 @@ void	ft_export(t_minishell *shell, char *cmd)
 	char **var;
 	t_env *node;
 
-	var = ft_split(cmd, ' ');
 	node = NULL;
+	var = ft_split(cmd, ' ');
 	if (!var)
 		return ;
 	i = 0;
 	if (!ft_strncmp(var[i], "export", ft_max_strlen(var[i], "export")) && !var[++i])
 		return (ft_sort_list(shell->export), ft_print_export(shell->export));
-	while (i < 0 && var[i])
+	while (i != -1 && var[i])
 		i = ft_export2(var, node, shell, i);
-	/*while (var[i])
-	{
-		if (!ft_check_name(var[i]))
-			return ;
-		if (ft_strchr(var[i], '='))
-		{
-			if (!ft_check_duplicated(var[i], &shell->export, &shell->undefined_var))
-			{
-				node = ft_create_node(ft_get_name(var[i]), ft_get_value(var[i]));
-				ft_connect_node(&shell->env, node);
-				flag = 1;
-			}
-		}
-		if (!flag)
-		{	
-			if (!ft_check_duplicated(var[i], &shell->env, &shell->undefined_var))
-			{
-				node = ft_create_node(ft_get_name(var[i]), ft_get_value(var[i]));
-				ft_connect_node(&shell->undefined_var, node);
-			}
-		}
-		flag = 0;
-		i++;
-	}*/
 	ft_merge_lists(&shell, shell->env, shell->undefined_var);
 	ft_sort_list(shell->export);
 	ft_print_export(shell->export);
@@ -575,6 +595,11 @@ void	ft_exec_build(t_minishell *shell, char *cmd)
 		ft_cd(shell, cmd);
 		ft_merge_lists(&shell, shell->env, shell->undefined_var);
 		ft_sort_list(shell->export);
+	}
+	if (ft_strncmp(cmd, "pwd ", 4) == 0)
+	{
+		ft_printf("pwd: too many arguments");
+		exit (1);
 	}
 	if (ft_strncmp(cmd, "pwd", 3) == 0)
 		ft_pwd(shell);
@@ -1050,8 +1075,10 @@ t_token	*ft_analisis_comands(t_pipex *pipex, t_minishell *shell, t_token **save)
 	if (ft_strncmp("exit", (*save)->str, 5) == 0)
 		exit(0);
 	tmp = *save;
-	if ((*save)->type == COMMAND || (*save)->type == EXEC || !ft_strncmp("pwd", (*save)->str, 3) || !ft_strncmp("echo", (*save)->str, 4) || (ft_strncmp("cd", (*save)->str, 2) || ((!ft_strncmp("env", (*save)->str, 3) && ft_strncmp("env ", (*save)->str, 4)) || (!ft_strncmp("export", (*save)->str, 6) && ft_strncmp("export ", (*save)->str, 7)))))
+	if ((*save)->type == COMMAND || (*save)->type == EXEC || !ft_strncmp("pwd", (*save)->str, 3) || !ft_strncmp("echo", (*save)->str, 4) || ((!ft_strncmp("env", (*save)->str, 3) && ft_strncmp("env ", (*save)->str, 4)) || (!ft_strncmp("export", (*save)->str, 6) && ft_strncmp("export ", (*save)->str, 7))))
 	{
+		if (ft_strncmp("cd", (*save)->str, 2) == 0)
+			return (tmp);
 		while (*save && (*save)->type != PIPE && (*save)->type != AND && (*save)->type != OR)
 			*save = (*save)->next;
 		if (*save && (*save)->type == PIPE)

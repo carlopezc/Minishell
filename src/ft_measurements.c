@@ -1,23 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strlen.c                                        :+:      :+:    :+:   */
+/*   ft_measurements.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lbellmas <lbellmas@student.42barcelon      +#+  +:+       +#+        */
+/*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/15 17:10:24 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/05/30 18:06:29 by lbellmas         ###   ########.fr       */
+/*   Created: 2025/05/29 16:11:02 by carlopez          #+#    #+#             */
+/*   Updated: 2025/05/29 18:26:34 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../header/ft_minishell.h"
 
-size_t	ft_strlen(const char *s)
+int	ft_arraylen(char **arr)
 {
-	size_t	p;
+	int	i;
 
-	p = 0;
-	while (s && s[p] != '\0')
-		p++;
-	return (p);
+	i = 0;
+	while (arr && arr[i])
+		i++;
+	return (i);
+}
+
+int	ft_listlen(t_env *env)
+{
+	int	i;
+
+	i = 0;
+	while (env)
+	{
+		i++;
+		env = env->next;
+	}
+	return (i);
 }

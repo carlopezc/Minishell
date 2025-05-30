@@ -1,0 +1,122 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_free.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/29 15:52:48 by carlopez          #+#    #+#             */
+/*   Updated: 2025/05/30 17:59:33 by lbellmas         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../header/ft_minishell.h"
+
+void	ft_free_env(t_env **env)
+{
+	t_env	*tmp;
+	t_env	*next;
+
+	if (!env)
+		return ;
+	tmp = *env;
+	while (tmp)
+	{
+		next = tmp->next;
+		ft_safe_free((void **)&tmp->name);
+		ft_safe_free((void **)&tmp->value);
+		ft_safe_free((void **)&tmp);
+		tmp = next;
+	}
+	*env = NULL;
+	return ;
+}
+
+void	ft_free_array(char **arr)
+{
+	int	i;
+
+	if (!arr)
+		return ;
+	i = 0;
+	while (arr[i])
+		ft_safe_free((void **)&arr[i++]);
+	free(arr);
+	return ;
+}
+
+void	ft_free_tokens(t_minishell **minishell)
+{
+	t_token	*tmp;
+	t_token	*token;
+
+	token = (*minishell)->tokens;
+	tmp = NULL;
+	while (token)
+	{
+		tmp = token->next;
+		if (token->str)
+			ft_safe_free((void **)&(token->str));
+		ft_safe_free((void **)&token);
+		token = tmp;
+	}
+	return ;
+}
+
+void	ft_free_node(t_env *node, t_env **list)
+{
+	t_env	*tmp;
+	t_env	*prev;
+
+	tmp = *list;
+	prev = NULL;
+	if (!node)
+		return ;
+	if (!tmp->next)
+	{
+		ft_safe_free((void **)&tmp->name);
+		ft_safe_free((void **)&tmp->value);
+		*list = NULL;
+		list = NULL;
+		return (ft_safe_free((void **)&tmp));
+	}
+	while (tmp)
+	{
+		if (tmp->next && !ft_strncmp((tmp->next)->name,
+				node->name, ft_max_strlen((tmp->next)->name, node->name)))
+			prev = tmp;
+		if (!ft_strncmp(tmp->name, node->name,
+				ft_max_strlen(tmp->name, node->name)))
+		{
+			if (prev)
+				prev->next = tmp->next;
+			else
+				*list = tmp->next;
+			ft_safe_free((void **)&tmp->value);
+			tmp->next = NULL;
+			return (ft_safe_free((void **)&tmp->name), ft_safe_free((void **)&tmp));
+		}
+		tmp = tmp->next;
+	}
+	return ;
+}
+
+void	ft_free_minishell(t_minishell **minishell)
+{
+	if (!minishell || !*minishell)
+		return ;
+	if ((*minishell)->tokens)
+	{
+		ft_free_tokens(minishell);
+		(*minishell)->tokens = NULL;
+	}
+	if ((*minishell)->env)
+		ft_free_env(&(*minishell)->env);
+	if ((*minishell)->export)
+		ft_free_env(&(*minishell)->export);
+	if ((*minishell)->undefined_var)
+		ft_free_env(&(*minishell)->undefined_var);
+	free(*minishell);
+	*minishell = NULL;
+	return ;
+}

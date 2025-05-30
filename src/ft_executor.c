@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/05/28 14:16:48 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/05/29 13:49:55 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -674,12 +674,12 @@ void	ft_docs_in(t_pipex *pipex)
 	}
 	else
 	{
-		close(pipex->pipe[0][0]);
-		close(pipex->pipe[0][1]);
-		waitpid(pipex->pid, NULL, 0);
 		close(tmp_pipe[1]);
 		dup2(tmp_pipe[0], 0);
 		close(tmp_pipe[0]);
+		close(pipex->pipe[0][0]);
+		close(pipex->pipe[0][1]);
+		waitpid(pipex->pid, NULL, 0);
 	}
 }
 
@@ -1102,7 +1102,7 @@ t_token	*ft_or(t_pipex *pipex, t_minishell *shell, t_token *save)
 	}
 	if (shell->status == 0)
 	{
-		while (save && (save->type != AND || pipex->brackets_count != brackets) && (save->type != OR || brackets != pipex->brackets_count))
+		while (save && (save->type != AND || !(pipex->brackets_count <= brackets)) && (save->type != OR || brackets != pipex->brackets_count))
 		{
 			if (save->type == O_BRACKET)
 				pipex->brackets_count += 1;

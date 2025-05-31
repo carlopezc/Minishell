@@ -6,7 +6,7 @@
 #    By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/27 15:14:10 by carlopez          #+#    #+#              #
-#    Updated: 2025/05/30 11:28:43 by carlopez         ###   ########.fr        #
+#    Updated: 2025/05/31 18:25:56 by lbellmas         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -39,7 +39,7 @@ LIB	= header/ft_minishell.h
 LIBGET	= $(GETDIR)/get_next_line_bonus.h
 
 # Archivos fuente
-SRC	= ft_tokenization.c ft_parsing.c ft_executor.c ft_split_cmd.c ft_wildcard.c ft_aux_check.c ft_check.c ft_count.c ft_env.c ft_expand.c ft_export.c ft_free.c ft_get_elements.c ft_init.c ft_measurements.c ft_print.c ft_signals.c ft_strdup_variants.c ft_testing_tools.c ft_token_utils.c ft_brackets.c
+SRC	= ft_tokenization.c ft_parsing.c ft_executor.c ft_split_cmd.c ft_wildcard.c ft_aux_check.c ft_check.c ft_count.c ft_env.c ft_expand.c ft_export.c ft_free.c ft_get_elements.c ft_init.c ft_measurements.c ft_print.c ft_signals.c ft_strdup_variants.c ft_testing_tools.c ft_token_utils.c ft_brackets.c ft_executor2.c ft_executor3.c ft_executor4.c ft_executor5.c ft_executor6.c ft_executor7.c ft_executor8.c ft_executor9.c ft_executor10.c ft_executor11.c ft_executor12.c ft_executor13.c
 BSRC	= 
 UTILS	= ft_utils.c
 GET	= get_next_line_bonus.c get_next_line_utils_bonus.c

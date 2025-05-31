@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 19:26:24 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/31 20:04:19 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/31 21:47:16 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,7 +125,7 @@ void	ft_unquote(char **input, int flag)
 			else if ((*input)[i] == '\\' || (*input)[i] == ';')
 			{
 				if (simp || ((*input)[i + 1]
-					&& ((*input)[i + 1] == '(' || (*input)[i + 1] == ')')))
+					&& ((*input)[i + 1] == '(' || (*input)[i + 1] == ')' || (*input)[i + 1] == '*')))
 					unquoted = ft_strjoin_char(unquoted, (*input)[i++]);
 				else
 					i++;

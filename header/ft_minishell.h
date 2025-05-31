@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 11:59:23 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/31 19:50:42 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/31 23:50:28 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,7 +174,7 @@ void			ft_manage_shell_signals(void);
 char			*token_to_str(t_token_type type);
 
 //ft_variable.c
-int			ft_variable(char **input, t_minishell **minishell);
+int				ft_variable(char **input, t_minishell **minishell);
 
 //ft_file_management.c
 char			**ft_get_elements(void);
@@ -185,5 +185,7 @@ int				ft_check_asterisk(char *input, char ***elements);
 int				ft_find_asterisk(char *input);
 int				ft_parse_asterisk(char **input);
 char			**ft_split_asterisk(char *input, char c);
+
+void	ft_init_int(int (*i)[3]);
 
 #endif

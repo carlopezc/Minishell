@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 22:19:44 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/31 23:55:06 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/06/01 00:03:43 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,22 @@ static int	ft_asterisk2(char ***elements,
 		(*i)[2]++;
 	}
 	return (flag);
+}
+
+static int	ft_asterisk4(char ***elements,
+		char **s_input, int (*i)[3], int *flag)
+{
+	*flag = ft_asterisk2(elements, s_input, i, *flag);
+	if ((!(*elements)[(*i)[1]][(*i)[2]] && !*flag) || *flag == -1)
+	{
+		if (!ft_delete_item(elements, (*elements)[(*i)[1]]))
+			return (0);
+		*flag = 1;
+		return (2);
+	}
+	else
+		(*i)[0]++;
+	return (1);
 }
 
 static int	ft_asterisk3(char ***elements,
@@ -73,16 +89,11 @@ int	ft_main_asterisk(char **s_input, char ***elements, int (*i)[3], int *flag)
 			(*i)[0]++;
 		else if (ft_strchr(s_input[(*i)[0]], '*'))
 		{
-			*flag = ft_asterisk2(elements, s_input, i, *flag);
-			if ((!(*elements)[(*i)[1]][(*i)[2]] && !*flag) || *flag == -1)
-			{
-				if (!ft_delete_item(elements, (*elements)[(*i)[1]]))
-					return (0);
-				*flag = 1;
+			res = ft_asterisk4(elements, s_input, i, flag);
+			if (!res)
+				return (0);
+			else if (res == 2)
 				break ;
-			}
-			else
-				(*i)[0]++;
 		}
 		else
 		{
@@ -99,9 +110,9 @@ int	ft_main_asterisk(char **s_input, char ***elements, int (*i)[3], int *flag)
 
 int	ft_check_asterisk(char *input, char ***elements)
 {
-	char **s_input;
-	int	i[3];
-	int	flag;
+	char	**s_input;
+	int		i[3];
+	int		flag;
 
 	ft_init_int(&i);
 	flag = 0;

@@ -1,47 +1,46 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_print.c                                         :+:      :+:    :+:   */
+/*   ft_free_aux.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/29 15:51:45 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/30 20:04:03 by carlopez         ###   ########.fr       */
+/*   Created: 2025/05/30 21:49:31 by carlopez          #+#    #+#             */
+/*   Updated: 2025/05/30 21:50:01 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
 
-void	ft_print_elements(char **elements)
+void	ft_free_env(t_env **env)
 {
-	int	i;
+	t_env	*tmp;
+	t_env	*next;
 
-	i = 0;
-	while (elements[i])
-		ft_printf("%s ", elements[i++]);
-	return ;
-}
-
-void	ft_print_tokens(t_token	*token)
-{
-	t_token	*tmp;
-
-	tmp = token;
+	if (!env)
+		return ;
+	tmp = *env;
 	while (tmp)
 	{
-		ft_printf("El input es %s\n", tmp->str);
-		ft_printf("El token type es: %s\n", token_to_str(tmp->type));
-		tmp = tmp->next;
+		next = tmp->next;
+		ft_safe_free((void **)&tmp->name);
+		ft_safe_free((void **)&tmp->value);
+		ft_safe_free((void **)&tmp);
+		tmp = next;
 	}
+	*env = NULL;
 	return ;
 }
 
-void	ft_print_array(char **arr)
+void	ft_free_array(char **arr)
 {
 	int	i;
 
+	if (!arr)
+		return ;
 	i = 0;
-	while (arr && arr[i])
-		ft_printf("%s\n", arr[i++]);
+	while (arr[i])
+		ft_safe_free((void **)&arr[i++]);
+	free(arr);
 	return ;
 }

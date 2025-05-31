@@ -6,13 +6,14 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 16:05:18 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/30 11:31:01 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/30 19:17:42 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
 
-t_token_type	ft_is_operator_aux_aux(char **value, char *input, int *i, int flag)
+t_token_type	ft_is_operator_aux_aux(char **value,
+		char *input, int *i, int flag)
 {
 	if (!ft_strncmp(input + *i, "|", 1))
 	{

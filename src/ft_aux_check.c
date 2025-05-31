@@ -6,11 +6,51 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 18:31:30 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/30 13:30:14 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/30 21:31:34 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
+
+int	ft_check_duplicated(char *str, t_env **env, t_env **undefined)
+{
+	char	*name_to_add;
+	char	*value;
+	t_env	*tmp;
+
+	tmp = *env;
+	name_to_add = ft_get_name(str);
+	value = ft_get_value(str);
+	while (tmp)
+	{
+		if (!ft_strncmp(name_to_add,
+				tmp->name, ft_max_strlen(name_to_add, tmp->name)))
+		{
+			if (value)
+				ft_change_value(str, &tmp);
+			ft_safe_free((void **)&name_to_add);
+			return (1);
+		}
+		tmp = tmp->next;
+	}
+	if (undefined)
+	{
+		tmp = *undefined;
+		while (tmp)
+		{
+			if (!ft_strncmp(name_to_add, tmp->name,
+					ft_max_strlen(name_to_add, tmp->name)))
+			{
+				ft_free_node(tmp, undefined);
+				ft_safe_free((void **)&name_to_add);
+				return (0);
+			}
+			tmp = tmp->next;
+		}
+	}
+	ft_safe_free((void **)&name_to_add);
+	return (0);
+}
 
 int	ft_check_next(t_token *tokens, int o_brckt)
 {
@@ -115,4 +155,26 @@ int	ft_check_brackets(t_token *token)
 	else if (open && close)
 		ft_quit_brackets(token, &open, &close);
 	return (1);
+}
+
+int	ft_is_builtin(char *input)
+{
+	if (*input == '(')
+		input = input + 1;
+	if (!ft_strncmp(input, "echo", 4))
+		return (1);
+	else if (!ft_strncmp(input, "cd", 2))
+		return (1);
+	else if (!ft_strncmp(input, "pwd", 3))
+		return (1);
+	else if (!ft_strncmp(input, "export", 6))
+		return (1);
+	else if (!ft_strncmp(input, "unset", 5))
+		return (1);
+	else if (!ft_strncmp(input, "env", 3))
+		return (1);
+	else if (!ft_strncmp(input, "exit", 4))
+		return (1);
+	else
+		return (0);
 }

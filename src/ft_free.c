@@ -6,44 +6,11 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 15:52:48 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/30 17:50:18 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/30 21:52:13 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
-
-void	ft_free_env(t_env **env)
-{
-	t_env	*tmp;
-	t_env	*next;
-
-	if (!env)
-		return ;
-	tmp = *env;
-	while (tmp)
-	{
-		next = tmp->next;
-		ft_safe_free((void **)&tmp->name);
-		ft_safe_free((void **)&tmp->value);
-		ft_safe_free((void **)&tmp);
-		tmp = next;
-	}
-	*env = NULL;
-	return ;
-}
-
-void	ft_free_array(char **arr)
-{
-	int	i;
-
-	if (!arr)
-		return ;
-	i = 0;
-	while (arr[i])
-		ft_safe_free((void **)&arr[i++]);
-	free(arr);
-	return ;
-}
 
 void	ft_free_tokens(t_minishell **minishell)
 {
@@ -63,6 +30,20 @@ void	ft_free_tokens(t_minishell **minishell)
 	return ;
 }
 
+static int	ft_if_no_next(t_env **tmp, t_env **list)
+{
+	if (*tmp && !(*tmp)->next)
+	{
+		ft_safe_free((void **)&(*tmp)->name);
+		ft_safe_free((void **)&(*tmp)->value);
+		ft_safe_free((void **)tmp);
+		*list = NULL;
+		list = NULL;
+		return (0);
+	}
+	return (1);
+}
+
 void	ft_free_node(t_env *node, t_env **list)
 {
 	t_env	*tmp;
@@ -72,14 +53,8 @@ void	ft_free_node(t_env *node, t_env **list)
 	prev = NULL;
 	if (!node)
 		return ;
-	if (!tmp->next)
-	{
-		ft_safe_free((void **)&tmp->name);
-		ft_safe_free((void **)&tmp->value);
-		*list = NULL;
-		list = NULL;
-		return (ft_safe_free((void **)&tmp));
-	}
+	if (!ft_if_no_next(&tmp, list))
+		return ;
 	while (tmp)
 	{
 		if (tmp->next && !ft_strncmp((tmp->next)->name,
@@ -94,7 +69,8 @@ void	ft_free_node(t_env *node, t_env **list)
 				*list = tmp->next;
 			ft_safe_free((void **)&tmp->value);
 			tmp->next = NULL;
-			return (ft_safe_free((void **)&tmp->name), ft_safe_free((void **)&tmp));
+			return (ft_safe_free((void **)&tmp->name),
+				ft_safe_free((void **)&tmp));
 		}
 		tmp = tmp->next;
 	}

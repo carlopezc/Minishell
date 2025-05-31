@@ -6,7 +6,7 @@
 #    By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/27 15:14:10 by carlopez          #+#    #+#              #
-#    Updated: 2025/05/30 17:03:35 by carlopez         ###   ########.fr        #
+#    Updated: 2025/05/30 21:50:21 by carlopez         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -39,7 +39,7 @@ LIB	= header/ft_minishell.h
 LIBGET	= $(GETDIR)/get_next_line_bonus.h
 
 # Archivos fuente
-SRC	= ft_manage_nodes.c ft_tokenization.c ft_parsing.c ft_executor.c ft_split_cmd.c ft_wildcard.c ft_aux_check.c ft_check.c ft_count.c ft_env.c ft_expand.c ft_export.c ft_free.c ft_get_elements.c ft_init.c ft_measurements.c ft_print.c ft_signals.c ft_strdup_variants.c ft_testing_tools.c ft_token_utils.c ft_brackets.c
+SRC	= ft_variable.c ft_free_aux.c ft_asterisk.c ft_file_management.c ft_manage_nodes.c ft_quotes.c ft_str_utils.c ft_tokenization.c ft_parsing.c ft_executor.c ft_split_cmd.c ft_wildcard.c ft_aux_check.c ft_check.c ft_count.c ft_env.c ft_expand.c ft_export.c ft_free.c ft_get_elements.c ft_init.c ft_measurements.c ft_print.c ft_signals.c ft_strdup_variants.c ft_testing_tools.c ft_token_utils.c ft_brackets.c
 BSRC	= 
 UTILS	= ft_utils.c
 GET	= get_next_line_bonus.c get_next_line_utils_bonus.c

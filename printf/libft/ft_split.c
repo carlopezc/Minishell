@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 09:31:50 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/04/03 12:30:14 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/05/31 18:45:34 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ static int	ft_word_count(char const *w, char c)
 	return (count);
 }
 
-static void	ft_free_todo(int p, char **word)
+void	ft_free_todo(int p, char **word)
 {
 	while (p >= 0)
 	{

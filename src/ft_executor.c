@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/05/28 21:06:01 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/31 18:44:50 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -258,8 +258,7 @@ void	ft_env(t_minishell *shell, char *cmd)
  
  	i = 0;
 	flag = 0;
-	ft_printf("Entra en env\n");
-	var = ft_split(cmd, ' ');
+	var = ft_split_cmd(cmd, ' ');
 	if (!var)
 		return ;
 	//Input es env unicamente
@@ -269,7 +268,6 @@ void	ft_env(t_minishell *shell, char *cmd)
 	env_tmp = ft_strdup_env(shell->env);
  	while (var[i])
  	{
-		ft_printf("var es : %s\n", var[i]);
  		if (ft_strchr(var[i], '='))
  		{
 			if (!ft_check_duplicated(var[i], &env_tmp, NULL))
@@ -289,7 +287,28 @@ void	ft_env(t_minishell *shell, char *cmd)
  	}
 	ft_print_env(env_tmp);
 	return ;
- }
+}
+
+void	ft_print_value(char *value)
+{
+	int	i;
+
+	i = 0;
+	ft_printf("\"");
+	while (value[i])
+	{
+		if (value[i] == '\"' || value[i] == '\'')
+			write(1, "\\", 1);
+		if (value[i] == '$')
+			write(1, "\\", 1);
+		if (value[i] == '\\')
+			write(1, "\\", 1);
+		write(1, &value[i], 1);
+		i++;
+	}
+	ft_printf("\"\n");
+	return ;
+}
 
 void	ft_print_export(t_env *export)
 {
@@ -304,9 +323,11 @@ void	ft_print_export(t_env *export)
 			ft_printf("declare -x %s=\"\"\n", tmp->name);
 		else
 		{
-			//Super chorra hay que cambairlo
 			if (!(tmp->name[0] == '_' && tmp->name[1] == '\0'))
-				ft_printf("declare -x %s=\"%s\"\n", tmp->name, tmp->value);
+			{
+				ft_printf("declare -x %s=", tmp->name, tmp->value);
+				ft_print_value(tmp->value);
+			}
 		}
 		tmp = tmp->next;
 	}
@@ -391,6 +412,33 @@ void	ft_sort_list(t_env *head)
 	}
 }
 
+void	ft_advance_var(char *cmd, int *i)
+{
+	t_quote quote;
+
+	ft_init_quote(&quote);
+	if (!cmd)
+		return ;
+	while (cmd[*i] && cmd[*i] == ' ')
+		(*i)++;
+	while (cmd[*i] && cmd[*i] != ' ')
+	{
+		if (cmd[*i] == '=')
+			break ;
+		(*i)++;
+	}
+	if (cmd[*i] != '=')
+		return ;
+	while (cmd[*i])
+	{
+		ft_check_quote(&quote, cmd[*i]);
+		if (cmd[*i] == ' ' && quote.flag == 0)
+			return ;
+		(*i)++;
+	}
+	return ;
+}
+
 int	ft_check_name(char *var)
 {
 	int	i;
@@ -398,8 +446,10 @@ int	ft_check_name(char *var)
 	i = 0;
 	if (!ft_isalpha(var[i]) && (var[i] != '_'))
 		return (ft_printf("Non valid name\n"), 0);
-	while (var[++i] && var[i] != '=')
+	while (var[++i] && (var[i] != '=' && var[i] != ' '))
 	{
+		if (var[i] == '+' && var[i + 1] == '=')
+			return (1);
 		if (!ft_isalnum(var[i]) && (var[i] != '_'))
 			return (ft_printf("Non valid name\n"), 0);
 	}
@@ -410,38 +460,33 @@ void	ft_export(t_minishell *shell, char *cmd)
 {
 	int	i;
 	int flag;
-	char **var;
 	t_env *node;
+	char	**split;
 
-	var = ft_split(cmd, ' ');
-	if (!var)
-		return ;
 	i = 0;
-	flag = 0;
- 	// NOMBRES VÁLIDOS:
-	// Tiene que comenzar con caracter o con guion bajo
-	// En el resto del nombre puede contener caracteres guiones bajos y números NADA MAS
-	// Para el valor no hay restricciones, cualquier simbolo, emoji, caracter etc, cuidado con caracteres especiales escaparlos, o entre comillas simples
-	if (!ft_strncmp(var[i], "export", ft_max_strlen(var[i], "export")) && !var[++i])
+	split = ft_split_cmd(cmd, ' ');
+	if (!split || !*split)
+		return (ft_free_todo(i, split));
+	if (!ft_strncmp(split[i], "export", ft_max_strlen(split[i], "export")) && !split[i + 1])
 		return (ft_sort_list(shell->export), ft_print_export(shell->export));
-	while (var[i])
+	while (split[i])
 	{
-		if (!ft_check_name(var[i]))
+		if (!ft_check_name(split[i]))
 			return ;
-		if (ft_strchr(var[i], '='))
+		if (ft_strchr(split[i], '='))
 		{
-			if (!ft_check_duplicated(var[i], &shell->env, &shell->undefined_var))
+			if (!ft_check_duplicated(split[i], &shell->env, &shell->undefined_var))
 			{
-				node = ft_create_node(ft_get_name(var[i]), ft_get_value(var[i]));
+				node = ft_create_node(ft_get_name(split[i]), ft_get_value(split[i]));
 				ft_connect_node(&shell->env, node);
-				flag = 1;
 			}
+			flag = 1;
 		}
-		if (!flag)
-		{	
-			if (!ft_check_duplicated(var[i], &shell->env, &shell->undefined_var))
+		else if (!flag)
+		{
+			if (!ft_check_duplicated(split[i], &shell->env, &shell->undefined_var))
 			{
-				node = ft_create_node(ft_get_name(var[i]), NULL);
+				node = ft_create_node(ft_get_name(split[i]), NULL);
 				ft_connect_node(&shell->undefined_var, node);
 			}
 		}
@@ -450,7 +495,7 @@ void	ft_export(t_minishell *shell, char *cmd)
 	}
 	ft_merge_lists(&shell, shell->env, shell->undefined_var);
 	ft_sort_list(shell->export);
-	ft_print_export(shell->export);
+	//ft_print_export(shell->export);
 	return ;
 }
 

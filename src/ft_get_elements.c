@@ -6,11 +6,29 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 16:36:42 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/30 16:47:50 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/30 21:43:43 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
+
+int	ft_get_size(char *input, char c)
+{
+	int		i;
+	int		size;
+
+	i = 0;
+	size = 0;
+	while (input[i])
+	{
+		if (input[i] == c)
+			size++;
+		i++;
+	}
+	if (input[i - 1] != c)
+		size++;
+	return (size);
+}
 
 char	*ft_get_next(char *input, int *i)
 {
@@ -26,15 +44,29 @@ char	*ft_get_next(char *input, int *i)
 	return (ft_substr(input, start, *i - start));
 }
 
+static char	*ft_clean_value(char *value)
+{
+	char	*tmp;
+
+	tmp = NULL;
+	if ((value[0] == '\"' || value[0] == '\'')
+		&& ((value[ft_strlen(value) - 1] == '\"')
+			|| (value[ft_strlen(value) - 1] == '\'')))
+	{
+		tmp = ft_substr(value, 1, ft_strlen(value) - 2);
+		ft_safe_free((void **)&value);
+		value = tmp;
+	}
+	return (value);
+}
+
 char	*ft_get_value(char *str)
 {
 	int		i;
 	char	*value;
 	char	*equal;
-	char	*tmp;
 
 	i = 0;
-	tmp = NULL;
 	equal = ft_strchr(str, '=');
 	if (!equal)
 		return (NULL);
@@ -47,15 +79,7 @@ char	*ft_get_value(char *str)
 		while (equal[i])
 			value = ft_strjoin_char(value, equal[i++]);
 	}
-	if ((value[0] == '\"' || value[0] == '\'')
-		&& ((value[ft_strlen(value) - 1] == '\"')
-			|| (value[ft_strlen(value) - 1] == '\'')))
-	{
-		tmp = ft_substr(value, 1, ft_strlen(value) - 2);
-		ft_safe_free((void **)&value);
-		value = tmp;
-	}
-	return (value);
+	return (ft_clean_value(value));
 }
 
 char	*ft_get_name(char *str)

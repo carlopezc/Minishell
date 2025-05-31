@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 16:16:23 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/30 17:03:38 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/30 19:16:45 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ static char	*ft_create_env2(char *env)
 {
 	char	*tmp;
 	char	*value;
-	
+
 	tmp = ft_get_value(env);
 	value = ft_itoa(ft_atoi(tmp) + 1);
 	ft_safe_free((void **)&tmp);
@@ -62,9 +62,9 @@ t_env	*ft_create_env(char **env_array)
 
 	if (!env_array || !*env_array)
 		return (NULL);
-	i = 0;
+	i = -1;
 	env = NULL;
-	while (env_array[i])
+	while (env_array[++i])
 	{
 		name = ft_get_name(env_array[i]);
 		if (!ft_strncmp(name, "SHLVL", ft_max_strlen(name, "SHLVL")))
@@ -77,7 +77,6 @@ t_env	*ft_create_env(char **env_array)
 		if (!node)
 			return (ft_printf("Error creating environment node\n"), NULL);
 		ft_connect_node(&env, node);
-		i++;
 	}
 	return (env);
 }

@@ -6,98 +6,11 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 12:44:53 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/30 14:56:56 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/30 19:31:36 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
-
-void	ft_unquote(char **input, int flag)
-{
-	char	*unquoted;
-	int		i;
-	int		in_word;
-	int		simp;
-	int		asterisk;
-
-	i = 0;
-	in_word = 0;
-	simp = 0;
-	asterisk = 0;
-	unquoted = NULL;
-	while ((*input)[i])
-	{
-		if (!i || (!(*input)[i - 1] || (*input)[i - 1] != '\\'))
-		{
-			if (((*input)[i] == '\'' || (*input)[i] == '\"') && (flag || asterisk) && in_word)
-			{
-				in_word = 0;
-				unquoted = ft_strjoin_char(unquoted, (*input)[i++]);
-			}
-			else if (((*input)[i] == '\"') && flag && ((ft_strchr(&(*input)[i], ' ')) && (ft_strchr(&(*input)[i + 1], '\"')) && (ft_strchr(&(*input)[i], ' ') < ft_strchr(&(*input)[i + 1], '\"'))))
-			{
-				in_word = 1;
-				unquoted = ft_strjoin_char(unquoted, (*input)[i++]);
-			}
-			else if (((*input)[i] == '\"') && ((ft_strchr(&(*input)[i], '*')) && (ft_strchr(&(*input)[i + 1], '\"')) && (ft_strchr(&(*input)[i], '*') < ft_strchr(&(*input)[i + 1], '\"'))))
-			{
-				if (!asterisk)
-					asterisk = 1;
-				else
-					asterisk = 0;
-				in_word = 1;
-				unquoted = ft_strjoin_char(unquoted, (*input)[i++]);
-			}
-			else if (((*input)[i] == '\'') && ((ft_strchr(&(*input)[i], '*')) && (ft_strchr(&(*input)[i + 1], '\'')) && (ft_strchr(&(*input)[i], '*') < ft_strchr(&(*input)[i + 1], '\''))))
-			{
-				if (!asterisk)
-					asterisk = 1;
-				else
-					asterisk = 0;
-				in_word = 1;
-				unquoted = ft_strjoin_char(unquoted, (*input)[i++]);
-				if (simp)
-					simp = 0;
-				else
-					simp = 1;
-			}
-			else if (((*input)[i] == '\'') && flag && ((ft_strchr(&(*input)[i], ' ')) && (ft_strchr(&(*input)[i + 1], '\'')) && (ft_strchr(&(*input)[i], ' ') < ft_strchr(&(*input)[i + 1], '\''))))
-			{
-				in_word = 1;
-				unquoted = ft_strjoin_char(unquoted, (*input)[i++]);
-				if (simp)
-					simp = 0;
-				else
-					simp = 1;
-			}
-			else if ((*input)[i] == '\"' || (*input)[i] == '\'')
-			{
-				if ((*input)[i] == '\'')
-				{
-					if (simp)
-						simp = 0;
-					else
-						simp = 1;
-				}
-				i++;
-			}
-			else if ((*input)[i] == '\\' || (*input)[i] == ';')
-			{
-				if (simp || ((*input)[i + 1] && ((*input)[i + 1] == '(' || (*input)[i + 1] == ')')))
-					unquoted = ft_strjoin_char(unquoted, (*input)[i++]);
-				else
-					i++;
-			}
-			else
-				unquoted = ft_strjoin_char(unquoted, (*input)[i++]);
-		}
-		else
-			unquoted = ft_strjoin_char(unquoted, (*input)[i++]);
-	}
-	unquoted = ft_strjoin_char(unquoted, '\0');
-	*input = unquoted;
-	return ;
-}
 
 char	*ft_create_array(char **s_input)
 {
@@ -124,75 +37,6 @@ char	*ft_create_array(char **s_input)
 		else
 			i++;
 	}
-	return (input);
-}
-
-void	ft_variable(char **input, t_minishell **minishell)
-{
-	char	*dollar;
-	t_quote	quote;
-	int		i;
-	char	*final;
-
-	quote.flag = 0;
-	quote.type = 0;
-	i = 0;
-	final = NULL;
-	if (!*input || !(*input)[0])
-		return ;
-	dollar = ft_strchr(*input, '$');
-	if (!dollar)
-		return ;
-	while ((*input)[i])
-	{
-		if (!(*input)[i - 1] || ((*input)[i - 1] && (*input)[i - 1] != '\\'))
-			ft_check_quote(&quote, (*input)[i]);
-		if ((*input)[i] == '$' && (quote.type != '\'' && (!(*input)[i - 1] || ((*input)[i - 1] && (*input)[i - 1] != '\\'))))
-		{
-			if ((!(*input)[i - 1]) || ((*input)[i - 1] && (*input)[i - 1] != '\\'))
-			{
-				i++;
-				if ((*input)[i] == '?')
-				{
-					ft_printf("%d\n", (*minishell)->status);
-					return ;
-				}
-				else
-					final = ft_strjoin(final, ft_expand(*input, &i, (*minishell)->env));
-			}
-			else
-			{
-				final = ft_strjoin_char(final, (*input)[i]);
-				if ((*input)[i + 1] && ((*input)[i + 1] != '\'' && (*input)[i + 1] != '\"'))
-					i--;
-			}
-		}
-		else
-			final = ft_strjoin_char(final, (*input)[i++]);
-	}
-	*input = final;
-	return ;
-}
-
-char	*ft_quit_quotes(char **s_input, t_minishell **minishell)
-{
-	int		i;
-	char	*input;
-	int		flag;
-
-	i = 0;
-	flag = 0;
-	while (s_input[i])
-	{
-		ft_variable(&s_input[i], minishell);
-		ft_unquote(&s_input[i], flag);
-		if (!ft_strncmp(s_input[i], "export", 7) || !ft_strncmp(s_input[i], "env", 4) || !ft_strncmp(s_input[i], "echo", 5))
-			flag = 1;
-		if (ft_check_operator(s_input[i]))
-			flag = 0;
-		i++;
-	}
-	input = ft_create_array(s_input);
 	return (input);
 }
 
@@ -265,7 +109,6 @@ int	ft_add_bracket_token(t_token **token)
 	start = 0;
 	cpy = NULL;
 	prev = NULL;
-	//hacerlo anadiendo el de antes
 	while (tmp)
 	{
 		str = tmp->str;
@@ -278,7 +121,8 @@ int	ft_add_bracket_token(t_token **token)
 				if (!new_token)
 					return (0);
 				ft_connect_token(token, new_token, prev);
-				tmp->str = ft_substr(str, start + 1, ft_strlen(str) - (start + 1));
+				tmp->str = ft_substr(str, start + 1,
+						ft_strlen(str) - (start + 1));
 				str = tmp->str;
 				i--;
 			}
@@ -286,7 +130,8 @@ int	ft_add_bracket_token(t_token **token)
 			{
 				cpy = ft_strdup(str);
 				tmp->str = ft_substr(str, 0, i);
-				while (tmp && cpy[i] && cpy[i] == ')' && (!cpy[i - 1] || cpy[i] != '\\'))
+				while (tmp && cpy[i]
+					&& cpy[i] == ')' && (!cpy[i - 1] || cpy[i] != '\\'))
 				{
 					new_token = ft_create_token(")", C_BRACKET);
 					if (!new_token)

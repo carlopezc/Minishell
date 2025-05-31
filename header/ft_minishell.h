@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 11:59:23 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/30 12:10:05 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/31 18:46:01 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,6 +130,7 @@ void			ft_connect_token(t_token **tokens, t_token *new, t_token *prev);
 int				ft_add_bracket_token(t_token **token);
 int				ft_check_wildcard(t_token **tokens);
 char			*ft_create_array(char **s_input);
+void			ft_free_todo(int p, char **word);
 
 //ft_token_utils.c
 void			ft_add_node_back(t_token **lst, t_token *new);
@@ -137,13 +138,12 @@ void			ft_add_node_back(t_token **lst, t_token *new);
 //ft_count.c
 int				ft_count_brackets(char *str);
 int				ft_count_quotes(char *str);
+int	ft_count_files(DIR *dir);
 
 //ft_aux_check.c
 int				ft_last_check(t_token *tokens);
 int				ft_check_brackets(t_token *token);
-
-//ft_count.c
-int				ft_count_quotes(char *str);
+int				ft_is_builtin(char *input);
 
 //ft_init.c
 void			ft_init_quote(t_quote *quote);
@@ -152,19 +152,38 @@ void			ft_init_quote(t_quote *quote);
 int				ft_quit_brckt_dup(t_token *tmp, char c);
 int				ft_quit_brackets(t_token *token, int *open, int *close);
 
+//ft_quotes.c
+void	ft_unquote(char **input, int flag);
+char	*ft_quit_quotes(char **s_input, t_minishell **minishell);
+
 //ft_get_elements.c
 char			*ft_get_next(char *input, int *i);
+int	ft_get_size(char *input, char c);
 
 //ft_env.c
 t_env			*ft_empty_env(void);
 
 //ft_export.c
 void			ft_empty_export(t_minishell **shell);
+void	ft_change_value(char *str, t_env **node);
 
 //ft_signals.c
 void			ft_manage_shell_signals(void);
 
 //ft_testing_tools.c
 char			*token_to_str(t_token_type type);
+
+//ft_variable.c
+void	ft_variable(char **input, t_minishell **minishell);
+
+//ft_file_management.c
+char	**ft_get_elements(void);
+int	ft_delete_item(char ***elements, char *delete);
+
+//ft_asterisk.c
+int	ft_check_asterisk(char *input, char ***elements);
+int	ft_find_asterisk(char *input);
+int	ft_parse_asterisk(char **input);
+char	**ft_split_asterisk(char *input, char c);
 
 #endif

@@ -6,11 +6,28 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 18:28:50 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/30 11:50:07 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/05/30 20:49:17 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
+
+int	ft_count_files(DIR *dir)
+{
+	struct dirent	*entry;
+	int				files;
+
+	files = 0;
+	entry = readdir(dir);
+	while (entry)
+	{
+		if (entry->d_name[0] != '.')
+			files++;
+		entry = readdir(dir);
+	}
+	closedir(dir);
+	return (files);
+}
 
 int	ft_count_brackets(char *str)
 {
@@ -23,10 +40,9 @@ int	ft_count_brackets(char *str)
 	i = 0;
 	while (str[i])
 	{
-		if (str[i] == '(' /*&& (i > 0 && (!str[i - 1] || str[i - 1] != '\\'))*/)
+		if (str[i] == '(' && (!i || (!str[i - 1] || str[i - 1] != '\\')))
 			o_bracket++;
-		else if (str[i] == ')'/* && (i > 0
-				&& (!str[i - 1] || str[i - 1] != '\\'))*/)
+		else if (str[i] == ')' && (!i || (!str[i - 1] || str[i - 1] != '\\')))
 			c_bracket++;
 		i++;
 	}

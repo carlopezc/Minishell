@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 11:59:23 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/31 23:50:28 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/06/01 00:44:20 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,5 +187,6 @@ int				ft_parse_asterisk(char **input);
 char			**ft_split_asterisk(char *input, char c);
 
 void	ft_init_int(int (*i)[3]);
+int	ft_check_next(t_token *tokens, int o_brckt);
 
 #endif

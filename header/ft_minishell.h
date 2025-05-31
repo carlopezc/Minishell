@@ -130,6 +130,7 @@ void			ft_connect_token(t_token **tokens, t_token *new, t_token *prev);
 int				ft_add_bracket_token(t_token **token);
 int				ft_check_wildcard(t_token **tokens);
 char			*ft_create_array(char **s_input);
+void			ft_free_todo(int p, char **word);
 
 //ft_token_utils.c
 void			ft_add_node_back(t_token **lst, t_token *new);

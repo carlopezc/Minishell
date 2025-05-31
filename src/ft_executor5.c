@@ -45,7 +45,7 @@ void	ft_env(t_minishell *shell, char *cmd)
 	t_env	*env_tmp;
 
 	i = 0;
-	var = ft_split(cmd, ' ');
+	var = ft_split_cmd(cmd, ' ');
 	if (!var)
 		return ;
 	if (!ft_strncmp(var[i], "env", ft_max_strlen(var[i], "env")) && !var[++i])
@@ -54,6 +54,27 @@ void	ft_env(t_minishell *shell, char *cmd)
 	while (i != -1 && var[i])
 		i = ft_env2(var, i, env_tmp);
 	ft_print_env(env_tmp);
+	return ;
+}
+
+void	ft_print_value(char *value)
+{
+	int	i;
+
+	i = 0;
+	ft_printf("\"");
+	while (value[i])
+	{
+		if (value[i] == '\"' || value[i] == '\'')
+			write(1, "\\", 1);
+		if (value[i] == '$')
+			write(1, "\\", 1);
+		if (value[i] == '\\')
+			write(1, "\\", 1);
+		write(1, &value[i], 1);
+		i++;
+	}
+	ft_printf("\"\n");
 	return ;
 }
 
@@ -71,7 +92,10 @@ void	ft_print_export(t_env *export)
 		else
 		{
 			if (!(tmp->name[0] == '_' && tmp->name[1] == '\0'))
-				ft_printf("declare -x %s=\"%s\"\n", tmp->name, tmp->value);
+			{
+				ft_printf("declare -x %s=", tmp->name, tmp->value);
+				ft_print_value(tmp->value);
+			}
 		}
 		tmp = tmp->next;
 	}

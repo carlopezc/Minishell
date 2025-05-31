@@ -35,7 +35,7 @@ static int	ft_word_count(char const *w, char c)
 	return (count);
 }
 
-static void	ft_free_todo(int p, char **word)
+void	ft_free_todo(int p, char **word)
 {
 	while (p >= 0)
 	{

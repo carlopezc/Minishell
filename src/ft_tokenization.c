@@ -6,18 +6,17 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/31 21:47:45 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/06/01 01:59:56 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
 
-char	*ft_group_input(t_minishell **minishell, char *input, int *i)
+char	*ft_group_input(char *input, int *i)
 {
 	char	*value;
 
 	value = NULL;
-	(void)minishell;
 	while (input[*i])
 	{
 		if (ft_check_operator(&input[*i]))
@@ -28,19 +27,18 @@ char	*ft_group_input(t_minishell **minishell, char *input, int *i)
 	return (value);
 }
 
-int	ft_define_parts(t_minishell **minishell,
-			char *input, char **value, t_token_type *type, int *i)
+int	ft_define_parts(char *input, char **value, t_token_type *type, int *i)
 {
 	if (input[*i] == '.' && input[*i + 1] && input[*i + 1] == '/')
 	{
 		*type = EXEC;
-		*value = ft_group_input(minishell, input, i);
+		*value = ft_group_input(input, i);
 		return (1);
 	}
 	else if (ft_is_builtin(&input[*i]))
 	{
 		*type = BUILTIN;
-		*value = ft_group_input(minishell, input, i);
+		*value = ft_group_input(input, i);
 		return (1);
 	}
 	*type = ft_is_operator(value, input, i);
@@ -51,7 +49,7 @@ int	ft_define_parts(t_minishell **minishell,
 	else
 	{
 		*type = COMMAND;
-		*value = ft_group_input(minishell, input, i);
+		*value = ft_group_input(input, i);
 		return (1);
 	}
 }
@@ -65,7 +63,7 @@ int	ft_group_command(t_minishell **minishell, char *input, int *i)
 	token = NULL;
 	value = NULL;
 	type = NOT_SET;
-	if (!ft_define_parts(minishell, input, &value, &type, i))
+	if (!ft_define_parts(input, &value, &type, i))
 		return (0);
 	token = ft_create_token(value, type);
 	if (!token)

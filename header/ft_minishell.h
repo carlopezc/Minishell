@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 11:59:23 by carlopez          #+#    #+#             */
-/*   Updated: 2025/06/01 04:32:29 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/06/01 04:36:47 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -218,7 +218,7 @@ t_token			*ft_exectime(t_pipex *pipex, t_minishell *shell,
 					t_token *tmp, t_token *save);
 void			ft_arrange_fd(t_pipex *pipex);
 t_pipex			*ft_init_pipex(void);
-void			ft_free_pipex(t_pipex *);
+void			ft_free_pipex(t_pipex *pipex);
 char			*ft_errase_route(char *route);
 void			ft_cd_add(t_minishell *shell, char *temp);
 int				ft_check_cd(char *file, char *pwd);
@@ -240,7 +240,7 @@ void			ft_exec_build(t_minishell *shell, char *cmd);
 void			ft_pre_exec_command(t_pipex *pipex,
 					t_token *cmd, t_minishell *shell);
 int				ft_path(t_env **env, t_pipex **pipex, char *cmd);
-t_token 		*ft_redir(t_token *save, t_token_type type, t_pipex *pipex);
+t_token			*ft_redir(t_token *save, t_token_type type, t_pipex *pipex);
 void			ft_exec(t_minishell *shell, t_pipex *pipex, t_token *save);
 void			ft_terminator(t_pipex *pipex);
 t_token			*ft_killchilds(t_pipex *pipex,

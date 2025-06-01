@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:19:49 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/05/31 19:27:01 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/06/01 04:56:05 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@ t_pipex	*ft_init_pipex(void)
 	t_pipex	*pipex;
 
 	pipex = (t_pipex *)malloc(sizeof(t_pipex));
+	if (!pipex)
+		return (NULL);
 	pipex->childs = 0;
 	pipex->docs_in = NULL;
 	pipex->docs_out = NULL;

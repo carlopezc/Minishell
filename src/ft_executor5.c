@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:12:04 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/05/31 19:19:59 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/06/01 04:39:17 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,51 +54,6 @@ void	ft_env(t_minishell *shell, char *cmd)
 	while (i != -1 && var[i])
 		i = ft_env2(var, i, env_tmp);
 	ft_print_env(env_tmp);
-	return ;
-}
-
-void	ft_print_value(char *value)
-{
-	int	i;
-
-	i = 0;
-	ft_printf("\"");
-	while (value[i])
-	{
-		if (value[i] == '\"' || value[i] == '\'')
-			write(1, "\\", 1);
-		if (value[i] == '$')
-			write(1, "\\", 1);
-		if (value[i] == '\\')
-			write(1, "\\", 1);
-		write(1, &value[i], 1);
-		i++;
-	}
-	ft_printf("\"\n");
-	return ;
-}
-
-void	ft_print_export(t_env *export)
-{
-	t_env	*tmp;
-
-	tmp = export;
-	while (tmp)
-	{
-		if (!tmp->value)
-			ft_printf("declare -x %s\n", tmp->name);
-		else if (tmp->value[0] == '\0')
-			ft_printf("declare -x %s=\"\"\n", tmp->name);
-		else
-		{
-			if (!(tmp->name[0] == '_' && tmp->name[1] == '\0'))
-			{
-				ft_printf("declare -x %s=", tmp->name, tmp->value);
-				ft_print_value(tmp->value);
-			}
-		}
-		tmp = tmp->next;
-	}
 	return ;
 }
 

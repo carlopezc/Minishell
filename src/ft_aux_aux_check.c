@@ -6,26 +6,26 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 00:41:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/06/01 00:43:18 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/06/01 04:50:59 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
 
-static int	ft_check_duplicated2(t_env *tmp, char *name_to_add,
+static int	ft_check_duplicated2(t_env **tmp, char *name_to_add,
 		char *value, char *str)
 {
-	while (tmp)
+	while (*tmp)
 	{
 		if (!ft_strncmp(name_to_add,
-				tmp->name, ft_max_strlen(name_to_add, tmp->name)))
+				(*tmp)->name, ft_max_strlen(name_to_add, (*tmp)->name)))
 		{
 			if (value)
-				ft_change_value(str, &tmp);
+				ft_change_value(str, tmp);
 			ft_safe_free((void **)&name_to_add);
 			return (0);
 		}
-		tmp = tmp->next;
+		*tmp = (*tmp)->next;
 	}
 	return (1);
 }
@@ -39,7 +39,7 @@ int	ft_check_duplicated(char *str, t_env **env, t_env **undefined)
 	tmp = *env;
 	name_to_add = ft_get_name(str);
 	value = ft_get_value(str);
-	if (!ft_check_duplicated2(tmp, name_to_add, value, str))
+	if (!ft_check_duplicated2(&tmp, name_to_add, value, str))
 		return (1);
 	if (undefined)
 	{

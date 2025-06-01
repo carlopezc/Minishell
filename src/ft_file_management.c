@@ -6,11 +6,20 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 20:03:11 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/30 20:05:03 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/06/01 04:22:14 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
+
+int	ft_create_element_dup(char ***new, int size)
+{
+	*new = (char **)malloc(size * sizeof(char *));
+	if (!*new)
+		return (0);
+	(*new)[size - 1] = NULL;
+	return (1);
+}
 
 int	ft_delete_item(char ***elements, char *delete)
 {
@@ -19,26 +28,21 @@ int	ft_delete_item(char ***elements, char *delete)
 	char	**new;
 	int		size;
 
-	i = 0;
+	i = -1;
 	j = 0;
-	size = 0;
-	if (!elements | !*elements)
+	if (!elements || !*elements)
 		return (1);
 	size = ft_arraylen(*elements);
-	new = (char **)malloc(size * sizeof(char *));
-	if (!new)
+	if (!ft_create_element_dup(&new, size))
 		return (0);
-	new[size - 1] = NULL;
-	while ((*elements)[i])
+	while ((*elements)[++i])
 	{
 		if ((*elements)[i] != delete)
 		{
 			new[j] = ft_strdup((*elements)[i]);
-			if (!new[j])
+			if (!new[j++])
 				return (ft_free_array(new), 0);
-			j++;
 		}
-		i++;
 	}
 	ft_free_array(*elements);
 	*elements = new;
@@ -66,9 +70,8 @@ char	**ft_fill_files(int size)
 		if (entry->d_name[0] != '.')
 		{
 			files[i] = ft_strdup(entry->d_name);
-			if (!files[i])
+			if (!files[i++])
 				return (ft_free_array(files), NULL);
-			i++;
 		}
 		entry = readdir(dir);
 	}

@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 11:59:23 by carlopez          #+#    #+#             */
-/*   Updated: 2025/06/01 01:55:27 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/06/01 04:25:36 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,8 +186,28 @@ int				ft_find_asterisk(char *input);
 int				ft_parse_asterisk(char **input);
 char			**ft_split_asterisk(char *input, char c);
 
-void	ft_init_int(int (*i)[3]);
-int	ft_check_next(t_token *tokens, int o_brckt);
-void	ft_last(t_token **token);
+void			ft_init_int(int (*i)[3]);
+int				ft_check_next(t_token *tokens, int o_brckt);
+void			ft_last(t_token **token);
+int				ft_simp(int simp);
+int				ft_asterisk(int asterisk);
+int				ft_unquote_if(int i, int flag, char **input);
+int				ft_unquote_if2(int i, char **input);
+void			ft_unquote_inside2(int *in_word, int *i,
+					char **input, char **unquoted);
+int				ft_unquote_if4(int i, int flag, char **input);
+int				ft_unquote_if3(int i, char **input);
+int				ft_unquote_inside5(int *i, char **unquoted,
+					char **input, int *simp);
+int				ft_unquote_inside4(int *in_word,
+					int *simp, int asterisk);
+void			ft_unquote_inside3(int *in_word, int *i,
+					char **input, char **unquoted);
+void			ft_unquote_inside(int *in_word, int *i,
+					char **input, char **unquoted);
+void			ft_unquote_first(int (*i)[4], char **input,
+					char **unquoted, int flag);
+void			ft_asterisk_init(int *i, int *in_word,
+					int *simp, int *asterisk);
 
 #endif

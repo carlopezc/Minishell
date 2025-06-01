@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 19:26:24 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/31 21:47:16 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/06/01 03:57:06 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,102 +39,16 @@ char	*ft_quit_quotes(char **s_input, t_minishell **minishell)
 void	ft_unquote(char **input, int flag)
 {
 	char	*unquoted;
-	int		i;
-	int		in_word;
-	int		simp;
-	int		asterisk;
+	int		i[4];
 
-	i = 0;
-	in_word = 0;
-	simp = 0;
-	asterisk = 0;
+	ft_asterisk_init(&i[0], &i[1], &i[2], &i[3]);
 	unquoted = NULL;
-	while ((*input)[i])
+	while ((*input)[i[0]])
 	{
-		if (!i || (!(*input)[i - 1] || (*input)[i - 1] != '\\'))
-		{
-			if (((*input)[i] == '\''
-				|| (*input)[i] == '\"') && (flag || asterisk) && in_word)
-			{
-				in_word = 0;
-				unquoted = ft_strjoin_char(unquoted, (*input)[i++]);
-			}
-			else if (((*input)[i] == '\"')
-				&& flag && ((ft_strchr(&(*input)[i], ' '))
-				&& (ft_strchr(&(*input)[i + 1], '\"'))
-				&& (ft_strchr(&(*input)[i], ' ')
-				< ft_strchr(&(*input)[i + 1], '\"'))))
-			{
-				in_word = 1;
-				unquoted = ft_strjoin_char(unquoted, (*input)[i++]);
-			}
-			else if (((*input)[i] == '\"')
-				&& ((ft_strchr(&(*input)[i], '*'))
-				&& (ft_strchr(&(*input)[i + 1], '\"'))
-				&& (ft_strchr(&(*input)[i], '*')
-				< ft_strchr(&(*input)[i + 1], '\"'))))
-			{
-				if (!asterisk)
-					asterisk = 1;
-				else
-					asterisk = 0;
-				in_word = 1;
-				unquoted = ft_strjoin_char(unquoted, (*input)[i++]);
-			}
-			else if (((*input)[i] == '\'')
-				&& ((ft_strchr(&(*input)[i], '*'))
-				&& (ft_strchr(&(*input)[i + 1], '\''))
-				&& (ft_strchr(&(*input)[i], '*')
-				< ft_strchr(&(*input)[i + 1], '\''))))
-			{
-				if (!asterisk)
-					asterisk = 1;
-				else
-					asterisk = 0;
-				in_word = 1;
-				unquoted = ft_strjoin_char(unquoted, (*input)[i++]);
-				if (simp)
-					simp = 0;
-				else
-					simp = 1;
-			}
-			else if (((*input)[i] == '\'')
-				&& flag && ((ft_strchr(&(*input)[i], ' '))
-				&& (ft_strchr(&(*input)[i + 1], '\''))
-				&& (ft_strchr(&(*input)[i], ' ')
-				< ft_strchr(&(*input)[i + 1], '\''))))
-			{
-				in_word = 1;
-				unquoted = ft_strjoin_char(unquoted, (*input)[i++]);
-				if (simp)
-					simp = 0;
-				else
-					simp = 1;
-			}
-			else if ((*input)[i] == '\"' || (*input)[i] == '\'')
-			{
-				if ((*input)[i] == '\'')
-				{
-					if (simp)
-						simp = 0;
-					else
-						simp = 1;
-				}
-				i++;
-			}
-			else if ((*input)[i] == '\\' || (*input)[i] == ';')
-			{
-				if (simp || ((*input)[i + 1]
-					&& ((*input)[i + 1] == '(' || (*input)[i + 1] == ')' || (*input)[i + 1] == '*')))
-					unquoted = ft_strjoin_char(unquoted, (*input)[i++]);
-				else
-					i++;
-			}
-			else
-				unquoted = ft_strjoin_char(unquoted, (*input)[i++]);
-		}
+		if (!i[0] || (!(*input)[i[0] - 1] || (*input)[i[0] - 1] != '\\'))
+			ft_unquote_first(&i, input, &unquoted, flag);
 		else
-			unquoted = ft_strjoin_char(unquoted, (*input)[i++]);
+			unquoted = ft_strjoin_char(unquoted, (*input)[i[0]++]);
 	}
 	*input = unquoted;
 }

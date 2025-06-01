@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 15:52:48 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/30 21:52:13 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/06/01 04:11:12 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,18 @@ static int	ft_if_no_next(t_env **tmp, t_env **list)
 	return (1);
 }
 
+void	ft_free_node2(t_env **prev, t_env **tmp, t_env **list)
+{
+	if (*prev)
+		(*prev)->next = (*tmp)->next;
+	else
+		*list = (*tmp)->next;
+	ft_safe_free((void **)&(*tmp)->value);
+	(*tmp)->next = NULL;
+	return (ft_safe_free((void **)&(*tmp)->name),
+		ft_safe_free((void **)tmp));
+}
+
 void	ft_free_node(t_env *node, t_env **list)
 {
 	t_env	*tmp;
@@ -62,16 +74,7 @@ void	ft_free_node(t_env *node, t_env **list)
 			prev = tmp;
 		if (!ft_strncmp(tmp->name, node->name,
 				ft_max_strlen(tmp->name, node->name)))
-		{
-			if (prev)
-				prev->next = tmp->next;
-			else
-				*list = tmp->next;
-			ft_safe_free((void **)&tmp->value);
-			tmp->next = NULL;
-			return (ft_safe_free((void **)&tmp->name),
-				ft_safe_free((void **)&tmp));
-		}
+			return (ft_free_node2(&prev, &tmp, list));
 		tmp = tmp->next;
 	}
 	return ;

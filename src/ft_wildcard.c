@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 17:57:16 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/31 21:58:02 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/06/01 02:32:55 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,9 +59,9 @@ int	ft_wildcard_loop(char *str, char **str_final, t_token **tmp)
 	int		i;
 	t_quote	quote;
 
-	i = 0;
+	i = -1;
 	ft_init_quote(&quote);
-	while (str[i])
+	while (str[++i])
 	{
 		if (!i || str[i - 1] != '\\')
 			ft_check_quote(&quote, str[i]);
@@ -77,9 +77,8 @@ int	ft_wildcard_loop(char *str, char **str_final, t_token **tmp)
 				return (0);
 		}
 		if (str[i] && (str[i] != '\''
-				&& str[i] != '\"') && !ft_find_asterisk(&str[i]))
+				&& str[i] != '\"') && (!ft_find_asterisk(&str[i])))
 			*str_final = ft_strjoin_char(*str_final, str[i]);
-		i++;
 	}
 	return (1);
 }

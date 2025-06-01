@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 20:06:41 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/31 23:50:23 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/06/01 02:31:54 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,9 +96,13 @@ int	ft_find_asterisk(char *input)
 	char	*space;
 
 	asterisk = ft_strchr(input, '*');
+	if (asterisk && *(asterisk - 1) && (*(asterisk - 1) == '\\'))
+		asterisk = ft_strchr(asterisk + 1, '*');
 	space = ft_strchr(input, ' ');
 	if (*input == '*' && (input + 1)
 		&& (*(input + 1) == '\"' || *(input + 1) == '\''))
+		return (0);
+	if (!space && !asterisk)
 		return (0);
 	if (!space && asterisk)
 		return (1);

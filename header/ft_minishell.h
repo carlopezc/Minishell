@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 11:59:23 by carlopez          #+#    #+#             */
-/*   Updated: 2025/06/01 04:25:36 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/06/01 04:32:29 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,5 +209,43 @@ void			ft_unquote_first(int (*i)[4], char **input,
 					char **unquoted, int flag);
 void			ft_asterisk_init(int *i, int *in_word,
 					int *simp, int *asterisk);
+//ft_executor
+void			ft_terminator(t_pipex *pipex);
+t_token			*ft_analisis_comands(t_pipex *pipex,
+					t_minishell *shell, t_token **save);
+t_token			*ft_analisis_redir(t_token *save, t_pipex *pipex);
+t_token			*ft_exectime(t_pipex *pipex, t_minishell *shell,
+					t_token *tmp, t_token *save);
+void			ft_arrange_fd(t_pipex *pipex);
+t_pipex			*ft_init_pipex(void);
+void			ft_free_pipex(t_pipex *);
+char			*ft_errase_route(char *route);
+void			ft_cd_add(t_minishell *shell, char *temp);
+int				ft_check_cd(char *file, char *pwd);
+void			ft_old_pwd(t_env **env, t_env *pwd);
+char			*ft_correct_cd(char *path);
+void			ft_add_node(t_env **list, t_env *prev, t_env *node);
+void			ft_errase_pwd(t_minishell *shell);
+void			ft_cd_home(t_minishell *shell);
+void			ft_swap_list(t_env *a, t_env *b);
+void			ft_sort_list(t_env *head);
+void			ft_cd(t_minishell *shell, char *cmd);
+void			ft_pwd(t_minishell *shell);
+void			ft_export(t_minishell *shell, char *cmd);
+void			ft_env(t_minishell *shell, char *cmd);
+int				ft_check_docs(int *docs);
+void			ft_docs_in(t_pipex *pipex);
+void			ft_docs_out(t_pipex *pipex);
+void			ft_exec_build(t_minishell *shell, char *cmd);
+void			ft_pre_exec_command(t_pipex *pipex,
+					t_token *cmd, t_minishell *shell);
+int				ft_path(t_env **env, t_pipex **pipex, char *cmd);
+t_token 		*ft_redir(t_token *save, t_token_type type, t_pipex *pipex);
+void			ft_exec(t_minishell *shell, t_pipex *pipex, t_token *save);
+void			ft_terminator(t_pipex *pipex);
+t_token			*ft_killchilds(t_pipex *pipex,
+					t_minishell *shell, t_token *save);
+t_token			*ft_and(t_pipex *pipex, t_minishell *shell, t_token *save);
+t_token			*ft_or(t_pipex *pipex, t_minishell *shell, t_token *save);
 
 #endif

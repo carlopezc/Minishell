@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:13:20 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/06/01 04:39:53 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/06/01 19:29:05 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,32 +27,31 @@ size_t	ft_max_strlen(char *s1, char *s2)
 		return (len2);
 }
 
-void	ft_sort_list(t_env *head)
+void    ft_sort_list(t_env *head)
 {
-	t_env	*ptr;
-	t_env	*lptr;
-	int		swapped;
+        t_env   *ptr;
+        t_env   *lptr;
+        int             swapped;
 
-	if (!head)
-		return ;
-	swapped = 1;
-	lptr = NULL;
-	while (swapped)
-	{
-		swapped = 0;
-		ptr = head;
-		while (ptr->next != lptr)
-		{
-			if (ft_strncmp(ptr->name, ptr->next->name,
-					ft_max_strlen(ptr->name, ptr->next->name)) > 0)
-			{
-				ft_swap_list(ptr, ptr->next);
-				swapped = 1;
-			}
-			ptr = ptr->next;
-		}
-		lptr = ptr;
-	}
+        if (!head)
+                return ;
+        swapped = 1;
+        lptr = NULL;
+        while (swapped)
+        {
+                swapped = 0;
+                ptr = head;
+                while (ptr->next != lptr)
+                {
+                        if (ft_strncmp(ptr->name, ptr->next->name, ft_max_strlen(ptr->name ,ptr->next->name)) > 0)
+                        {
+                                ft_swap_list(ptr, ptr->next);
+                                swapped = 1;
+                        }
+                        ptr = ptr->next;
+                }
+                lptr = ptr;
+        }
 }
 
 void	ft_advance_var(char *cmd, int *i)
@@ -98,7 +97,7 @@ int	ft_check_name(char *var)
 	}
 	return (1);
 }
-
+/*
 void	ft_export(t_minishell *shell, char *cmd)
 {
 	int	i;
@@ -107,15 +106,17 @@ void	ft_export(t_minishell *shell, char *cmd)
 	char	**split;
 
 	i = 0;
+	flag = 1;
 	split = ft_split_cmd(cmd, ' ');
 	if (!split || !*split)
 		return (ft_free_todo(i, split));
+	ft_printf("%s\n", split[i]);
 	if (!ft_strncmp(split[i], "export", ft_max_strlen(split[i], "export")) && !split[i + 1])
-		return (ft_sort_list(shell->export), ft_print_export(shell->export));
+		return (ft_free_todo(i, split), ft_sort_list(shell->export), ft_print_export(shell->export));
 	while (split[i])
 	{
 		if (!ft_check_name(split[i]))
-			return ;
+			return (ft_free_todo(i, split));
 		if (ft_strchr(split[i], '='))
 		{
 			if (!ft_check_duplicated(split[i], &shell->env, &shell->undefined_var))
@@ -136,12 +137,13 @@ void	ft_export(t_minishell *shell, char *cmd)
 		flag = 0;
 		i++;
 	}
+//	ft_free_todo(i, split);
 	ft_merge_lists(&shell, shell->env, shell->undefined_var);
 	ft_sort_list(shell->export);
 	return ;
 }
+*/
 
-/*
 static int	ft_export2(char **split, t_env *node, t_minishell *shell, int i)
 {
 	int	flag;
@@ -188,4 +190,4 @@ void	ft_export(t_minishell *shell, char *cmd)
 	ft_merge_lists(&shell, shell->env, shell->undefined_var);
 	ft_sort_list(shell->export);
 	return ;
-}*/
+}

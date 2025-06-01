@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 17:57:16 by carlopez          #+#    #+#             */
-/*   Updated: 2025/06/01 02:32:55 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/06/01 17:29:19 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,8 @@ int	ft_check_wildcard(t_token **tokens)
 	char	*asterisk;
 
 	tmp = *tokens;
+	if (!tokens || !*tokens)
+		return (1);
 	str_final = NULL;
 	asterisk = ft_strchr(tmp->str, '*');
 	if (!asterisk)

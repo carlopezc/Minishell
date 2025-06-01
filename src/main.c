@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:15:05 by carlopez          #+#    #+#             */
-/*   Updated: 2025/06/01 00:47:26 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/06/01 18:56:37 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,8 @@ int	ft_main_loop(t_minishell **minishell)
 
 	while (1)
 	{
-		input = readline("minishell> ");
 		ft_manage_shell_signals();
+		input = readline("minishell> ");
 		if (!input)
 		{
 			ft_free_minishell(minishell);

@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 21:49:31 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/30 21:50:01 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/06/01 19:35:39 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,11 @@ void	ft_free_env(t_env **env)
 	{
 		next = tmp->next;
 		ft_safe_free((void **)&tmp->name);
+		tmp->name = NULL;
 		ft_safe_free((void **)&tmp->value);
+		tmp->value = NULL;
 		ft_safe_free((void **)&tmp);
+		tmp = NULL;
 		tmp = next;
 	}
 	*env = NULL;

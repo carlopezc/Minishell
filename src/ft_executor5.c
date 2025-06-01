@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:12:04 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/06/01 04:39:17 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/06/01 18:51:48 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ void	ft_swap_list(t_env *a, t_env *b)
 	char	*tmp_value;
 
 	tmp_name = a->name;
-	tmp_value = b->name;
+	tmp_value = a->name;
 	a->name = b->name;
 	a->value = b->value;
 	b->name = tmp_name;

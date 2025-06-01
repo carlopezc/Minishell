@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 09:31:50 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/05/30 19:14:19 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/06/01 17:32:04 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,7 @@ static int	ft_word_count(char const *w, char c)
 	p = 0;
 	count = 0;
 	in_word = 0;
-	quote.type = 0;
-	quote.flag = 0;
+	ft_init_quote(&quote);
 	while (w && w[p])
 	{
 		if (p > 0 && (!w[p - 1] || w[p - 1] != '\\'))

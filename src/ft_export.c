@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 16:13:37 by carlopez          #+#    #+#             */
-/*   Updated: 2025/06/01 04:38:56 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/06/01 18:37:04 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ void	ft_print_export(t_env *export)
 		{
 			if (!(tmp->name[0] == '_' && tmp->name[1] == '\0'))
 			{
-				ft_printf("declare -x %s=", tmp->name, tmp->value);
+				ft_printf("declare -x %s=", tmp->name);
 				ft_print_value(tmp->value);
 			}
 		}

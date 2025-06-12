@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 20:06:41 by carlopez          #+#    #+#             */
-/*   Updated: 2025/06/12 16:15:47 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/06/12 17:34:12 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ char	**ft_split_asterisk(char *input, char c)
 	
 	size = ft_get_size(input, c);
 	s_input = (char **)malloc((size + 1) * sizeof(char *));
-	if (!s_input || !*s_input)
+	if (!s_input)
 		return (NULL);
 	s_input[size] = NULL;
 	while (i < size)

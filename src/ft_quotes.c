@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 19:26:24 by carlopez          #+#    #+#             */
-/*   Updated: 2025/06/12 15:37:25 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/06/12 17:41:28 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,15 +25,13 @@ char	*ft_quit_quotes(char **s_input, t_minishell **minishell)
 		ft_variable(&s_input[i], minishell);
 		ft_unquote(&s_input[i], flag);
 		if (!ft_strncmp(s_input[i], "export", 7)
-			|| !ft_strncmp(s_input[i], "env", 4)/*
-			|| !ft_strncmp(s_input[i], "echo", 5)*/)
+			|| !ft_strncmp(s_input[i], "env", 4))
 			flag = 1;
 		if (ft_check_operator(s_input[i]))
 			flag = 0;
 		i++;
 	}
 	input = ft_create_array(s_input);
-	ft_printf("input final final es %s\n", input);
 	return (input);
 }
 /*
@@ -83,7 +81,6 @@ void	ft_unquote(char **input, int flag)
 	simp = 0;
 	asterisk = 0;
 	unquoted = NULL;
-	ft_printf("Me pasan : %s\n", *input);
 	ft_init_quote(&quote);
 	while ((*input)[i])
 	{
@@ -94,8 +91,6 @@ void	ft_unquote(char **input, int flag)
 				|| (*input)[i] == '\"') && (flag || asterisk) && in_word)
 			{
 				// aqui no distingo entre simples y dobles
-				ft_printf("entra en el 1\n");
-				ft_printf("con %c\n", (*input)[i]);
 				in_word = 0;
 				unquoted = ft_strjoin_char(unquoted, (*input)[i]);
 			}
@@ -105,8 +100,6 @@ void	ft_unquote(char **input, int flag)
 				&& (ft_strchr(&(*input)[i], ' ')
 				< ft_strchr(&(*input)[i + 1], '\"'))))
 			{
-				ft_printf("con %c\n", (*input)[i]);
-				ft_printf("entra en el 2\n");
 				in_word = 1;
 				unquoted = ft_strjoin_char(unquoted, (*input)[i]);
 			}
@@ -117,8 +110,6 @@ void	ft_unquote(char **input, int flag)
 				< ft_strchr(&(*input)[i + 1], '\"'))))
 			{
 				//lo puedo meter todos los ifs en estructuras de mas alante que, y le paso los dos caracteres
-				ft_printf("con %c\n", (*input)[i]);
-				ft_printf("entra en el 3\n");
 				if (!asterisk)
 					asterisk = 1;
 				else
@@ -132,8 +123,6 @@ void	ft_unquote(char **input, int flag)
 				&& (ft_strchr(&(*input)[i], '*')
 				< ft_strchr(&(*input)[i + 1], '\''))))
 			{
-				ft_printf("con %c\n", (*input)[i]);
-				ft_printf("entra en el 4\n");
 				if (!asterisk)
 					asterisk = 1;
 				else
@@ -151,8 +140,6 @@ void	ft_unquote(char **input, int flag)
 				&& (ft_strchr(&(*input)[i], ' ')
 				< ft_strchr(&(*input)[i + 1], '\''))))
 			{
-				ft_printf("con %c\n", (*input)[i]);
-				ft_printf("entra en el 5\n");
 				in_word = 1;
 				unquoted = ft_strjoin_char(unquoted, (*input)[i]);
 				if (simp)
@@ -162,11 +149,8 @@ void	ft_unquote(char **input, int flag)
 			}
 			else if ((*input)[i] == '\"' || (*input)[i] == '\'')
 			{
-				ft_printf("con %c\n", (*input)[i]);
-				ft_printf("entra en el 6\n");
 				if ((*input)[i] == '\'')
 				{
-					ft_printf("entra en el 7\n");
 					if (simp)
 						simp = 0;
 					else
@@ -177,23 +161,15 @@ void	ft_unquote(char **input, int flag)
 			}
 			else if ((*input)[i] == '\\' || (*input)[i] == ';')
 			{
-				ft_printf("con %c\n", (*input)[i]);
-				ft_printf("entra en el 8\n");
 				if (simp || ((*input)[i + 1]
 					&& ((*input)[i + 1] == '(' || (*input)[i + 1] == ')')))
 					unquoted = ft_strjoin_char(unquoted, (*input)[i]);
 			}
 			else
-			{
-				ft_printf("con %c\n", (*input)[i]);
-				ft_printf("entra en el 9\n");
 				unquoted = ft_strjoin_char(unquoted, (*input)[i]);
-			}
 		}
 		else
 		{
-			ft_printf("con %c\n", (*input)[i]);
-			ft_printf("entra en el 10\n");
 			//aqui escribe las comillas escapadas o todo lo escapado
 			unquoted = ft_strjoin_char(unquoted, (*input)[i]);
 		}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split_cmd.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lbellmas <lbellmas@student.42barcelon      +#+  +:+       +#+        */
+/*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 09:31:50 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/06/01 17:32:04 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/06/12 15:00:29 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ int	ft_cpy(char const *s, char **word, char c, int count)
 			i++;
 		if (i > 0 && (!s[i - 1] || s[i - 1] != '\\'))
 			ft_check_quote(&quote, s[i]);
-		while (s[i] && (s[i] != c || (s[i] == c && quote.flag == 1)))
+		while (s[i] && (s[i] != c || (quote.flag)))
 		{
 			word[p] = ft_strjoin_char(word[p], s[i++]);
 			if (!word[p])

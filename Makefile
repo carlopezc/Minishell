@@ -6,7 +6,7 @@
 #    By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/27 15:14:10 by carlopez          #+#    #+#              #
-#    Updated: 2025/06/01 04:30:18 by carlopez         ###   ########.fr        #
+#    Updated: 2025/06/11 12:34:28 by carlotalcd       ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,9 @@ AR	= ar
 ARFLAGS	= -rcs
 CC	= cc
 
-RFLAGS	= -I/opt/homebrew/opt/readline/include -L/opt/homebrew/opt/readline/lib -lreadline -lhistory
+INCLUDES = -I/opt/homebrew/opt/readline/include
+LDFLAGS = -L/opt/homebrew/opt/readline/lib
+LDLIBS = -lreadline -lhistory -lcurses
 CFLAGS	= -g -Wall -Wextra -Werror #-fsanitize=address 
 OFLAGS	= -MMD -MF $(@:.o=.d)
 
@@ -124,7 +126,7 @@ all: $(LIBPRINTF) $(NAME) $(LIB) $(LIBGET) Makefile
 # Compilación de archivos fuente generales
 $(OBJS): $(OBJDIR)/%.o : $(SRCDIR)/%.c Makefile | $(OBJDIR) $(DEPDIR)
 	@: printf "%-42b%b" "$(PURPLE)$<:" "$(BLUE)$(@F)$(RESET)\n"
-	@$(CC) $(CFLAGS) $(OFLAGS) -c $< -o $@
+	@$(CC) $(CFLAGS) $(INCLUDES) $(OFLAGS) -c $< -o $@
 	@mv $(OBJDIR)/*.d $(DEPDIR)
 
 $(BOBJ): $(BOBJDIR)/%.o : $(BSRCDIR)/%.c Makefile | $(BOBJDIR) $(DEPDIR)
@@ -163,7 +165,7 @@ $(LIBPRINTF):
 $(NAME): $(MAIN) $(OBJS) $(OBJS_GET) $(OUTILS) $(LIBPRINTF)
 	# $(call progress)
 	@: printf "%-42b%b" "$(PURPLE)$<:" "$(BLUE)$(@F)$(RESET)\n"
-	@$(CC) $(CFLAGS) $(MAIN) $(OBJS) $(OBJS_GET) $(OUTILS) $(LIBPRINTF) -o $(NAME) $(RFLAGS)
+	@$(CC) $(CFLAGS) $(MAIN) $(OBJS) $(OBJS_GET) $(OUTILS) $(LIBPRINTF) -o $(NAME) $(LDFLAGS) $(LDLIBS)
 
 bonus: $(BONUS) $(LIBPRINTF) $(LIB) Makefile
 

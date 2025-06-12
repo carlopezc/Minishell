@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_wildcard.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
+/*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 17:57:16 by carlopez          #+#    #+#             */
-/*   Updated: 2025/06/01 17:29:19 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/06/12 15:52:59 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,13 +70,15 @@ int	ft_wildcard_loop(char *str, char **str_final, t_token **tmp)
 			*str_final = ft_strjoin_char(*str_final, '*');
 			i += 2;
 		}
-		if (str[i] == '*' && !quote.flag
+		else if (str[i] == '*' && !quote.flag
 			&& (!i || str[i - 1] != '\\'))
 		{
 			if (!ft_get_pattern(str, &i, str_final, tmp))
 				return (0);
 		}
-		if (str[i] && (str[i] != '\''
+		else if (str[i] == '*' && ft_find_asterisk(&str[i]))
+			*str_final = ft_strjoin_char(*str_final, str[i]);
+		else if (str[i] && (str[i] != '\''
 				&& str[i] != '\"') && (!ft_find_asterisk(&str[i])))
 			*str_final = ft_strjoin_char(*str_final, str[i]);
 	}
@@ -100,8 +102,10 @@ int	ft_check_wildcard(t_token **tokens)
 	while (tmp)
 	{
 		str = tmp->str;
+		
 		if (!ft_parse_asterisk(&str))
 			return (0);
+		
 		if (!ft_wildcard_loop(str, &str_final, &tmp))
 			return (0);
 		tmp->str = ft_strdup(str_final);

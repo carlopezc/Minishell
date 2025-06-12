@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_executor6.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
+/*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:13:20 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/06/01 19:29:05 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/06/11 15:24:10 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ int	ft_check_name(char *var)
 	}
 	return (1);
 }
-/*
+
 void	ft_export(t_minishell *shell, char *cmd)
 {
 	int	i;
@@ -110,11 +110,14 @@ void	ft_export(t_minishell *shell, char *cmd)
 	split = ft_split_cmd(cmd, ' ');
 	if (!split || !*split)
 		return (ft_free_todo(i, split));
-	ft_printf("%s\n", split[i]);
+	while (split[i])
+		ft_printf("%s\n", split[i++]);
+	i = 0;
 	if (!ft_strncmp(split[i], "export", ft_max_strlen(split[i], "export")) && !split[i + 1])
 		return (ft_free_todo(i, split), ft_sort_list(shell->export), ft_print_export(shell->export));
 	while (split[i])
 	{
+		ft_printf("i es %d, y split en i %s\n", i, split[i]);
 		if (!ft_check_name(split[i]))
 			return (ft_free_todo(i, split));
 		if (ft_strchr(split[i], '='))
@@ -137,13 +140,13 @@ void	ft_export(t_minishell *shell, char *cmd)
 		flag = 0;
 		i++;
 	}
-//	ft_free_todo(i, split);
+	ft_free_todo(i, split);
 	ft_merge_lists(&shell, shell->env, shell->undefined_var);
 	ft_sort_list(shell->export);
 	return ;
 }
-*/
 
+/*
 static int	ft_export2(char **split, t_env *node, t_minishell *shell, int i)
 {
 	int	flag;
@@ -191,3 +194,4 @@ void	ft_export(t_minishell *shell, char *cmd)
 	ft_sort_list(shell->export);
 	return ;
 }
+	*/

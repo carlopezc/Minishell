@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_unquote_inside.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
+/*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 03:54:30 by carlopez          #+#    #+#             */
-/*   Updated: 2025/06/01 03:55:06 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/06/11 16:24:36 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ void	ft_unquote_inside(int *in_word, int *i, char **input, char **unquoted)
 void	ft_unquote_inside2(int *in_word, int *i, char **input, char **unquoted)
 {
 	*in_word = 1;
+	ft_printf("in word es %d\n", *in_word);
 	*unquoted = ft_strjoin_char(*unquoted, (*input)[(*i)++]);
 }
 

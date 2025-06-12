@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_unquote_if.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
+/*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 03:52:55 by carlopez          #+#    #+#             */
-/*   Updated: 2025/06/01 03:57:29 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/06/11 16:14:33 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,17 @@ int	ft_unquote_if4(int i, int flag, char **input)
 		&& (ft_strchr(&(*input)[i + 1], '\''))
 			&& (ft_strchr(&(*input)[i], ' ')
 			< ft_strchr(&(*input)[i + 1], '\''))))
+		return (1);
+	return (0);
+}
+
+int	ft_unquote_if5(int i, int flag, char **input)
+{
+	if (((*input)[i] == '\"')
+		&& flag && ((ft_strchr(&(*input)[i], ' '))
+		&& (ft_strchr(&(*input)[i + 1], '\"'))
+			&& (ft_strchr(&(*input)[i], ' ')
+			< ft_strchr(&(*input)[i + 1], '\"'))))
 		return (1);
 	return (0);
 }

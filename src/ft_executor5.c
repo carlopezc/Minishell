@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_executor5.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
+/*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:12:04 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/06/01 18:51:48 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/06/11 15:20:13 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ void	ft_swap_list(t_env *a, t_env *b)
 	char	*tmp_value;
 
 	tmp_name = a->name;
-	tmp_value = a->name;
+	tmp_value = a->value;
 	a->name = b->name;
 	a->value = b->value;
 	b->name = tmp_name;

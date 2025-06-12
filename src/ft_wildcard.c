@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 17:57:16 by carlopez          #+#    #+#             */
-/*   Updated: 2025/06/12 15:52:59 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/06/12 16:06:30 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,10 +102,8 @@ int	ft_check_wildcard(t_token **tokens)
 	while (tmp)
 	{
 		str = tmp->str;
-		
 		if (!ft_parse_asterisk(&str))
 			return (0);
-		
 		if (!ft_wildcard_loop(str, &str_final, &tmp))
 			return (0);
 		tmp->str = ft_strdup(str_final);

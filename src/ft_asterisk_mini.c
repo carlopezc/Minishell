@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_asterisk_mini.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
+/*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 22:19:44 by carlopez          #+#    #+#             */
-/*   Updated: 2025/06/01 00:03:43 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/06/12 16:13:47 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

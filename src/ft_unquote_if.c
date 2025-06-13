@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 03:52:55 by carlopez          #+#    #+#             */
-/*   Updated: 2025/06/11 16:14:33 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/06/13 10:39:43 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,11 +65,4 @@ int	ft_unquote_if5(int i, int flag, char **input)
 			< ft_strchr(&(*input)[i + 1], '\"'))))
 		return (1);
 	return (0);
-}
-
-int	ft_simp(int simp)
-{
-	if (simp)
-		return (0);
-	return (1);
 }

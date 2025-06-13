@@ -3,17 +3,24 @@
 /*                                                        :::      ::::::::   */
 /*   ft_aux_aux_check.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
+/*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 00:41:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/06/01 15:13:30 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/06/13 10:42:19 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
 
+int	ft_is_quote(char c)
+{
+	if (c == '\'' || c == '\"')
+		return (1);
+	return (0);
+}
+
 static int	ft_check_duplicated2(t_env **tmp, char *name_to_add,
-		char *value, char *str)
+	char *value, char *str)
 {
 	while (*tmp)
 	{

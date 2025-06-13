@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_minishell.h                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
+/*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 11:59:23 by carlopez          #+#    #+#             */
-/*   Updated: 2025/06/01 04:36:47 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/06/13 11:57:04 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,7 +113,7 @@ int				ft_listlen(t_env *env);
 void			ft_free_todo(int p, char **word);
 void			ft_check_quote(t_quote *quote, char c);
 void			ft_free_env(t_env **env);
-void			ft_print_export(t_env *export);
+void			ft_print_export(t_minishell *shell);
 char			*ft_expand(char *input, int *i, t_env *env);
 char			*ft_strjoin_char(char *str, char c);
 char			*ft_choose_larger(char *str, char *str2);
@@ -144,6 +144,9 @@ int				ft_count_files(DIR *dir);
 int				ft_last_check(t_token *tokens);
 int				ft_check_brackets(t_token *token);
 int				ft_is_builtin(char *input);
+
+//ft_aux_aux_check
+int				ft_is_quote(char c);
 
 //ft_init.c
 void			ft_init_quote(t_quote *quote);
@@ -247,5 +250,7 @@ t_token			*ft_killchilds(t_pipex *pipex,
 					t_minishell *shell, t_token *save);
 t_token			*ft_and(t_pipex *pipex, t_minishell *shell, t_token *save);
 t_token			*ft_or(t_pipex *pipex, t_minishell *shell, t_token *save);
+int				ft_check_name(char *var);
+char			*ft_quit_quotes(char **s_input, t_minishell **minishell);
 
 #endif

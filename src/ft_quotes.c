@@ -6,222 +6,91 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 19:26:24 by carlopez          #+#    #+#             */
-/*   Updated: 2025/06/12 17:41:28 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/06/13 12:00:02 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
 
-char	*ft_quit_quotes(char **s_input, t_minishell **minishell)
+static int	should_add_literal(char c, int simp, char next)
 {
-	int		i;
-	char	*input;
-	int		flag;
-
-	i = 0;
-	flag = 0;
-	while (s_input[i])
+	if (c == '\\' || c == ';')
 	{
-		ft_variable(&s_input[i], minishell);
-		ft_unquote(&s_input[i], flag);
-		if (!ft_strncmp(s_input[i], "export", 7)
-			|| !ft_strncmp(s_input[i], "env", 4))
-			flag = 1;
-		if (ft_check_operator(s_input[i]))
-			flag = 0;
-		i++;
+		if (simp)
+			return (1);
+		if (next == '(' || next == ')')
+			return (1);
 	}
-	input = ft_create_array(s_input);
-	return (input);
+	return (0);
 }
-/*
-void	ft_unquote(char **input, int flag)
+
+static char	*handle_escaped_char(char *unquoted, char *input, int i)
 {
-	t_quote	quote;
-	char	*unquoted;
-	int 	i;
-
-	ft_init_quote(&quote);
-	unquoted = NULL;
-	i = 0;
-	while ((*input)[i])
-	{
-		if (!(*input)[i - 1] || (*input)[i - 1] != '\\')
-		{
-			ft_check_quote(&quote, (*input)[i]);
-			if (quote.flag && flag)
-				unquoted = ft_strjoin_char(unquoted, (*input)[i]);
-			else if (quote.flag && ((*input)[i] == '\'' || (*input)[i] == '\"'))
-				unquoted = ft_strjoin_char(unquoted, (*input)[i]);
-
-			// general de check al unquoted si ha fallado malloc salgo
-		}
-		else
-			unquoted = ft_strjoin_char(unquoted, (*input)[i]);
-			// si falla return
-			// caso comillas escapadas lo escribe tal cual
-	}
-
-
-
+	return (ft_strjoin_char(unquoted, input[i]));
 }
-	*/
 
-void	ft_unquote(char **input, int flag)
+static char	*handle_unescaped_char(char *input, int *i, t_quote *q,
+	int *flags[3])
 {
-	char	*unquoted;
-	int		i;
-	int		in_word;
+	char	*new;
 	int		simp;
 	int		asterisk;
-	t_quote quote;
+	int		in_word;
+
+	new = NULL;
+	simp = *flags[0];
+	asterisk = *flags[1];
+	in_word = *flags[2];
+	ft_check_quote(q, input[*i]);
+	if ((input[*i] == '\'' || input[*i] == '"') && in_word)
+	{
+		new = ft_strjoin_char(NULL, input[*i]);
+		in_word = 0;
+	}
+	else if (should_add_literal(input[*i], simp, input[*i + 1]))
+		new = ft_strjoin_char(NULL, input[*i]);
+	else
+		new = ft_strjoin_char(NULL, input[*i]);
+	*flags[0] = simp;
+	*flags[1] = asterisk;
+	*flags[2] = in_word;
+	return (new);
+}
+
+static char	*ft_process_unquote_loop(char *input, t_quote *q)
+{
+	char	*unquoted;
+	int		i;
+	int		flags[3];
 
 	i = 0;
-	in_word = 0;
-	simp = 0;
-	asterisk = 0;
+	flags[0] = 0;
+	flags[1] = 0;
+	flags[2] = 0;
 	unquoted = NULL;
-	ft_init_quote(&quote);
-	while ((*input)[i])
+	while (input[i])
 	{
-		if (!i || (!(*input)[i - 1] || (*input)[i - 1] != '\\'))
-		{
-			ft_check_quote(&quote, (*input)[i]);
-			if (((*input)[i] == '\''
-				|| (*input)[i] == '\"') && (flag || asterisk) && in_word)
-			{
-				// aqui no distingo entre simples y dobles
-				in_word = 0;
-				unquoted = ft_strjoin_char(unquoted, (*input)[i]);
-			}
-			else if (((*input)[i] == '\"')
-				&& flag && ((ft_strchr(&(*input)[i], ' '))
-				&& (ft_strchr(&(*input)[i + 1], '\"'))
-				&& (ft_strchr(&(*input)[i], ' ')
-				< ft_strchr(&(*input)[i + 1], '\"'))))
-			{
-				in_word = 1;
-				unquoted = ft_strjoin_char(unquoted, (*input)[i]);
-			}
-			else if (((*input)[i] == '\"')
-				&& ((ft_strchr(&(*input)[i], '*'))
-				&& (ft_strchr(&(*input)[i + 1], '\"'))
-				&& (ft_strchr(&(*input)[i], '*')
-				< ft_strchr(&(*input)[i + 1], '\"'))))
-			{
-				//lo puedo meter todos los ifs en estructuras de mas alante que, y le paso los dos caracteres
-				if (!asterisk)
-					asterisk = 1;
-				else
-					asterisk = 0;
-				in_word = 1;
-				unquoted = ft_strjoin_char(unquoted, (*input)[i]);
-			}
-			else if (((*input)[i] == '\'')
-				&& ((ft_strchr(&(*input)[i], '*'))
-				&& (ft_strchr(&(*input)[i + 1], '\''))
-				&& (ft_strchr(&(*input)[i], '*')
-				< ft_strchr(&(*input)[i + 1], '\''))))
-			{
-				if (!asterisk)
-					asterisk = 1;
-				else
-					asterisk = 0;
-				in_word = 1;
-				unquoted = ft_strjoin_char(unquoted, (*input)[i]);
-				if (simp)
-					simp = 0;
-				else
-					simp = 1;
-			}
-			else if (((*input)[i] == '\'')
-				&& flag && ((ft_strchr(&(*input)[i], ' '))
-				&& (ft_strchr(&(*input)[i + 1], '\''))
-				&& (ft_strchr(&(*input)[i], ' ')
-				< ft_strchr(&(*input)[i + 1], '\''))))
-			{
-				in_word = 1;
-				unquoted = ft_strjoin_char(unquoted, (*input)[i]);
-				if (simp)
-					simp = 0;
-				else
-					simp = 1;
-			}
-			else if ((*input)[i] == '\"' || (*input)[i] == '\'')
-			{
-				if ((*input)[i] == '\'')
-				{
-					if (simp)
-						simp = 0;
-					else
-						simp = 1;
-				}
-				if (flag || (quote.flag && i))
-					unquoted = ft_strjoin_char(unquoted, (*input)[i]);
-			}
-			else if ((*input)[i] == '\\' || (*input)[i] == ';')
-			{
-				if (simp || ((*input)[i + 1]
-					&& ((*input)[i + 1] == '(' || (*input)[i + 1] == ')')))
-					unquoted = ft_strjoin_char(unquoted, (*input)[i]);
-			}
-			else
-				unquoted = ft_strjoin_char(unquoted, (*input)[i]);
-		}
+		if (i == 0 || input[i - 1] != '\\')
+			unquoted = ft_strjoin(unquoted,
+					handle_unescaped_char(input, &i, q,
+						(int *[]){&flags[0], &flags[1], &flags[2]}));
 		else
-		{
-			//aqui escribe las comillas escapadas o todo lo escapado
-			unquoted = ft_strjoin_char(unquoted, (*input)[i]);
-		}
+			unquoted = handle_escaped_char(unquoted, input, i);
 		i++;
 	}
+	return (unquoted);
+}
+
+void	ft_unquote(char **input, int flag)
+{
+	t_quote	q;
+	char	*unquoted;
+
+	(void)flag;
+	ft_init_quote(&q);
+	unquoted = ft_process_unquote_loop(*input, &q);
 	if (!unquoted)
 		*input = ft_strdup("");
 	else
 		*input = unquoted;
-	return ;
 }
-/*
-char	*ft_quit_quotes(char **s_input, t_minishell **minishell)
-{
-	int		i;
-	char	*input;
-	int		flag;
-
-	i = 0;
-	flag = 0;
-	while (s_input[i])
-	{
-		ft_variable(&s_input[i], minishell);
-		ft_unquote(&s_input[i], flag);
-		if (!ft_strncmp(s_input[i], "export", 7)
-			|| !ft_strncmp(s_input[i], "env", 4)
-			|| !ft_strncmp(s_input[i], "echo", 5))
-			flag = 1;
-		if (ft_check_operator(s_input[i]))
-			flag = 0;
-		i++;
-	}
-	input = ft_create_array(s_input);
-	return (input);
-}
-
-void	ft_unquote(char **input, int flag)
-{
-	char	*unquoted;
-	int		i[4];
-
-	ft_asterisk_init(&i[0], &i[1], &i[2], &i[3]);
-	unquoted = NULL;
-	ft_printf("llega aqui\n");
-	while ((*input)[i[0]])
-	{
-		if (!i[0] || (!(*input)[i[0] - 1] || (*input)[(i[0]) - 1] != '\\'))
-			ft_unquote_first(&i, input, &unquoted, flag);
-		else
-			unquoted = ft_strjoin_char(unquoted, (*input)[(i[0])++]);
-	}
-	*input = unquoted;
-	ft_printf("input apunta a : %s\n", *input);
-}
-*/

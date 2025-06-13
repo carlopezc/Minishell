@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:13:20 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/06/11 15:24:10 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/06/13 11:27:22 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,36 +27,37 @@ size_t	ft_max_strlen(char *s1, char *s2)
 		return (len2);
 }
 
-void    ft_sort_list(t_env *head)
+void	ft_sort_list(t_env *head)
 {
-        t_env   *ptr;
-        t_env   *lptr;
-        int             swapped;
+	t_env		*ptr;
+	t_env		*lptr;
+	int			swapped;
 
-        if (!head)
-                return ;
-        swapped = 1;
-        lptr = NULL;
-        while (swapped)
-        {
-                swapped = 0;
-                ptr = head;
-                while (ptr->next != lptr)
-                {
-                        if (ft_strncmp(ptr->name, ptr->next->name, ft_max_strlen(ptr->name ,ptr->next->name)) > 0)
-                        {
-                                ft_swap_list(ptr, ptr->next);
-                                swapped = 1;
-                        }
-                        ptr = ptr->next;
-                }
-                lptr = ptr;
-        }
+	if (!head)
+		return ;
+	swapped = 1;
+	lptr = NULL;
+	while (swapped)
+	{
+		swapped = 0;
+		ptr = head;
+		while (ptr->next != lptr)
+		{
+			if (ft_strncmp(ptr->name, ptr->next->name,
+					ft_max_strlen(ptr->name, ptr->next->name)) > 0)
+			{
+				ft_swap_list(ptr, ptr->next);
+				swapped = 1;
+			}
+			ptr = ptr->next;
+		}
+		lptr = ptr;
+	}
 }
 
 void	ft_advance_var(char *cmd, int *i)
 {
-	t_quote quote;
+	t_quote	quote;
 
 	ft_init_quote(&quote);
 	if (!cmd)
@@ -87,111 +88,19 @@ int	ft_check_name(char *var)
 
 	i = 0;
 	if (!ft_isalpha(var[i]) && (var[i] != '_'))
-		return (ft_printf("Non valid name\n"), 0);
+	{
+		ft_printf("Non valid name\n");
+		return (0);
+	}
 	while (var[++i] && (var[i] != '=' && var[i] != ' '))
 	{
 		if (var[i] == '+' && var[i + 1] == '=')
 			return (1);
 		if (!ft_isalnum(var[i]) && (var[i] != '_'))
-			return (ft_printf("Non valid name\n"), 0);
+		{
+			ft_printf("Non valid name\n");
+			return (0);
+		}
 	}
 	return (1);
 }
-
-void	ft_export(t_minishell *shell, char *cmd)
-{
-	int	i;
-	int flag;
-	t_env *node;
-	char	**split;
-
-	i = 0;
-	flag = 1;
-	split = ft_split_cmd(cmd, ' ');
-	if (!split || !*split)
-		return (ft_free_todo(i, split));
-	while (split[i])
-		ft_printf("%s\n", split[i++]);
-	i = 0;
-	if (!ft_strncmp(split[i], "export", ft_max_strlen(split[i], "export")) && !split[i + 1])
-		return (ft_free_todo(i, split), ft_sort_list(shell->export), ft_print_export(shell->export));
-	while (split[i])
-	{
-		ft_printf("i es %d, y split en i %s\n", i, split[i]);
-		if (!ft_check_name(split[i]))
-			return (ft_free_todo(i, split));
-		if (ft_strchr(split[i], '='))
-		{
-			if (!ft_check_duplicated(split[i], &shell->env, &shell->undefined_var))
-			{
-				node = ft_create_node(ft_get_name(split[i]), ft_get_value(split[i]));
-				ft_connect_node(&shell->env, node);
-			}
-			flag = 1;
-		}
-		else if (!flag)
-		{
-			if (!ft_check_duplicated(split[i], &shell->env, &shell->undefined_var))
-			{
-				node = ft_create_node(ft_get_name(split[i]), NULL);
-				ft_connect_node(&shell->undefined_var, node);
-			}
-		}
-		flag = 0;
-		i++;
-	}
-	ft_free_todo(i, split);
-	ft_merge_lists(&shell, shell->env, shell->undefined_var);
-	ft_sort_list(shell->export);
-	return ;
-}
-
-/*
-static int	ft_export2(char **split, t_env *node, t_minishell *shell, int i)
-{
-	int	flag;
-
-	flag = 0;
-	if (!ft_check_name(split[i]))
-		return (-1);
-	if (ft_strchr(split[i], '='))
-	{
-		if (!ft_check_duplicated(split[i], &shell->env, &shell->undefined_var))
-		{
-			node = ft_create_node(ft_get_name(split[i]), ft_get_value(split[i]));
-			ft_connect_node(&shell->env, node);
-		}
-		flag = 1;
-	}
-	if (!flag)
-	{
-		if (!ft_check_duplicated(split[i], &shell->env, &shell->undefined_var))
-		{
-			node = ft_create_node(ft_get_name(split[i]), NULL);
-			ft_connect_node(&shell->undefined_var, node);
-		}
-	}
-	return (i + 1);
-}
-
-void	ft_export(t_minishell *shell, char *cmd)
-{
-	int		i;
-	char	**split;
-	t_env	*node;
-
-	node = NULL;
-	split = ft_split_cmd(cmd, ' ');
-	if (!split)
-		return ;
-	i = 0;
-	if (!ft_strncmp(split[i], "export",
-			ft_max_strlen(split[i], "export")) && !split[++i])
-		return (ft_sort_list(shell->export), ft_print_export(shell->export));
-	while (i != -1 && split[i])
-		i = ft_export2(split, node, shell, i);
-	ft_merge_lists(&shell, shell->env, shell->undefined_var);
-	ft_sort_list(shell->export);
-	return ;
-}
-	*/

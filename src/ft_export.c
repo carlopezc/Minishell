@@ -3,59 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   ft_export.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
+/*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 16:13:37 by carlopez          #+#    #+#             */
-/*   Updated: 2025/06/01 18:37:04 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/06/13 11:45:40 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
-
-void	ft_print_value(char *value)
-{
-	int	i;
-
-	i = 0;
-	ft_printf("\"");
-	while (value[i])
-	{
-		if (value[i] == '\"' || value[i] == '\'')
-			write(1, "\\", 1);
-		if (value[i] == '$')
-			write(1, "\\", 1);
-		if (value[i] == '\\')
-			write(1, "\\", 1);
-		write(1, &value[i], 1);
-		i++;
-	}
-	ft_printf("\"\n");
-	return ;
-}
-
-void	ft_print_export(t_env *export)
-{
-	t_env	*tmp;
-
-	tmp = export;
-	while (tmp)
-	{
-		if (!tmp->value)
-			ft_printf("declare -x %s\n", tmp->name);
-		else if (tmp->value[0] == '\0')
-			ft_printf("declare -x %s=\"\"\n", tmp->name);
-		else
-		{
-			if (!(tmp->name[0] == '_' && tmp->name[1] == '\0'))
-			{
-				ft_printf("declare -x %s=", tmp->name);
-				ft_print_value(tmp->value);
-			}
-		}
-		tmp = tmp->next;
-	}
-	return ;
-}
 
 void	ft_change_value(char *str, t_env **node)
 {
@@ -82,4 +37,62 @@ void	ft_empty_export(t_minishell **shell)
 	ft_connect_node(&(*shell)->undefined_var, node);
 	ft_merge_lists(shell, (*shell)->env, (*shell)->undefined_var);
 	return ;
+}
+
+int	ft_export_aux(char **split, int i, t_minishell *shell, t_env **node)
+{
+	if (ft_strchr(split[i], '='))
+	{
+		if (!ft_check_duplicated(split[i], &shell->env, &shell->undefined_var))
+		{
+			*node = ft_create_node(ft_get_name(split[i]),
+					ft_get_value(split[i]));
+			ft_connect_node(&shell->env, *node);
+		}
+		return (1);
+	}
+	return (0);
+}
+
+static int	ft_export_loop(char **split, t_minishell *shell)
+{
+	int		i;
+	t_env	*node;
+
+	i = 1;
+	while (split[i])
+	{
+		if (!ft_check_name(split[i]))
+			return (ft_free_todo(i, split), 0);
+		if (!ft_export_aux(split, i, shell, &node))
+		{
+			if (!ft_check_duplicated(split[i],
+					&shell->env, &shell->undefined_var))
+			{
+				node = ft_create_node(ft_get_name(split[i]), NULL);
+				ft_connect_node(&shell->undefined_var, node);
+			}
+		}
+		i++;
+	}
+	return (1);
+}
+
+void	ft_export(t_minishell *shell, char *cmd)
+{
+	int				i;
+	char			**split;
+
+	i = 0;
+	split = ft_split_cmd(cmd, ' ');
+	if (!split || !*split)
+		return (ft_free_todo(i, split));
+	if (!ft_strncmp(split[i], "export",
+			ft_max_strlen(split[i], "export")) && !split[i + 1])
+		return (ft_free_todo(i, split), ft_print_export(shell));
+	if (!ft_export_loop(split, shell))
+		return ;
+	ft_merge_lists(&shell, shell->env, shell->undefined_var);
+	ft_sort_list(shell->export);
+	return (ft_free_todo(i, split));
 }

@@ -3,14 +3,60 @@
 /*                                                        :::      ::::::::   */
 /*   ft_print.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
+/*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 15:51:45 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/30 20:04:03 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/06/13 11:32:21 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
+
+void	ft_print_value(char *value)
+{
+	int	i;
+
+	i = 0;
+	ft_printf("\"");
+	while (value[i])
+	{
+		if (value[i] == '\"' || value[i] == '\'')
+			write(1, "\\", 1);
+		if (value[i] == '$')
+			write(1, "\\", 1);
+		if (value[i] == '\\')
+			write(1, "\\", 1);
+		write(1, &value[i], 1);
+		i++;
+	}
+	ft_printf("\"\n");
+	return ;
+}
+
+void	ft_print_export(t_minishell *shell)
+{
+	t_env	*tmp;
+
+	ft_sort_list(shell->export);
+	tmp = shell->export;
+	while (tmp)
+	{
+		if (!tmp->value)
+			ft_printf("declare -x %s\n", tmp->name);
+		else if (tmp->value[0] == '\0')
+			ft_printf("declare -x %s=\"\"\n", tmp->name);
+		else
+		{
+			if (!(tmp->name[0] == '_' && tmp->name[1] == '\0'))
+			{
+				ft_printf("declare -x %s=", tmp->name);
+				ft_print_value(tmp->value);
+			}
+		}
+		tmp = tmp->next;
+	}
+	return ;
+}
 
 void	ft_print_elements(char **elements)
 {

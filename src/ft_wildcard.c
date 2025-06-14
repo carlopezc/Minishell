@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 17:57:16 by carlopez          #+#    #+#             */
-/*   Updated: 2025/06/13 10:37:05 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/06/14 13:21:52 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@ char	*ft_expand_wildcard(char *input, t_token_type type)
 		return (NULL);
 	if ((type == REDIR_IN || type == REDIR_OUT) && (ft_arraylen(elements) > 1))
 		return (ft_printf("Error in files to redirect\n"), NULL);
+	if (!ft_arraylen(elements))
+		return (ft_strdup(input));
 	return (ft_create_array(elements));
 }
 

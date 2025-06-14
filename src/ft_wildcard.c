@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 17:57:16 by carlopez          #+#    #+#             */
-/*   Updated: 2025/06/14 13:21:52 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/06/14 18:36:31 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,18 +96,19 @@ int	ft_check_wildcard(t_token **tokens)
 	if (!tokens || !*tokens)
 		return (1);
 	str_final = NULL;
-	asterisk = ft_strchr(tmp->str, '*');
-	if (!asterisk)
-		return (1);
 	while (tmp)
 	{
-		str = tmp->str;
-		if (!ft_parse_asterisk(&str))
-			return (0);
-		if (!ft_wildcard_loop(str, &str_final, &tmp))
-			return (0);
-		tmp->str = ft_strdup(str_final);
-		ft_safe_free((void **)&str_final);
+		asterisk = ft_strchr(tmp->str, '*');
+		if (asterisk)
+		{
+			str = tmp->str;
+			if (!ft_parse_asterisk(&str))
+				return (0);
+			if (!ft_wildcard_loop(str, &str_final, &tmp))
+				return (0);
+			tmp->str = ft_strdup(str_final);
+			ft_safe_free((void **)&str_final);
+		}
 		tmp = tmp->next;
 	}
 	return (1);

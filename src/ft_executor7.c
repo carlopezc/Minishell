@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:14:50 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/06/11 15:18:37 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/06/14 19:23:34 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,35 @@
 #include <fcntl.h>
 #include <sys/wait.h>
 
+void	ft_echo_print(char *cmd)
+{
+	int	i;
+
+	i = 0;
+	if (!cmd)
+		return ;
+	while (cmd[i])
+	{
+		if (cmd[i] == '\\' && cmd[i - 1] && cmd[i - 1] != '\\')
+			i++;
+		else
+			ft_printf("%c", cmd[i++]);
+	}
+	return ;
+}
+
 void	ft_echo(char *cmd)
 {
 	char	*temp;
 
 	temp = ft_strchr(cmd, ' ');
 	if (ft_strncmp(temp + 1, "-n", 2) == 0)
-		ft_printf("%s", temp + 4);
+		ft_echo_print(temp + 4);
 	else
-		ft_printf("%s\n", temp + 1);
+	{
+		ft_echo_print(temp + 1);
+		ft_printf("\n");
+	}
 	return ;
 }
 

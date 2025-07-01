@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 17:57:16 by carlopez          #+#    #+#             */
-/*   Updated: 2025/06/14 18:36:31 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/07/01 16:44:38 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,10 +47,12 @@ int	ft_get_pattern(char *str, int *i, char **str_final, t_token **tmp)
 		&& (!*i || str[*i - 1] != '\\'))
 		(*i)++;
 	sub = ft_substr(str, start, *i - start);
+	ft_printf("sub es : %s\n", sub);
 	expanded = ft_expand_wildcard(sub, (*tmp)->type);
 	if (!expanded)
 		return (0);
 	*str_final = ft_strjoin(*str_final, expanded);
+	ft_printf("str final es : %s\n", *str_final);
 	free(sub);
 	free(expanded);
 	return (1);

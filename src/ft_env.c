@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 16:16:23 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/30 19:16:45 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/01 15:21:30 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,9 +45,13 @@ static char	*ft_create_env2(char *env)
 {
 	char	*tmp;
 	char	*value;
+	int	num;
 
 	tmp = ft_get_value(env);
-	value = ft_itoa(ft_atoi(tmp) + 1);
+	num = ft_atoi(tmp) + 1;
+	if (num > 999)
+		num = 1;
+	value = ft_itoa(num);
 	ft_safe_free((void **)&tmp);
 	return (value);
 }

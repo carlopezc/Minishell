@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 17:57:16 by carlopez          #+#    #+#             */
-/*   Updated: 2025/06/13 10:37:05 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/07/02 22:30:30 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@ char	*ft_expand_wildcard(char *input, t_token_type type)
 		return (NULL);
 	if ((type == REDIR_IN || type == REDIR_OUT) && (ft_arraylen(elements) > 1))
 		return (ft_printf("Error in files to redirect\n"), NULL);
+	if (!ft_arraylen(elements))
+		return (ft_strdup(input));
 	return (ft_create_array(elements));
 }
 
@@ -48,10 +50,11 @@ int	ft_get_pattern(char *str, int *i, char **str_final, t_token **tmp)
 	expanded = ft_expand_wildcard(sub, (*tmp)->type);
 	if (!expanded)
 		return (0);
+	if (str[*i] && str[*i] == ' '
+		&& (!*i || str[*i - 1] != '\\'))
+		expanded = ft_strjoin(expanded, " ");
 	*str_final = ft_strjoin(*str_final, expanded);
-	free(sub);
-	free(expanded);
-	return (1);
+	return (free(sub), free(expanded), 1);
 }
 
 int	ft_wildcard_loop(char *str, char **str_final, t_token **tmp)
@@ -59,13 +62,19 @@ int	ft_wildcard_loop(char *str, char **str_final, t_token **tmp)
 	int		i;
 	t_quote	quote;
 
-	i = -1;
+	i = 0;
 	ft_init_quote(&quote);
-	while (str[++i])
+	while (str[i])
 	{
+		if (quote.flag)
+			*str_final = ft_strjoin_char(*str_final, str[i]);
 		if (!i || str[i - 1] != '\\')
+		{
 			ft_check_quote(&quote, str[i]);
-		if (str[i] == '\\' && str[i + 1] == '*')
+			if (quote.flag && (str[i] == '\'' || str[i] == '\"'))
+				*str_final = ft_strjoin_char(*str_final, str[i]);
+		}
+		if (str[i] == '\\' && str[i + 1] == '*' && !quote.flag)
 		{
 			*str_final = ft_strjoin_char(*str_final, '*');
 			i += 2;
@@ -76,9 +85,11 @@ int	ft_wildcard_loop(char *str, char **str_final, t_token **tmp)
 			if (!ft_get_pattern(str, &i, str_final, tmp))
 				return (0);
 		}
-		else if (((str[i] == '*' && ft_find_asterisk(&str[i]))
+		else if (!quote.flag && ((str[i] == '*' && ft_find_asterisk(&str[i]))
 				|| (!ft_is_quote(str[i]) && !ft_find_asterisk(&str[i]))))
 			*str_final = ft_strjoin_char(*str_final, str[i]);
+		printf("%i %c\n",i, str[i]);
+		i++;
 	}
 	return (1);
 }
@@ -94,18 +105,19 @@ int	ft_check_wildcard(t_token **tokens)
 	if (!tokens || !*tokens)
 		return (1);
 	str_final = NULL;
-	asterisk = ft_strchr(tmp->str, '*');
-	if (!asterisk)
-		return (1);
 	while (tmp)
 	{
-		str = tmp->str;
-		if (!ft_parse_asterisk(&str))
-			return (0);
-		if (!ft_wildcard_loop(str, &str_final, &tmp))
-			return (0);
-		tmp->str = ft_strdup(str_final);
-		ft_safe_free((void **)&str_final);
+		asterisk = ft_strchr(tmp->str, '*');
+		if (asterisk)
+		{
+			str = tmp->str;
+			if (!ft_parse_asterisk(&str))
+				return (0);
+			if (!ft_wildcard_loop(str, &str_final, &tmp))
+				return (0);
+			tmp->str = ft_strdup(str_final);
+			ft_safe_free((void **)&str_final);
+		}
 		tmp = tmp->next;
 	}
 	return (1);

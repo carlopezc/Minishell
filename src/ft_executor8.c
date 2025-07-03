@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:16:20 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/06/13 16:49:51 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/03 14:58:10 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ static void	ft_docs_in_child(t_pipex *pipex)
 		unlink(".heredoc");
 	}
 	p = 0;
-	while (pipex->docs_in[p])
+	while (pipex->docs_in && pipex->docs_in[p])
 	{
 		ft_join_docs(pipex->docs_in[p]);
 		p++;

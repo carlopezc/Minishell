@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:15:05 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/03 14:16:43 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/03 15:36:46 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ int	ft_check_otokens(t_minishell *shell)
 	t_token	*tokens;
 
 	tokens = shell->tokens;
+	if (!tokens)
+		return (0);
 	if (tokens->type == PIPE || tokens->type == AND || tokens->type == OR)
 		return (ft_printf("Error with operators\n"), 0);
 	while (tokens && tokens->next)
@@ -39,25 +41,27 @@ int	ft_main_loop(t_minishell **minishell)
 	{
 		ft_manage_shell_signals();
 		input = readline("minishell> ");
-		if (input)
+		if (!input)
 		{
-			if (input && *input)
-				add_history(input);
-			if (!ft_process_input(minishell, input))
-				return (ft_safe_free((void **)&input),
-					ft_printf("Error processing input \n"), 2);
-			if (!ft_add_bracket_token(&((*minishell)->tokens)))
-				return (ft_printf("Error in brackets tokenization \n"), 2);
-			if (!ft_check_wildcard(&((*minishell)->tokens)))
-				return (ft_printf("Error in wildcard\n"), 2);
-			ft_printf("Tokens finales: \n");
-			ft_print_tokens((*minishell)->tokens);
-			if (ft_check_otokens(*minishell))
-				ft_executor(*minishell);
-			ft_safe_free((void **)&input);
-			ft_free_tokens(minishell);
-			(*minishell)->tokens = NULL;
+			ft_free_minishell(minishell);
+			exit(0);
 		}
+		if (input && *input)
+			add_history(input);
+		if (!ft_process_input(minishell, input))
+			return (ft_safe_free((void **)&input),
+				ft_printf("Error processing input \n"), 2);
+		if (!ft_add_bracket_token(&((*minishell)->tokens)))
+			return (ft_printf("Error in brackets tokenization \n"), 2);
+		if (!ft_check_wildcard(&((*minishell)->tokens)))
+			return (ft_printf("Error in wildcard\n"), 2);
+		ft_printf("Tokens finales: \n");
+		ft_print_tokens((*minishell)->tokens);
+		if (ft_check_otokens(*minishell))
+			ft_executor(*minishell);
+		ft_safe_free((void **)&input);
+		ft_free_tokens(minishell);
+		(*minishell)->tokens = NULL;
 	}
 }
 

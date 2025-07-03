@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:19:49 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/06/01 04:56:05 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/03 14:51:16 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ t_token	*ft_heredoc(t_token *save, t_pipex *pipex)
 
 static int	ft_mega_if(t_token **save)
 {
-	if ((*save)->type == COMMAND || (*save)->type == EXEC
+	if ((*save)->type == COMMAND || (*save)->type == EXEC || (*save)->type == HEREDOC
 		|| !ft_strncmp("pwd", (*save)->str, 3)
 		|| !ft_strncmp("echo", (*save)->str, 4)
 		|| ((!ft_strncmp("env", (*save)->str, 3)
@@ -100,7 +100,10 @@ t_token	*ft_analisis_comands(t_pipex *pipex, t_minishell *shell, t_token **save)
 			if (ft_path(&shell->env, &pipex, pipex->command[0]) == 0)
 				exit (0);
 		}
-		*save = tmp->next;
+		if (tmp->type != HEREDOC)
+			*save = tmp->next;
+		else
+			*save = tmp;
 	}
 	return (tmp);
 }

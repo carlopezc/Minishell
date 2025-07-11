@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/06/14 18:44:29 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/06/30 13:51:57 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,7 @@ int	ft_process_input(t_minishell **minishell, char *input)
 			i++;
 		if (!ft_group_command(minishell, input, &i))
 			return (0);
+		ft_printf("se queda en %c\n", input[i]);
 	}
 	ft_printf("input despues: %s\n", input);
 	return (1);

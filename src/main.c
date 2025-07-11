@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:15:05 by carlopez          #+#    #+#             */
-/*   Updated: 2025/06/14 18:45:43 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/06/30 20:38:29 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,6 @@ int	ft_main_loop(t_minishell **minishell)
 			return (ft_printf("Error in brackets tokenization \n"), 2);
 		if (!ft_check_wildcard(&((*minishell)->tokens)))
 			return (ft_printf("Error in wildcard\n"), 2);
-		ft_printf("Tokens finales: \n");
-		ft_print_tokens((*minishell)->tokens);
 		ft_executor(*minishell);
 		ft_safe_free((void **)&input);
 		ft_free_tokens(minishell);
@@ -53,10 +51,7 @@ int	main(int argc, char **argv, char **env)
 			-1);
 	if (!ft_init_minishell(&minishell, env))
 		return (ft_printf("Error in malloc\n"), -1);
-	if (ft_main_loop(&minishell))
-	{
+	while (ft_main_loop(&minishell))
 		ft_free_tokens(&minishell);
-		ft_main_loop(&minishell);
-	}
 	return (ft_free_minishell(&minishell), 0);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_env.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
+/*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 16:16:23 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/30 19:16:45 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/06/30 13:59:46 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,9 +45,14 @@ static char	*ft_create_env2(char *env)
 {
 	char	*tmp;
 	char	*value;
+	int		num;
 
 	tmp = ft_get_value(env);
-	value = ft_itoa(ft_atoi(tmp) + 1);
+	num = ft_atoi(tmp) + 1;
+	if (num <= 999)
+		value = ft_itoa(num);
+	else
+		value = ft_itoa(999);
 	ft_safe_free((void **)&tmp);
 	return (value);
 }

@@ -6,7 +6,11 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 16:16:23 by carlopez          #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2025/06/30 13:59:46 by carlotalcd       ###   ########.fr       */
+=======
+/*   Updated: 2025/07/01 15:21:30 by carlopez         ###   ########.fr       */
+>>>>>>> fb62861378999c7b00409ed7e682ba8d49109295
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +49,7 @@ static char	*ft_create_env2(char *env)
 {
 	char	*tmp;
 	char	*value;
+<<<<<<< HEAD
 	int		num;
 
 	tmp = ft_get_value(env);
@@ -53,6 +58,15 @@ static char	*ft_create_env2(char *env)
 		value = ft_itoa(num);
 	else
 		value = ft_itoa(999);
+=======
+	int	num;
+
+	tmp = ft_get_value(env);
+	num = ft_atoi(tmp) + 1;
+	if (num > 999)
+		num = 1;
+	value = ft_itoa(num);
+>>>>>>> fb62861378999c7b00409ed7e682ba8d49109295
 	ft_safe_free((void **)&tmp);
 	return (value);
 }

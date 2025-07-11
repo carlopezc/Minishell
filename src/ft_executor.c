@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/05/31 19:25:54 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/03 14:27:05 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ static t_token	*ft_executor2(t_pipex *pipex, t_token *save, t_minishell *shell,
 		ft_free_minishell(&shell);
 		exit(0);
 	}
-	if (save->type == COMMAND || save->type == BUILTIN || save->type == EXEC)
+	if (save->type == COMMAND || save->type == BUILTIN || save->type == EXEC || save->type == HEREDOC)
 		tmp = ft_analisis_comands(pipex, shell, &save);
 	while (pipex->pid == 0 && save && (save->type == REDIR_IN || save->type
 			== REDIR_OUT || save->type == HEREDOC || save->type == APPEND))

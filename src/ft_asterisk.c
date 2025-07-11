@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 20:06:41 by carlopez          #+#    #+#             */
-/*   Updated: 2025/06/13 11:31:24 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/07/02 20:46:07 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,14 +70,18 @@ int	ft_parse_asterisk(char **input)
 {
 	int		i;
 	char	*final_input;
+	t_quote	quote;
 
 	i = 0;
 	final_input = NULL;
+	ft_init_quote(&quote);
 	if (!*input)
 		return (1);
 	while ((*input)[i])
 	{
-		if ((*input)[i] == '*')
+		if (!i || (*input)[i - 1] != '\\')
+			ft_check_quote(&quote, (*input)[i]);
+		if ((*input)[i] == '*' && !quote.flag)
 		{
 			final_input = ft_strjoin_char(final_input, (*input)[i++]);
 			while ((*input)[i] && (*input)[i] == '*')

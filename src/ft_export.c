@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 16:13:37 by carlopez          #+#    #+#             */
-/*   Updated: 2025/06/13 11:45:40 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/07/01 15:21:03 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,26 @@
 void	ft_change_value(char *str, t_env **node)
 {
 	char	*equal;
+	int	value;
 
 	equal = ft_strchr(str, '=');
+	value = 0;
 	if (*(equal - 1) == '+')
 		(*node)->value = ft_strjoin((*node)->value, ft_get_value(str));
 	else
 	{
-		ft_safe_free((void **)&((*node)->value));
-		(*node)->value = ft_get_value(str);
+		if (!ft_strncmp(ft_get_name(str), "SHLVL", 6))
+		{
+			value = ft_atoi(ft_get_value(str));
+			if (value > 999)
+				value = 1;
+			(*node)->value = ft_itoa(value);
+		}
+		else
+		{	
+			ft_safe_free((void **)&((*node)->value));
+			(*node)->value = ft_get_value(str);
+		}
 	}
 	return ;
 }

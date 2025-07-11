@@ -6,7 +6,11 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2025/06/30 13:51:57 by carlotalcd       ###   ########.fr       */
+=======
+/*   Updated: 2025/07/02 19:59:31 by carlopez         ###   ########.fr       */
+>>>>>>> fb62861378999c7b00409ed7e682ba8d49109295
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +83,6 @@ int	ft_process_input(t_minishell **minishell, char *input)
 	i = 0;
 	if (!minishell || !input)
 		return (0);
-	ft_printf("input antes: %s\n", input);
 	if (!ft_parsing(&input, minishell))
 		return (0);
 	while (input[i])
@@ -90,6 +93,5 @@ int	ft_process_input(t_minishell **minishell, char *input)
 			return (0);
 		ft_printf("se queda en %c\n", input[i]);
 	}
-	ft_printf("input despues: %s\n", input);
 	return (1);
 }

@@ -6,7 +6,11 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 17:57:16 by carlopez          #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2025/06/30 20:39:46 by carlotalcd       ###   ########.fr       */
+=======
+/*   Updated: 2025/07/02 22:30:30 by carlopez         ###   ########.fr       */
+>>>>>>> fb62861378999c7b00409ed7e682ba8d49109295
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,10 +54,11 @@ int	ft_get_pattern(char *str, int *i, char **str_final, t_token **tmp)
 	expanded = ft_expand_wildcard(sub, (*tmp)->type);
 	if (!expanded)
 		return (0);
+	if (str[*i] && str[*i] == ' '
+		&& (!*i || str[*i - 1] != '\\'))
+		expanded = ft_strjoin(expanded, " ");
 	*str_final = ft_strjoin(*str_final, expanded);
-	free(sub);
-	free(expanded);
-	return (1);
+	return (free(sub), free(expanded), 1);
 }
 
 int	ft_wildcard_loop(char *str, char **str_final, t_token **tmp)
@@ -61,13 +66,19 @@ int	ft_wildcard_loop(char *str, char **str_final, t_token **tmp)
 	int		i;
 	t_quote	quote;
 
-	i = -1;
+	i = 0;
 	ft_init_quote(&quote);
-	while (str[++i])
+	while (str[i])
 	{
+		if (quote.flag)
+			*str_final = ft_strjoin_char(*str_final, str[i]);
 		if (!i || str[i - 1] != '\\')
+		{
 			ft_check_quote(&quote, str[i]);
-		if (str[i] == '\\' && str[i + 1] == '*')
+			if (quote.flag && (str[i] == '\'' || str[i] == '\"'))
+				*str_final = ft_strjoin_char(*str_final, str[i]);
+		}
+		if (str[i] == '\\' && str[i + 1] == '*' && !quote.flag)
 		{
 			*str_final = ft_strjoin_char(*str_final, '*');
 			i += 2;
@@ -78,9 +89,11 @@ int	ft_wildcard_loop(char *str, char **str_final, t_token **tmp)
 			if (!ft_get_pattern(str, &i, str_final, tmp))
 				return (0);
 		}
-		else if (((str[i] == '*' && ft_find_asterisk(&str[i]))
+		else if (!quote.flag && ((str[i] == '*' && ft_find_asterisk(&str[i]))
 				|| (!ft_is_quote(str[i]) && !ft_find_asterisk(&str[i]))))
 			*str_final = ft_strjoin_char(*str_final, str[i]);
+		printf("%i %c\n",i, str[i]);
+		i++;
 	}
 	return (1);
 }

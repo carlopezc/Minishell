@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:17:06 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/05/31 18:42:37 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/03 15:19:17 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,20 @@ static void	ft_docs_out_true(t_pipex *pipex)
 		ft_docs_out(pipex);
 }
 
+void	ft_heredoc_lonely(void)
+{
+	char *str;
+	str = get_next_line(0);
+	while (str)
+	{
+		ft_printf("%s", str);
+		free(str);
+		str = NULL;
+		str = get_next_line(0);
+	}
+	exit(0);
+}
+
 void	ft_exec(t_minishell *shell, t_pipex *pipex, t_token *save)
 {
 	if (pipex->pipe[0][0] && !pipex->docs_in && !pipex->heredoc)
@@ -107,6 +121,10 @@ void	ft_exec(t_minishell *shell, t_pipex *pipex, t_token *save)
 		dup2(pipex->pipe[1][1], 1);
 		close(pipex->pipe[1][1]);
 	}
+	if (save->type == HEREDOC && (pipex->docs_out || pipex->pipe[1][1]))
+		ft_heredoc_lonely();
+	if (save->type == HEREDOC)
+		exit(0);
 	if (save->type == BUILTIN)
 	{
 		ft_exec_build(shell, save->str);

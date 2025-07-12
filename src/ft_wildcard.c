@@ -6,11 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 17:57:16 by carlopez          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2025/06/30 20:39:46 by carlotalcd       ###   ########.fr       */
-=======
-/*   Updated: 2025/07/02 22:30:30 by carlopez         ###   ########.fr       */
->>>>>>> fb62861378999c7b00409ed7e682ba8d49109295
+/*   Updated: 2025/07/12 15:58:16 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +54,7 @@ int	ft_get_pattern(char *str, int *i, char **str_final, t_token **tmp)
 		&& (!*i || str[*i - 1] != '\\'))
 		expanded = ft_strjoin(expanded, " ");
 	*str_final = ft_strjoin(*str_final, expanded);
+	ft_printf("Al salir de get pattern i vale %d\n", *i);
 	return (free(sub), free(expanded), 1);
 }
 
@@ -70,13 +67,11 @@ int	ft_wildcard_loop(char *str, char **str_final, t_token **tmp)
 	ft_init_quote(&quote);
 	while (str[i])
 	{
-		if (quote.flag)
-			*str_final = ft_strjoin_char(*str_final, str[i]);
 		if (!i || str[i - 1] != '\\')
 		{
 			ft_check_quote(&quote, str[i]);
 			if (quote.flag && (str[i] == '\'' || str[i] == '\"'))
-				*str_final = ft_strjoin_char(*str_final, str[i]);
+				i++;
 		}
 		if (str[i] == '\\' && str[i + 1] == '*' && !quote.flag)
 		{
@@ -92,8 +87,10 @@ int	ft_wildcard_loop(char *str, char **str_final, t_token **tmp)
 		else if (!quote.flag && ((str[i] == '*' && ft_find_asterisk(&str[i]))
 				|| (!ft_is_quote(str[i]) && !ft_find_asterisk(&str[i]))))
 			*str_final = ft_strjoin_char(*str_final, str[i]);
-		printf("%i %c\n",i, str[i]);
-		i++;
+		else if (quote.flag && str[i] != '\'' && str[i] != '\"')
+			*str_final = ft_strjoin_char(*str_final, str[i]);
+		if (str[i])
+			i++;
 	}
 	return (1);
 }

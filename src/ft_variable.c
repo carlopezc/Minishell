@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 19:24:52 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/31 19:58:45 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/14 20:00:06 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,10 @@ static int	ft_variable2(char **input, int *i,
 		t_minishell **minishell, char **final)
 {
 	if ((*input)[++(*i)] == '?')
-		return (ft_printf("%d\n", (*minishell)->status), 0);
+	{
+		*final = ft_strjoin(*final, ft_itoa((*minishell)->status));
+		return (0);
+	}
 	else
 		*final = ft_strjoin(*final,
 				ft_expand(*input, i, (*minishell)->env));
@@ -42,7 +45,10 @@ int	ft_variable(char **input, t_minishell **minishell)
 				&& (!(*input)[i - 1] || (*input)[i - 1] != '\\')))
 		{
 			if (!ft_variable2(input, &i, minishell, &final))
+			{
+				*input = final;
 				return (1);
+			}
 		}
 		else
 			final = ft_strjoin_char(final, (*input)[i++]);

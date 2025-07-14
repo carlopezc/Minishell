@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 11:26:24 by carlopez          #+#    #+#             */
-/*   Updated: 2025/06/17 11:07:17 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/07/14 15:22:17 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,9 +106,6 @@ int	ft_manage_brackets(t_token *tokens)
 	t_token	*tmp;
 
 	tmp = tokens;
-	ft_printf("llega aqui \n");
-	ft_printf("Tokens son: \n");
-	ft_print_tokens(tokens);
 	while (tmp)
 	{
 		if (!ft_check_brackets(tmp))

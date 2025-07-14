@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:10:29 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/05/31 19:17:01 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/14 19:16:04 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,8 +107,17 @@ void	ft_pwd(t_minishell *shell)
 		env = env->next;
 	if (!env)
 		ft_printf("no env\n");
+	if (ft_strchr(env->value, '/'))
+	{
+		ft_printf("%s\n", ft_strchr(env->value, '/'));
+		return ;
+	}
+	env = shell->env;
+	while (env && ft_strncmp(env->name, "OLDPWD", 3))
+                env = env->next;
+        if (!env)
+                ft_printf("no env\n");
 	ft_printf("%s\n", ft_strchr(env->value, '/'));
-	return ;
 }
 
 void	ft_print_env(t_env *env)

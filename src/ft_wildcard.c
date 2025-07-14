@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 17:57:16 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/12 15:58:16 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/14 16:18:54 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,18 +43,15 @@ int	ft_get_pattern(char *str, int *i, char **str_final, t_token **tmp)
 			&& str[start - 1] != ' ' && start > 0))
 		start--;
 	(*i)++;
-	while (str[*i] && str[*i] != ' '
-		&& (!*i || str[*i - 1] != '\\'))
+	while (str[*i] && str[*i] != ' ')
 		(*i)++;
 	sub = ft_substr(str, start, *i - start);
 	expanded = ft_expand_wildcard(sub, (*tmp)->type);
 	if (!expanded)
 		return (0);
-	if (str[*i] && str[*i] == ' '
-		&& (!*i || str[*i - 1] != '\\'))
+	if (str[*i] && str[*i] == ' ')
 		expanded = ft_strjoin(expanded, " ");
 	*str_final = ft_strjoin(*str_final, expanded);
-	ft_printf("Al salir de get pattern i vale %d\n", *i);
 	return (free(sub), free(expanded), 1);
 }
 
@@ -62,11 +59,13 @@ int	ft_wildcard_loop(char *str, char **str_final, t_token **tmp)
 {
 	int		i;
 	t_quote	quote;
+	int	flag;
 
 	i = 0;
 	ft_init_quote(&quote);
 	while (str[i])
 	{
+		flag = 0;
 		if (!i || str[i - 1] != '\\')
 		{
 			ft_check_quote(&quote, str[i]);
@@ -75,8 +74,10 @@ int	ft_wildcard_loop(char *str, char **str_final, t_token **tmp)
 		}
 		if (str[i] == '\\' && str[i + 1] == '*' && !quote.flag)
 		{
-			*str_final = ft_strjoin_char(*str_final, '*');
+			//si entra aqui se come un caracter al final
+			*str_final = ft_strjoin_char(*str_final, str[i + 1]);
 			i += 2;
+			flag = 1;
 		}
 		else if (str[i] && str[i] == '*' && !quote.flag
 			&& (!i || str[i - 1] != '\\'))
@@ -84,12 +85,14 @@ int	ft_wildcard_loop(char *str, char **str_final, t_token **tmp)
 			if (!ft_get_pattern(str, &i, str_final, tmp))
 				return (0);
 		}
+		else if ((str[i] == '\'' || str[i] == '\"') && str[i - 1] == '\\' && !ft_find_asterisk(&str[i]))
+			*str_final = ft_strjoin_char(*str_final, str[i]);
 		else if (!quote.flag && ((str[i] == '*' && ft_find_asterisk(&str[i]))
 				|| (!ft_is_quote(str[i]) && !ft_find_asterisk(&str[i]))))
 			*str_final = ft_strjoin_char(*str_final, str[i]);
 		else if (quote.flag && str[i] != '\'' && str[i] != '\"')
 			*str_final = ft_strjoin_char(*str_final, str[i]);
-		if (str[i])
+		if (str[i] && !flag)
 			i++;
 	}
 	return (1);

@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:14:50 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/11 18:55:29 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/14 13:17:17 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,11 @@ void	ft_echo_print(char *cmd)
 	i = 0;
 	if (!cmd)
 		return ;
-	ft_printf("entra en el echo con %s\n", cmd);
 	while (cmd[i])
 	{
-		if (cmd[i] == '\\' && cmd[i - 1] && cmd[i - 1] != '\\')
+		if (cmd[i] == '\\' && (!i || cmd[i - 1] != '\\'))
+			i++;
+		else if ((cmd[i] == '\"' || cmd[i] == '\'') && (!i || cmd[i - 1] != '\\'))
 			i++;
 		else
 			ft_printf("%c", cmd[i++]);
@@ -37,6 +38,8 @@ void	ft_echo(char *cmd)
 	char	*temp;
 
 	temp = ft_strchr(cmd, ' ');
+	if (!temp)
+		ft_printf("\n");
 	if (ft_strncmp(temp + 1, "-n", 2) == 0)
 		ft_echo_print(temp + 4);
 	else

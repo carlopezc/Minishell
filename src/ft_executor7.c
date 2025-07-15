@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:14:50 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/14 13:17:17 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/15 18:11:55 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,16 +17,22 @@
 void	ft_echo_print(char *cmd)
 {
 	int	i;
+	t_quote	q;
 
 	i = 0;
+	ft_init_quote(&q);
 	if (!cmd)
 		return ;
+	ft_printf("entra con %s\n", cmd);
 	while (cmd[i])
 	{
-		if (cmd[i] == '\\' && (!i || cmd[i - 1] != '\\'))
+		if (cmd[i] == '\\' && ((!i || cmd[i - 1] != '\\') && !q.flag))
 			i++;
 		else if ((cmd[i] == '\"' || cmd[i] == '\'') && (!i || cmd[i - 1] != '\\'))
+		{
+			ft_check_quote(&q, cmd[i]);
 			i++;
+		}
 		else
 			ft_printf("%c", cmd[i++]);
 	}

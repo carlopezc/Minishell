@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 17:57:16 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/14 16:18:54 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/15 18:36:59 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,8 +69,15 @@ int	ft_wildcard_loop(char *str, char **str_final, t_token **tmp)
 		if (!i || str[i - 1] != '\\')
 		{
 			ft_check_quote(&quote, str[i]);
-			if (quote.flag && (str[i] == '\'' || str[i] == '\"'))
+			/*
+			if (quote.flag && quote.type == str[i])
 				i++;
+			else if (quote.flag && (str[i] == '\'' || str[i] == '\"'))
+			{
+				*str_final = ft_strjoin_char(*str_final, '\\');
+				*str_final = ft_strjoin_char(*str_final, str[i]);
+			}
+			*/
 		}
 		if (str[i] == '\\' && str[i + 1] == '*' && !quote.flag)
 		{
@@ -85,7 +92,7 @@ int	ft_wildcard_loop(char *str, char **str_final, t_token **tmp)
 			if (!ft_get_pattern(str, &i, str_final, tmp))
 				return (0);
 		}
-		else if ((str[i] == '\'' || str[i] == '\"') && str[i - 1] == '\\' && !ft_find_asterisk(&str[i]))
+		else if ((str[i] == '\'' || str[i] == '\"') && str[i - 1] != '\\'/* && !ft_find_asterisk(&str[i])*/)
 			*str_final = ft_strjoin_char(*str_final, str[i]);
 		else if (!quote.flag && ((str[i] == '*' && ft_find_asterisk(&str[i]))
 				|| (!ft_is_quote(str[i]) && !ft_find_asterisk(&str[i]))))

@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 16:13:37 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/01 15:21:03 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/15 11:58:20 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,8 @@ int	ft_export_aux(char **split, int i, t_minishell *shell, t_env **node)
 			*node = ft_create_node(ft_get_name(split[i]),
 					ft_get_value(split[i]));
 			ft_connect_node(&shell->env, *node);
+			ft_printf("Nodo anadido es %s\n", (*node)->name);
+			ft_printf("Nodo anadido es %s\n", (*node)->value);
 		}
 		return (1);
 	}

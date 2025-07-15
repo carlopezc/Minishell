@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 16:05:18 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/30 19:17:42 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/15 17:12:54 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,8 @@ void	ft_check_quote(t_quote *quote, char c)
 			quote->flag = 1;
 			quote->type = c;
 		}
+		else if (quote->type != c)
+			return ;
 		else if (quote->type == c)
 		{
 			quote->flag = 0;

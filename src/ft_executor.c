@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/03 14:27:05 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/16 17:12:43 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@ t_token	*ft_and(t_pipex *pipex, t_minishell *shell, t_token *save)
 	while (pipex->childs > 0)
 	{
 		wait(&shell->status);
+		if (WIFEXITED(shell->status))
+			shell->status = WEXITSTATUS(shell->status);
 		pipex->childs--;
 	}
 	if (shell->status != 0)
@@ -48,6 +50,8 @@ t_token	*ft_or(t_pipex *pipex, t_minishell *shell, t_token *save)
 	while (pipex->childs > 0)
 	{
 		wait(&shell->status);
+		if (WIFEXITED(shell->status))
+			shell->status = WEXITSTATUS(shell->status);
 		pipex->childs--;
 	}
 	if (shell->status == 0)

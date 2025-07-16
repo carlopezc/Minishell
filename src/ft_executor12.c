@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:19:49 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/03 14:51:16 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/16 16:50:55 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,12 +93,13 @@ t_token	*ft_analisis_comands(t_pipex *pipex, t_minishell *shell, t_token **save)
 			pipe(pipex->pipe[1]);
 		pipex->pid = fork();
 		pipex->childs++;
+		if (pipex->pid == 0)
+			ft_manage_child_signals();
 		if (pipex->pid == 0 && tmp->type == COMMAND)
 		{
-			ft_manage_child_signals();
 			pipex->command = ft_split(tmp->str, ' ');
 			if (ft_path(&shell->env, &pipex, pipex->command[0]) == 0)
-				exit (0);
+				exit(127);
 		}
 		if (tmp->type != HEREDOC)
 			*save = tmp->next;

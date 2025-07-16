@@ -6,11 +6,39 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 17:57:16 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/16 15:23:51 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/16 20:12:11 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
+
+int	ft_find_asterisk_in_word(const char *str, int index)
+{
+    int	start = index;
+    int	end = index;
+
+    // Encuentra el inicio de la palabra delimitada por espacios
+    while (start > 0 && str[start - 1] != ' ')
+        start--;
+
+    // Encuentra el final de la palabra delimitada por espacios
+    while (str[end] && str[end] != ' ')
+        end++;
+
+    // Recorre la palabra y busca un asterisco usando while
+    int i = start;
+    while (i < end)
+    {
+        if (str[i] == '*')
+		{
+			ft_printf("Devuelve uno con %s\n", str + start);
+            return (1);
+		}
+        i++;
+    }
+	ft_printf("devuelve cero con %s\n", str + start);
+    return (0);
+}
 
 char	*ft_expand_wildcard(char *input, t_token_type type)
 {
@@ -46,6 +74,7 @@ int	ft_get_pattern(char *str, int *i, char **str_final, t_token **tmp)
 	while (str[*i] && str[*i] != ' ')
 		(*i)++;
 	sub = ft_substr(str, start, *i - start);
+	ft_printf("sub: %s\n", sub);
 	expanded = ft_expand_wildcard(sub, (*tmp)->type);
 	if (!expanded)
 		return (0);
@@ -88,14 +117,13 @@ int	ft_wildcard_loop(char *str, char **str_final, t_token **tmp)
 			}
 			*/
 		}
-		if (str[i] && str[i] == '\\' && quote.flag) 
+		if (str[i] && str[i] == '\\' && quote.type == '\'')
 		{
 			*str_final = ft_strjoin_char(*str_final, '\\');
 			*str_final = ft_strjoin_char(*str_final, '\\');
 		}
 		else if (str[i] && str[i] == '\\' && str[i + 1] == '*' && !quote.flag && !ft_find_asterisk(&str[i]))
 		{
-			//si entra aqui se come un caracter al final
 			*str_final = ft_strjoin_char(*str_final, str[i + 1]);
 			i += 2;
 			flag = 1;
@@ -106,8 +134,11 @@ int	ft_wildcard_loop(char *str, char **str_final, t_token **tmp)
 			if (!ft_get_pattern(str, &i, str_final, tmp))
 				return (0);
 		}
-		else if (str[i] && (str[i] == '\'' || str[i] == '\"') && str[i - 1] != '\\' && !ft_find_asterisk(&str[i]))
+		else if (str[i] && (str[i] == '\'' || str[i] == '\"') && str[i - 1] != '\\' && ft_find_asterisk_in_word(str, i))
+		{
+			//*str_final = ft_strjoin_char(*str_final, '\\');
 			*str_final = ft_strjoin_char(*str_final, str[i]);
+		}
 		else if (str[i] && !quote.flag && ((str[i] == '*' && !ft_find_asterisk(&str[i]))
 				|| (!ft_is_quote(str[i]) && !ft_find_asterisk(&str[i]))))
 			*str_final = ft_strjoin_char(*str_final, str[i]);

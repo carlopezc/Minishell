@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_quotes2.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
+/*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 15:15:42 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/15 17:14:01 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/16 16:38:02 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ char	*ft_simp_unquote(char *input, int *i, t_quote q)
 		(*i)++;	//me salto primera comilla simple
 	else
 		unquoted = ft_strjoin_char(unquoted, input[(*i)++]);
-	while (input[*i] != '\'' && (!*i || input[*i - 1] != '\\'))
+	while (input[*i] && input[*i] != '\''/* && (!*i || input[*i - 1] != '\\')*/)
 	{
 		if (input[*i] == '*')
 			unquoted = ft_strjoin_char(unquoted, '\\');

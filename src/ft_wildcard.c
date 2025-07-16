@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 17:57:16 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/16 13:36:50 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/16 15:23:51 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,6 +136,7 @@ int	ft_check_wildcard(t_token **tokens)
 		if (asterisk)
 		{
 			str = tmp->str;
+			//ft_unquote(&str, 0);
 			if (!ft_parse_asterisk(&str))
 				return (0);
 			if (!ft_wildcard_loop(str, &str_final, &tmp))

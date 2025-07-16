@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:14:50 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/16 09:52:48 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/16 15:26:18 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void	ft_echo_print(char *cmd)
 	ft_printf("entra en echo print con %s\n", cmd);
 	while (cmd[i])
 	{
-		if (cmd[i] == '\\' && ((!i || cmd[i - 1] != '\\') && !q.flag))
+		if (cmd[i] == '\\' && ((!i || cmd[i - 1] != '\\')/* && !q.flag*/))
 		{
 			//ft_printf("1 con %c\n", cmd[i]);
 			i++;

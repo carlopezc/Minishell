@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 16:34:23 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/29 18:14:39 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/16 13:56:27 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,5 +38,5 @@ char	*ft_expand(char *input, int *i, t_env *env)
 			return (ft_safe_free((void **)&name_var), ft_strdup(tmp->value));
 		tmp = tmp->next;
 	}
-	return (ft_safe_free((void **)&name_var), ft_strdup(""));
+	return (ft_safe_free((void **)&name_var), /*ft_strdup("")*/NULL);
 }

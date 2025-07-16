@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 17:57:16 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/15 18:36:59 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/16 13:36:50 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,15 +60,24 @@ int	ft_wildcard_loop(char *str, char **str_final, t_token **tmp)
 	int		i;
 	t_quote	quote;
 	int	flag;
+	int	s_flag;
 
 	i = 0;
+	s_flag = 0;
 	ft_init_quote(&quote);
 	while (str[i])
 	{
 		flag = 0;
 		if (!i || str[i - 1] != '\\')
 		{
+			if (quote.flag)
+				s_flag = 1;
 			ft_check_quote(&quote, str[i]);
+			if (s_flag && !quote.flag)
+			{
+				i++;
+				s_flag = 0;
+			}
 			/*
 			if (quote.flag && quote.type == str[i])
 				i++;
@@ -79,7 +88,12 @@ int	ft_wildcard_loop(char *str, char **str_final, t_token **tmp)
 			}
 			*/
 		}
-		if (str[i] == '\\' && str[i + 1] == '*' && !quote.flag)
+		if (str[i] && str[i] == '\\' && quote.flag) 
+		{
+			*str_final = ft_strjoin_char(*str_final, '\\');
+			*str_final = ft_strjoin_char(*str_final, '\\');
+		}
+		else if (str[i] && str[i] == '\\' && str[i + 1] == '*' && !quote.flag && !ft_find_asterisk(&str[i]))
 		{
 			//si entra aqui se come un caracter al final
 			*str_final = ft_strjoin_char(*str_final, str[i + 1]);
@@ -92,12 +106,12 @@ int	ft_wildcard_loop(char *str, char **str_final, t_token **tmp)
 			if (!ft_get_pattern(str, &i, str_final, tmp))
 				return (0);
 		}
-		else if ((str[i] == '\'' || str[i] == '\"') && str[i - 1] != '\\'/* && !ft_find_asterisk(&str[i])*/)
+		else if (str[i] && (str[i] == '\'' || str[i] == '\"') && str[i - 1] != '\\' && !ft_find_asterisk(&str[i]))
 			*str_final = ft_strjoin_char(*str_final, str[i]);
-		else if (!quote.flag && ((str[i] == '*' && ft_find_asterisk(&str[i]))
+		else if (str[i] && !quote.flag && ((str[i] == '*' && !ft_find_asterisk(&str[i]))
 				|| (!ft_is_quote(str[i]) && !ft_find_asterisk(&str[i]))))
 			*str_final = ft_strjoin_char(*str_final, str[i]);
-		else if (quote.flag && str[i] != '\'' && str[i] != '\"')
+		else if (str[i] && quote.flag && str[i] != '\'' && str[i] != '\"')
 			*str_final = ft_strjoin_char(*str_final, str[i]);
 		if (str[i] && !flag)
 			i++;

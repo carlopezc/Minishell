@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 19:24:52 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/14 20:00:06 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/16 14:41:18 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,27 @@ static int	ft_variable2(char **input, int *i,
 		*final = ft_strjoin(*final,
 				ft_expand(*input, i, (*minishell)->env));
 	return (1);
+}
+
+char	*ft_check_final(char *str)
+{
+	char	*final;
+	int	i;
+
+	final = NULL;
+	i = 0;
+	if (!str || (!ft_strchr(str, '\"') && (!ft_strchr(str, '\''))))
+		return (str);
+	while (str[i])	
+	{
+		if (str[i] == '\'' && (str[i - 1] == '\'' || str[i + 1] == '\''))
+			i++;
+		else if (str[i] == '\"' && (str[i - 1] == '\"' || str[i + 1] == '\"'))
+			i++;
+		else
+			final = ft_strjoin_char(final, str[i++]);
+	}
+	return (final);
 }
 
 int	ft_variable(char **input, t_minishell **minishell)
@@ -53,6 +74,7 @@ int	ft_variable(char **input, t_minishell **minishell)
 		else
 			final = ft_strjoin_char(final, (*input)[i++]);
 	}
-	*input = final;
+	*input = ft_check_final(final);
+	ft_printf("Tras ft_variable: %s\n", final);
 	return (1);
 }

@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 18:31:30 by carlopez          #+#    #+#             */
-/*   Updated: 2025/06/30 13:51:44 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/07/17 19:12:07 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,6 @@ int	ft_check_brackets(t_token *token)
 	value = token->str;
 	i = 0;
 	open = ft_brackets_loop(value, &i, '(');
-	
 	close = 0;
 	flag = 0;
 	while (value[i] && (value[i] != '(' && value[i] != ')'))

@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/14 13:07:45 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/17 19:04:32 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,20 @@
 char	*ft_group_input(char *input, int *i)
 {
 	char	*value;
+	t_quote	q;
 
 	value = NULL;
+	ft_init_quote(&q);
 	while (input[*i])
 	{
-		if (ft_check_operator(&input[*i]))
-			return (value);
-		value = ft_strjoin_char(value, input[*i]);
-		(*i)++;
+		if (!q.flag)
+		{
+			if (ft_check_operator(&input[*i]))
+				return (value);
+		}
+		if ((input[*i] == '\'' || input[*i] == '\"') && input[*i - 1] != '\\')
+			ft_check_quote(&q, input[*i]);
+		value = ft_strjoin_char(value, input[(*i)++]);
 	}
 	return (value);
 }
@@ -79,10 +85,8 @@ int	ft_process_input(t_minishell **minishell, char *input)
 	i = 0;
 	if (!minishell || !input)
 		return (0);
-	ft_printf("Antes del parsing %s\n", input);
 	if (!ft_parsing(&input, minishell))
 		return (0);
-	ft_printf("Tras parsing %s\n", input);
 	while (input[i])
 	{
 		while (input[i] && input[i] == ' ')

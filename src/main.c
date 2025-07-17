@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:15:05 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/17 16:14:38 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/17 19:38:35 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,20 +46,22 @@ int	ft_main_loop(t_minishell **minishell)
 			ft_free_minishell(minishell);
 			exit(0);
 		}
-		if (input && *input)
+		if (*input)
+		{
 			add_history(input);
-		if (!ft_process_input(minishell, input))
-			return (ft_safe_free((void **)&input),
-				ft_printf("Error processing input \n"), 2);
-		if (!ft_add_bracket_token(&((*minishell)->tokens)))
-			return (ft_printf("Error in brackets tokenization \n"), 2);
-		if (!ft_check_wildcard(&((*minishell)->tokens)))
-			return (ft_printf("Error in wildcard\n"), 2);
-		if (ft_check_otokens(*minishell))
-			ft_executor(*minishell);
-		ft_safe_free((void **)&input);
-		ft_free_tokens(minishell);
-		(*minishell)->tokens = NULL;
+			if (!ft_process_input(minishell, input))
+				return (ft_safe_free((void **)&input),
+					ft_printf("Error processing input \n"), 2);
+			if (!ft_add_bracket_token(&((*minishell)->tokens)))
+				return (ft_printf("Error in brackets tokenization \n"), 2);
+			if (!ft_check_wildcard(&((*minishell)->tokens)))
+				return (ft_printf("Error in wildcard\n"), 2);
+			if (ft_check_otokens(*minishell))
+				ft_executor(*minishell);
+			ft_safe_free((void **)&input);
+			ft_free_tokens(minishell);
+			(*minishell)->tokens = NULL;
+		}
 	}
 }
 

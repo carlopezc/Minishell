@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 15:50:24 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/14 19:48:06 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/16 16:38:58 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,14 @@ void	ft_manage_shell_signals(void)
 	signal(SIGQUIT, SIG_IGN);
 }
 
+void	ft_csignal_child(int signal)
+{
+	(void)signal;
+	exit(130);
+}
+
 void	ft_manage_child_signals(void)
 {
-	signal(SIGINT, SIG_DFL);
+	signal(SIGINT, ft_csignal_child);
 	signal(SIGQUIT, SIG_DFL);
 }

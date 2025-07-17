@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:19:49 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/16 16:50:55 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/17 19:58:34 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,10 @@ t_token	*ft_analisis_comands(t_pipex *pipex, t_minishell *shell, t_token **save)
 		{
 			pipex->command = ft_split(tmp->str, ' ');
 			if (ft_path(&shell->env, &pipex, pipex->command[0]) == 0)
+			{
+				ft_free_pipex(pipex);
 				exit(127);
+			}
 		}
 		if (tmp->type != HEREDOC)
 			*save = tmp->next;

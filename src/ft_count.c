@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_count.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
+/*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 18:28:50 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/17 19:33:27 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/19 13:31:16 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ int	ft_count_quotes(char *str)
 	{
 		if (str[i] == '\"' || str[i] == '\'')
 		{
-			if (!str[i - 1] || (str[i - 1] && str[i - 1] != '\\'))
+			if (!i || (!str[i - 1] || (str[i - 1] && str[i - 1] != '\\')))
 			{
 				if (str[i] == '\"')
 					double_quotes++;

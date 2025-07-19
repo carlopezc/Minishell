@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_file_management.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
+/*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 20:03:11 by carlopez          #+#    #+#             */
-/*   Updated: 2025/06/01 04:22:14 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/19 11:34:19 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,8 +53,8 @@ char	**ft_fill_files(int size)
 {
 	char			**files;
 	struct dirent	*entry;
-	DIR				*dir;
 	int				i;
+	DIR	*dir;
 
 	dir = opendir(".");
 	if (!dir)
@@ -71,10 +71,11 @@ char	**ft_fill_files(int size)
 		{
 			files[i] = ft_strdup(entry->d_name);
 			if (!files[i++])
-				return (ft_free_array(files), NULL);
+				return (closedir(dir), ft_free_array(files), NULL);
 		}
 		entry = readdir(dir);
 	}
+	closedir(dir);
 	return (files);
 }
 
@@ -91,6 +92,5 @@ char	**ft_get_elements(void)
 		return (ft_printf("Error opening dir\n"), NULL);
 	n_files = ft_count_files(dir);
 	files = ft_fill_files(n_files);
-	closedir(dir);
 	return (files);
 }

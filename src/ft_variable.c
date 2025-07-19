@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_variable.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
+/*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 19:24:52 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/16 14:41:18 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/19 12:13:39 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,9 +37,9 @@ char	*ft_check_final(char *str)
 		return (str);
 	while (str[i])	
 	{
-		if (str[i] == '\'' && (str[i - 1] == '\'' || str[i + 1] == '\''))
+		if (str[i] == '\'' && (!i || (str[i - 1] == '\'' || str[i + 1] == '\'')))
 			i++;
-		else if (str[i] == '\"' && (str[i - 1] == '\"' || str[i + 1] == '\"'))
+		else if (str[i] == '\"' && (!i || (str[i - 1] == '\"' || str[i + 1] == '\"')))
 			i++;
 		else
 			final = ft_strjoin_char(final, str[i++]);
@@ -60,10 +60,10 @@ int	ft_variable(char **input, t_minishell **minishell)
 		return (0);
 	while ((*input)[i])
 	{
-		if (!(*input)[i - 1] || (*input)[i - 1] != '\\')
+		if (!i || (!(*input)[i - 1] || (*input)[i - 1] != '\\'))
 			ft_check_quote(&quote, (*input)[i]);
 		if ((*input)[i] == '$' && (quote.type != '\''
-				&& (!(*input)[i - 1] || (*input)[i - 1] != '\\')))
+				&& (!i || (!(*input)[i - 1] || (*input)[i - 1] != '\\'))))
 		{
 			if (!ft_variable2(input, &i, minishell, &final))
 			{
@@ -75,6 +75,6 @@ int	ft_variable(char **input, t_minishell **minishell)
 			final = ft_strjoin_char(final, (*input)[i++]);
 	}
 	*input = ft_check_final(final);
-	ft_printf("Tras ft_variable: %s\n", final);
+	//ft_printf("Tras ft_variable: %s\n", final);
 	return (1);
 }

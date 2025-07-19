@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/03 14:27:05 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/17 20:43:23 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@ t_token	*ft_and(t_pipex *pipex, t_minishell *shell, t_token *save)
 	while (pipex->childs > 0)
 	{
 		wait(&shell->status);
+		if (WIFEXITED(shell->status))
+			shell->status = WEXITSTATUS(shell->status);
 		pipex->childs--;
 	}
 	if (shell->status != 0)
@@ -48,6 +50,8 @@ t_token	*ft_or(t_pipex *pipex, t_minishell *shell, t_token *save)
 	while (pipex->childs > 0)
 	{
 		wait(&shell->status);
+		if (WIFEXITED(shell->status))
+			shell->status = WEXITSTATUS(shell->status);
 		pipex->childs--;
 	}
 	if (shell->status == 0)
@@ -71,10 +75,12 @@ static t_token	*ft_executor2(t_pipex *pipex, t_token *save, t_minishell *shell,
 {
 	if (ft_strncmp("exit", save->str, 5) == 0)
 	{
+		ft_free_pipex(pipex);
 		ft_free_minishell(&shell);
 		exit(0);
 	}
-	if (save->type == COMMAND || save->type == BUILTIN || save->type == EXEC || save->type == HEREDOC)
+	if (save->type == COMMAND || save->type == BUILTIN
+		|| save->type == EXEC || save->type == HEREDOC)
 		tmp = ft_analisis_comands(pipex, shell, &save);
 	while (pipex->pid == 0 && save && (save->type == REDIR_IN || save->type
 			== REDIR_OUT || save->type == HEREDOC || save->type == APPEND))

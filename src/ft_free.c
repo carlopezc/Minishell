@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 15:52:48 by carlopez          #+#    #+#             */
-/*   Updated: 2025/06/01 04:11:12 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/17 16:17:50 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ void	ft_free_tokens(t_minishell **minishell)
 	t_token	*tmp;
 	t_token	*token;
 
+	if (!minishell || !*minishell)
+		return ;
 	token = (*minishell)->tokens;
 	tmp = NULL;
 	while (token)

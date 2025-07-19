@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:14:50 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/16 20:00:40 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/07/19 12:16:19 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,6 +123,11 @@ void	ft_unset(t_minishell *shell, char *cmd)
 
 void	ft_exec_build(t_minishell *shell, char *cmd)
 {
+	if (ft_strlen(cmd) == 4)
+	{
+		write(1, "\n", 1);
+		return ;
+	}
 	if (!ft_strncmp(cmd, "echo", ft_strlen("echo")))
 		ft_echo(cmd);
 	if (!ft_strncmp(cmd, "cd", ft_strlen("cd")))

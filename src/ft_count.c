@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 18:28:50 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/30 20:49:17 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/17 19:33:27 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,30 @@ int	ft_count_brackets(char *str)
 	return (0);
 }
 
+int	ft_check_qorder(char *str)
+{
+	int	i;
+	int	sing;
+	int	doub;
+
+	i = 0;
+	sing = 0;
+	doub = 0;
+	if (!str)
+		return (1);
+	while (str[i])
+	{
+		if (str[i] == '\'' && (!i || str[i - 1] != '\\') && !doub)
+			sing = !sing;
+		else if (str[i] == '\"' && (!i || str[i - 1] != '\\') && !sing) 
+			doub = !doub;
+		i++;
+	}
+	if (sing || doub)
+		return (ft_printf("Error with open quotes\n"), 0);
+	return (1);
+}
+
 int	ft_count_quotes(char *str)
 {
 	int	i;
@@ -75,6 +99,6 @@ int	ft_count_quotes(char *str)
 		i++;
 	}
 	if (!(double_quotes % 2) && !(simple_quotes % 2))
-		return (1);
+		return (ft_check_qorder(str));
 	return (0);
 }

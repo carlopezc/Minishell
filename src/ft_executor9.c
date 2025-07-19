@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:17:06 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/03 15:19:17 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/17 20:26:44 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ static void	ft_docs_out_true(t_pipex *pipex)
 		ft_docs_out(pipex);
 }
 
-void	ft_heredoc_lonely(void)
+void	ft_heredoc_lonely(t_pipex *pipex)
 {
 	char *str;
 	str = get_next_line(0);
@@ -100,6 +100,7 @@ void	ft_heredoc_lonely(void)
 		str = NULL;
 		str = get_next_line(0);
 	}
+	ft_free_pipex(pipex);
 	exit(0);
 }
 
@@ -122,7 +123,7 @@ void	ft_exec(t_minishell *shell, t_pipex *pipex, t_token *save)
 		close(pipex->pipe[1][1]);
 	}
 	if (save->type == HEREDOC && (pipex->docs_out || pipex->pipe[1][1]))
-		ft_heredoc_lonely();
+		ft_heredoc_lonely(pipex);
 	if (save->type == HEREDOC)
 		exit(0);
 	if (save->type == BUILTIN)

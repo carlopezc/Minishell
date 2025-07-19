@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 12:44:53 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/15 13:49:44 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/19 12:19:07 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,8 +102,6 @@ int	ft_parsing(char **input, t_minishell **minishell)
 	if (!ft_count_brackets(src))
 		return (ft_printf("Brackets not closed\n"), 0);
 	s_input = ft_split_cmd(*input, ' ');
-	ft_printf("S_input es : \n");
-	ft_print_array(s_input);
 	if (!s_input || !*s_input)
 		return (0);
 	*input = ft_quit_quotes(s_input, minishell);

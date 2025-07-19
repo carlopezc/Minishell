@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 16:05:18 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/15 17:12:54 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/17 18:39:42 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,16 @@ t_token_type	ft_is_operator_aux_aux(char **value,
 {
 	if (!ft_strncmp(input + *i, "|", 1))
 	{
+		if (flag)
+			return (ft_printf("syntax error near unexpected token\n"), ERROR);
 		*value = ft_strdup("|");
 		*i += 1;
 		return (PIPE);
 	}
 	else if (!ft_strncmp(input + *i, "&&", 2))
 	{
+		if (flag)
+			return (ft_printf("syntax error near unexpected token\n"), ERROR);
 		*value = ft_strdup("&&");
 		*i += 2;
 		return (AND);
@@ -37,25 +41,43 @@ t_token_type	ft_is_operator_aux(char **value, char *input, int *i, int flag)
 	if (!ft_strncmp(input + *i, ">>", 2))
 	{
 		*i += 2;
-		*value = ft_get_next(input, i);
 		if (flag)
+		{
+			if (*(input + *i) == ')')
+				return (ft_printf("syntax error near unexpected token\n"), ERROR);
 			*value = ft_strjoin("(", *value);
+		}
+		*value = ft_get_next(input, i);
+		if (!ft_strncmp(*value, "", ft_strlen(*value)))
+			return (ERROR);
 		return (APPEND);
 	}
 	else if (!ft_strncmp(input + *i, ">", 1))
 	{
 		*i += 1;
-		*value = ft_get_next(input, i);
 		if (flag)
-			return (ft_printf("parse error near blabla\n"), ERROR);
+		{
+			if (*(input + *i) == ')')
+				return (ft_printf("syntax error near unexpected token\n"), ERROR);
+			*value = ft_strjoin("(", *value);
+		}
+		*value = ft_get_next(input, i);
+		if (!ft_strncmp(*value, "", ft_strlen(*value)))
+			return (ERROR);
 		return (REDIR_OUT);
 	}
 	else if (!ft_strncmp(input + *i, "<", 1))
 	{
 		*i += 1;
-		*value = ft_get_next(input, i);
 		if (flag)
+		{
+			if (*(input + *i) == ')')
+				return (ft_printf("syntax error near unexpected token\n"), ERROR);
 			*value = ft_strjoin("(", *value);
+		}
+		*value = ft_get_next(input, i);
+		if (!ft_strncmp(*value, "", ft_strlen(*value)))
+			return (ERROR);
 		return (REDIR_IN);
 	}
 	return (ft_is_operator_aux_aux(value, input, i, flag));
@@ -73,16 +95,27 @@ t_token_type	ft_is_operator(char **value, char *input, int *i)
 	}
 	if (!ft_strncmp(input + *i, "||", 2))
 	{
-		*value = ft_strdup("||");
-		*i += 2;
+		if (flag)
+			return (ft_printf("syntax error near unexpected token\n"), ERROR);
+		else
+		{
+			*value = ft_strdup("||");
+			*i += 2;
+		}
 		return (OR);
 	}
 	else if (!ft_strncmp(input + *i, "<<", 2))
 	{
 		*i += 2;
-		*value = ft_get_next(input, i);
 		if (flag)
+		{
+			if (*(input + *i) == ')')
+				return (ft_printf("syntax error near unexpected token\n"), ERROR);
 			*value = ft_strjoin("(", *value);
+		}
+		*value = ft_get_next(input, i);
+		if (!ft_strncmp(*value, "", ft_strlen(*value)))
+			return (ERROR);
 		return (HEREDOC);
 	}
 	return (ft_is_operator_aux(value, input, i, flag));

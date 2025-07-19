@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:21:00 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/05/31 19:25:30 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/17 20:23:11 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@ t_token	*ft_killchilds(t_pipex *pipex, t_minishell *shell, t_token *save)
 		while (pipex->childs > 0)
 		{
 			wait(&shell->status);
+			if (WIFEXITED(shell->status))
+				shell->status = WEXITSTATUS(shell->status);
 			pipex->childs--;
 		}
 	}

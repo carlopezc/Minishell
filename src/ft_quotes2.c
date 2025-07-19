@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 15:15:42 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/16 16:38:02 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/07/19 12:44:36 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,8 +64,12 @@ void	ft_unquote(char **input, int flag)
 	in_word = 1;
 	if (flag)
 		return (ft_unquote_except(input));
+	int count = 0;
+	//falla <<'$USER'  
 	while ((*input)[i])	
 	{
+		ft_printf("i = %i, count = %i, input = %s, len = %i\n", i, count, *input, ft_strlen(*input));
+		count++;
 		if ((*input)[i] == '\'' && (!i || (*input)[i - 1] != '\\'))
 			final = ft_strjoin(final, ft_simp_unquote(*input, &i, q));
 		ft_check_in_word(&in_word, (*input)[i]);
@@ -87,6 +91,7 @@ void	ft_unquote(char **input, int flag)
 			i++;
 		else
 			final = ft_strjoin_char(final, (*input)[i++]);
+		ft_printf("hola\n");
 	}
 	*input = final;
 }

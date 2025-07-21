@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 15:52:48 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/17 16:17:50 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/21 20:01:02 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,5 +99,6 @@ void	ft_free_minishell(t_minishell **minishell)
 		ft_free_env(&(*minishell)->undefined_var);
 	free(*minishell);
 	*minishell = NULL;
+	rl_clear_history();
 	return ;
 }

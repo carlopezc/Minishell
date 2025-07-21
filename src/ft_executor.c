@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/17 20:43:23 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/21 19:57:17 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ static t_token	*ft_executor2(t_pipex *pipex, t_token *save, t_minishell *shell,
 {
 	if (ft_strncmp("exit", save->str, 5) == 0)
 	{
-		ft_free_pipex(pipex);
+		ft_free_pipex(&pipex);
 		ft_free_minishell(&shell);
 		exit(0);
 	}
@@ -125,5 +125,5 @@ int	ft_executor(t_minishell *shell)
 			save = ft_executor3(save, pipex, shell);
 		save = ft_killchilds(pipex, shell, save);
 	}
-	return (ft_free_pipex(pipex), 0);
+	return (ft_free_pipex(&pipex), 0);
 }

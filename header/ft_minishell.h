@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 11:59:23 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/21 18:47:35 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/21 19:58:30 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -221,7 +221,7 @@ t_token			*ft_exectime(t_pipex *pipex, t_minishell *shell,
 					t_token *tmp, t_token *save);
 void			ft_arrange_fd(t_pipex *pipex);
 t_pipex			*ft_init_pipex(void);
-void			ft_free_pipex(t_pipex *pipex);
+void			ft_free_pipex(t_pipex **pipex);
 char			*ft_errase_route(char *route);
 void			ft_cd_add(t_minishell *shell, char *temp);
 int				ft_check_cd(char *file, char *pwd);

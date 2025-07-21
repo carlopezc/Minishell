@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:17:41 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/05/31 18:53:07 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/21 19:56:23 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,24 +76,25 @@ int	ft_path(t_env **env, t_pipex **pipex, char *cmd)
 	return (ft_path2(pipex, split, cmd));
 }
 
-void	ft_free_pipex(t_pipex *pipex)
+void	ft_free_pipex(t_pipex **pipex)
 {
 	int	p;
 
 	p = 0;
-	if (!pipex)
+	if (!*pipex)
 		return ;
-	if (pipex->path)
-		ft_safe_free((void **)&pipex->path);
-	if (pipex->command)
+	if ((*pipex)->path)
+		ft_safe_free((void **)&(*pipex)->path);
+	if ((*pipex)->command)
 	{
-		while (pipex->command[p])
+		while ((*pipex)->command[p])
 		{
-			ft_safe_free((void **)&pipex->command[p]);
+			ft_safe_free((void **)&(*pipex)->command[p]);
 			p++;
 		}
-		ft_safe_free((void **)&pipex->command);
+		ft_safe_free((void **)&(*pipex)->command);
 	}
-	pipex->path = NULL;
-	pipex->command = NULL;
+	ft_safe_free((void **)pipex);
+	//pipex->path = NULL;
+	//pipex->command = NULL;
 }

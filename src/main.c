@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:15:05 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/21 19:20:24 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/21 20:00:23 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,7 @@ int	ft_main_loop(t_minishell **minishell)
 		}
 	}
 	ft_safe_free((void **)&input);
+	rl_clear_history();
 }
 
 int	main(int argc, char **argv, char **env)

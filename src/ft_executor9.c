@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:17:06 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/17 20:26:44 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/21 19:57:55 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ void	ft_heredoc_lonely(t_pipex *pipex)
 		str = NULL;
 		str = get_next_line(0);
 	}
-	ft_free_pipex(pipex);
+	ft_free_pipex(&pipex);
 	exit(0);
 }
 

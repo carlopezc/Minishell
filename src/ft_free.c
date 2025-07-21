@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 15:52:48 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/21 20:01:02 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/21 20:54:02 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ void	ft_free_tokens(t_minishell **minishell)
 		ft_safe_free((void **)&token);
 		token = tmp;
 	}
+	(*minishell)->tokens = NULL;
 	return ;
 }
 

@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 18:31:30 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/17 19:12:07 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/21 20:35:32 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,8 @@ int	ft_last_check(t_token *tokens)
 	{
 		while ((tmp->str)[i])
 		{
-			if ((tmp->str)[i] && (tmp->str)[i] == '(' && ((!(tmp->str)[i - 1]
-									|| (tmp->str)[i - 1] != '\\')))
+			if ((tmp->str)[i] && (tmp->str)[i] == '(' && ((i == 0 
+								|| (tmp->str)[i - 1] != '\\')))
 				o_brckt++;
 			i++;
 		}
@@ -64,7 +64,7 @@ int	ft_brackets_loop(char *value, int *i, char c)
 
 	count = 0;
 	while (value[*i] && (value[*i] == c
-			&& (!value[*i - 1] || value[*i - 1] != '\\')))
+			&& (*i == 0 || value[*i - 1] != '\\')))
 	{
 		(*i)++;
 		count++;
@@ -90,7 +90,7 @@ int	ft_check_brackets(t_token *token)
 		flag = 1;
 		i++;
 	}
-	if (value[i] && value[i] == '(' && (!value[i - 1] || value[i - 1] != '\\'))
+	if (value[i] && value[i] == '(' && (i == 0 || value[i - 1] != '\\'))
 		return (ft_printf("syntax error near unsexpected token ')'\n"), 0);
 	close = ft_brackets_loop(value, &i, ')');
 	if (!flag && open == close)

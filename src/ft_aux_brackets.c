@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 01:52:34 by carlopez          #+#    #+#             */
-/*   Updated: 2025/06/01 01:54:16 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/21 20:36:17 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int	ft_add_bracket_token2(t_token **tmp, t_token *prev, int *i, t_token **token)
 
 	str = (*tmp)->str;
 	start = 0;
-	if (str[*i] == '(' && (!str[*i - 1] || str[*i - 1] != '\\'))
+	if (str[*i] == '(' && (*i == 0 || str[*i - 1] != '\\'))
 	{
 		start = *i;
 		new_token = ft_create_token("(", O_BRACKET);
@@ -44,12 +44,12 @@ int	ft_add_bracket_token3(t_token **tmp, int *i, t_token **token)
 
 	str = (*tmp)->str;
 	cpy = NULL;
-	if (str[*i] == ')' && (!str[(*i) - 1] || str[(*i) - 1] != '\\'))
+	if (str[*i] == ')' && (*i == 0 || str[(*i) - 1] != '\\'))
 	{
 		cpy = ft_strdup(str);
 		(*tmp)->str = ft_substr(str, 0, *i);
 		while (tmp && cpy[*i]
-			&& cpy[*i] == ')' && (!cpy[(*i) - 1] || cpy[(*i)] != '\\'))
+			&& cpy[*i] == ')' && (*i == 0 || cpy[(*i)] != '\\'))
 		{
 			new_token = ft_create_token(")", C_BRACKET);
 			if (!new_token)

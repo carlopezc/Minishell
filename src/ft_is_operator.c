@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 20:12:24 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/21 20:39:47 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/21 21:35:37 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,11 +66,11 @@ t_token_type	ft_is_operator3(char **value,
 		{
 			if (*(input + *i) == ')' || !ft_check_error(input, *i, ')'))
 				return (ft_printf("syntax error\n"), ERROR);
-			*value = ft_strjoin("(", *value);
 		}
+		ft_safe_free((void **)value);
 		*value = ft_get_next(input, i);
 		if (!ft_strncmp(*value, "", ft_strlen(*value)))
-			return (ERROR);
+			return (ft_safe_free((void **)value), ERROR);
 		return (REDIR_IN);
 	}
 	return (ft_is_operator4(value, input, i, flag));
@@ -85,11 +85,11 @@ t_token_type	ft_is_operator2(char **value, char *input, int *i, int flag)
 		{
 			if (*(input + *i) == ')' || !ft_check_error(input, *i, ')'))
 				return (ft_printf("syntax error\n"), ERROR);
-			*value = ft_strjoin("(", *value);
 		}
+		ft_safe_free((void **)value);
 		*value = ft_get_next(input, i);
 		if (!ft_strncmp(*value, "", ft_strlen(*value)))
-			return (ERROR);
+			return (ft_safe_free((void **)value), ERROR);
 		return (APPEND);
 	}
 	else if (!ft_strncmp(input + *i, ">", 1))
@@ -99,11 +99,11 @@ t_token_type	ft_is_operator2(char **value, char *input, int *i, int flag)
 		{
 			if (*(input + *i) == ')' || !ft_check_error(input, *i, ')'))
 				return (ft_printf("syntax error\n"), ERROR);
-			*value = ft_strjoin("(", *value);
 		}
+		ft_safe_free((void **)value);
 		*value = ft_get_next(input, i);
 		if (!ft_strncmp(*value, "", ft_strlen(*value)))
-			return (ERROR);
+			return (ft_safe_free((void **)value), ERROR);
 		return (REDIR_OUT);
 	}
 	return (ft_is_operator3(value, input, i, flag));
@@ -136,11 +136,11 @@ t_token_type	ft_is_operator(char **value, char *input, int *i)
 		{
 			if (*(input + *i) == ')' || !ft_check_error(input, *i, ')'))
 				return (ft_printf("syntax error\n"), ERROR);
-			*value = ft_strjoin("(", *value);
 		}
+		ft_safe_free((void **)value);
 		*value = ft_get_next(input, i);
 		if (!ft_strncmp(*value, "", ft_strlen(*value)))
-			return (ERROR);
+			return (ft_safe_free((void **)value), ERROR);
 		return (HEREDOC);
 	}
 	return (ft_is_operator2(value, input, i, flag));

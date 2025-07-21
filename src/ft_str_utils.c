@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 19:45:39 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/30 19:46:42 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/21 19:33:59 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,6 @@ char	*ft_strjoin_char(char *str, char c)
 	}
 	final[i++] = c;
 	final[i] = '\0';
-	ft_safe_free((void **)&str);
+	free(str);
 	return (final);
 }

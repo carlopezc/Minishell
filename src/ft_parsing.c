@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 12:44:53 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/19 12:19:07 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/07/21 19:29:09 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ char	*ft_create_array(char **s_input)
 {
 	char	*input;
 	char	*tmp;
+	char	*old;
 	int		i;
 
 	i = 0;
@@ -30,8 +31,10 @@ char	*ft_create_array(char **s_input)
 		if (*s_input[i])
 		{
 			tmp = ft_strjoin(" ", s_input[i]);
+			old = input;
 			input = ft_strjoin(input, tmp);
 			free(tmp);
+			free(old);
 			i++;
 		}
 		else
@@ -89,23 +92,23 @@ void	ft_last(t_token **token)
 	return ;
 }
 
-int	ft_parsing(char **input, t_minishell **minishell)
+char	*ft_parsing(char *input, t_minishell **minishell)
 {
-	char	*src;
 	char	**s_input;
+	char	*input_final;
 
-	if (!*input | !(*input)[0])
-		return (1);
-	src = *input;
-	if (!ft_count_quotes(src))
-		return (ft_printf("Quotes not closed\n"), 0);
-	if (!ft_count_brackets(src))
-		return (ft_printf("Brackets not closed\n"), 0);
-	s_input = ft_split_cmd(*input, ' ');
+	s_input = NULL;
+	if (!input | !*input)
+		return (NULL);
+	if (!ft_count_quotes(input))
+		return (ft_printf("Quotes not closed\n"), NULL);
+	if (!ft_count_brackets(input))
+		return (ft_printf("Brackets not closed\n"), NULL);
+	s_input = ft_split_cmd(input, ' ');
 	if (!s_input || !*s_input)
-		return (0);
-	*input = ft_quit_quotes(s_input, minishell);
-	if (!*input)
-		return (ft_free_array(s_input), 0);
-	return (ft_free_array(s_input), 1);
+		return (ft_free_array(s_input), NULL);
+	input_final = ft_quit_quotes(s_input, minishell);
+	if (!input_final || !*input_final)
+		return (ft_free_array(s_input), NULL);
+	return (ft_free_array(s_input), input_final);
 }

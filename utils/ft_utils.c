@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/27 17:47:17 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/19 11:17:07 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/07/21 19:32:45 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ char	*ft_quit_quotes(char **s_input, t_minishell **minishell)
 	flag = 0;
 	while (s_input[i])
 	{
-		ft_printf("entra con %s\n", s_input[i]);
 		ft_variable(&s_input[i], minishell);
 		ft_unquote(&s_input[i], flag);
 		if (!ft_strncmp(s_input[i], "export", 7)

@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/17 19:04:32 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/21 19:25:37 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,18 +81,23 @@ int	ft_group_command(t_minishell **minishell, char *input, int *i)
 int	ft_process_input(t_minishell **minishell, char *input)
 {
 	int	i;
+	char	*final_input;
 
 	i = 0;
+	final_input = NULL;
 	if (!minishell || !input)
 		return (0);
-	if (!ft_parsing(&input, minishell))
-		return (0);
-	while (input[i])
+	final_input = ft_parsing(input, minishell);
+	ft_safe_free((void **)&input);
+	if (!final_input)
+		return (ft_safe_free((void **)final_input), 0);
+	while (final_input[i])
 	{
-		while (input[i] && input[i] == ' ')
+		while (final_input[i] && final_input[i] == ' ')
 			i++;
-		if (!ft_group_command(minishell, input, &i))
-			return (0);
+		if (!ft_group_command(minishell, final_input, &i))
+			return (ft_safe_free((void **)&final_input), 0);
 	}
+	ft_safe_free((void **)&final_input);
 	return (1);
 }

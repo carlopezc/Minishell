@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 15:15:42 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/19 13:57:38 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/07/21 19:13:12 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,5 +92,6 @@ void	ft_unquote(char **input, int flag)
 		else
 			final = ft_strjoin_char(final, (*input)[i++]);
 	}
+	free(*input);
 	*input = final;
 }

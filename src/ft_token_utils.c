@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 16:26:52 by carlopez          #+#    #+#             */
-/*   Updated: 2025/06/17 11:31:25 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/07/21 17:20:55 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ t_token	*ft_create_token(char *str, t_token_type type)
 	if (!token)
 		return (NULL);
 	token->str = ft_strdup(str);
+	free(str);
 	token->type = type;
 	token->next = NULL;
 	return (token);

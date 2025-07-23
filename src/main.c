@@ -6,11 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:15:05 by carlopez          #+#    #+#             */
-<<<<<<< Updated upstream
-/*   Updated: 2025/07/23 18:14:45 by marvin           ###   ########.fr       */
-=======
-/*   Updated: 2025/07/23 18:13:18 by carlopez         ###   ########.fr       */
->>>>>>> Stashed changes
+/*   Updated: 2025/07/23 18:29:52 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

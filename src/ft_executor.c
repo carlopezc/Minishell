@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/21 19:57:17 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/23 13:11:04 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ t_token	*ft_or(t_pipex *pipex, t_minishell *shell, t_token *save)
 static t_token	*ft_executor2(t_pipex *pipex, t_token *save, t_minishell *shell,
 	t_token *tmp)
 {
-	if (ft_strncmp("exit", save->str, 5) == 0)
+	if (ft_strncmp("exit", save->str, 4) == 0)
 	{
 		ft_free_pipex(&pipex);
 		ft_free_minishell(&shell);

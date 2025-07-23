@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:09:11 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/05/31 19:15:21 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/23 13:01:40 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@ void	ft_add_node(t_env **list, t_env *prev, t_env *node)
 
 	next = NULL;
 	tmp = *list;
+	if (!prev || !prev->next)
+		prev = *list;
 	if (!tmp)
 		return ;
 	while (tmp)
@@ -89,15 +91,14 @@ void	ft_cd_home(t_minishell *shell)
 	while (pwd && pwd->next && ft_strncmp((pwd->next)->name,
 			"PWD", ft_max_strlen("PWD", (pwd->next)->name)))
 		pwd = pwd->next;
-	if (!pwd || !pwd->next)
-		return ;
 	home = shell->env;
 	while (home && ft_strncmp(home->name, "HOME",
 			ft_max_strlen("HOME", home->name)))
 		home = home->next;
 	if (!home)
 		return ;
-	ft_old_pwd(&shell->env, pwd->next);
+	if (pwd && pwd->next)
+		ft_old_pwd(&shell->env, pwd->next);
 	node = ft_create_node(ft_strdup("PWD"), ft_strdup(home->value));
 	ft_add_node(&shell->env, pwd, node);
 	chdir(home->value);

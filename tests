@@ -1,0 +1,29 @@
+" "ls
+""
+"         "ls
+' '
+
+
+
+Si pones env -i ./minishell y abres ./minishell otro ./minishell otro y le das control +D, Control + D...
+
+./minishell < /dev/urandom 
+
+env | ""
+
+-----
+echo $""
+echo $''
+
+export "OLA"='A'
+
+---
+>b
+>>asd
+>>
+
+Signals: Contorl + C --> 130
+
+---
+
+/usr/bin/ping

@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:10:29 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/14 19:16:04 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/23 13:05:26 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ void	ft_cd(t_minishell *shell, char *cmd)
 	while (pwd && pwd->next && ft_strncmp((pwd->next)->name,
 			"PWD", ft_max_strlen("PWD", (pwd->next)->name)))
 		pwd = pwd->next;
-	if (!ft_strncmp(cmd, "cd", 3) || !(ft_strncmp(cmd, "cd ~", 5)))
+	if ((!pwd || !pwd->next) || !ft_strncmp(cmd, "cd", 3) || !(ft_strncmp(cmd, "cd ~", 5)))
 		return (ft_cd_home(shell));
 	if (!(ft_strncmp(cmd, "cd ~", 4)))
 	{

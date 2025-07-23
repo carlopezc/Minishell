@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:08:11 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/06/01 17:44:11 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/23 16:57:42 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,8 +56,8 @@ int	ft_check_cd(char *file, char *pwd)
 	temp = ft_strjoin(pwd, "/");
 	final = ft_strjoin(temp, file);
 	ft_safe_free((void **)&temp);
-	if (access(final, F_OK) != 0)
-		return (ft_safe_free((void **)&final), 0);
+	if (access(final, F_OK) != 0 || access(final, X_OK) != 0)
+		return (write (2, "Cannot be accessed\n", 19), ft_safe_free((void **)&final), 0);
 	else
 		return (ft_safe_free((void **)&final), 1);
 }
@@ -79,7 +79,7 @@ void	ft_errase_pwd(t_minishell *shell)
 			return ;
 		env->value[c--] = '\0';
 	}
-	if (env->value[c] != '=' && env->value[c -1] != '=')
+	if (c != 0)
 		env->value[c] = '\0';
 }
 

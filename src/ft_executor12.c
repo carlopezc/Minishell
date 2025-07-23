@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:19:49 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/21 19:57:34 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/23 17:45:00 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,27 @@ static int	ft_mega_if(t_token **save)
 	return (0);
 }
 
+void	ft_analisis_comands2(t_pipex *pipex, t_minishell *shell, t_token *tmp)
+{
+	char	*temp;
+
+	if (ft_strchr(tmp->str, '/'))
+	{
+		temp = ft_strrchr(tmp->str, '/');
+		pipex->command = ft_split(temp + 1, ' ');
+		*temp = '\0';
+		pipex->path = ft_strdup(tmp->str);
+		return ;
+	}
+	pipex->command = ft_split(tmp->str, ' ');
+	if (ft_path(&shell->env, &pipex, pipex->command[0]) == 0)
+	{
+		write(2, "Error finding path\n", 19);
+		ft_free_pipex(&pipex);
+		exit(127);
+	}
+}
+
 t_token	*ft_analisis_comands(t_pipex *pipex, t_minishell *shell, t_token **save)
 {
 	t_token	*tmp;
@@ -96,14 +117,7 @@ t_token	*ft_analisis_comands(t_pipex *pipex, t_minishell *shell, t_token **save)
 		if (pipex->pid == 0)
 			ft_manage_child_signals();
 		if (pipex->pid == 0 && tmp->type == COMMAND)
-		{
-			pipex->command = ft_split(tmp->str, ' ');
-			if (ft_path(&shell->env, &pipex, pipex->command[0]) == 0)
-			{
-				ft_free_pipex(&pipex);
-				exit(127);
-			}
-		}
+			ft_analisis_comands2(pipex, shell, tmp);
 		if (tmp->type != HEREDOC)
 			*save = tmp->next;
 		else

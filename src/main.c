@@ -6,11 +6,13 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:15:05 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/23 13:35:00 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/23 18:12:01 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
+
+volatile int control_c;
 
 int	ft_check_otokens(t_minishell *shell)
 {
@@ -41,6 +43,11 @@ int	ft_main_loop(t_minishell **minishell)
 	{
 		ft_manage_shell_signals();
 		input = readline("minishell> ");
+		if (control_c)
+		{
+			(*minishell)->status = 130;
+			control_c = 0;
+		}
 		if (!input)
 		{
 			ft_free_minishell(minishell);
@@ -55,10 +62,16 @@ int	ft_main_loop(t_minishell **minishell)
 				return (ft_printf("Error in brackets tokenization \n"), 2);
 			if (!ft_check_wildcard(&((*minishell)->tokens)))
 				return (ft_printf("Error in wildcard\n"), 2);
+			ft_print_tokens((*minishell)->tokens);
 			if (ft_check_otokens(*minishell))
 				ft_executor(*minishell);
 			ft_free_tokens(minishell);
 			(*minishell)->tokens = NULL;
+		}
+		if (control_c)
+		{
+			(*minishell)->status = 130;
+			control_c = 0;
 		}
 	}
 	ft_safe_free((void **)&input);
@@ -69,6 +82,7 @@ int	main(int argc, char **argv, char **env)
 {
 	t_minishell	*minishell;
 
+	control_c = 0;
 	minishell = NULL;
 	if (argc != 1 || !argv[0])
 		return (ft_printf("Wrong number of arguments (no arguments needed)\n"),

@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:10:29 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/23 13:05:26 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/23 16:47:10 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ static void	ft_cd_route(t_minishell *shell, char *cmd)
 		pwd = pwd->next;
 	if (!pwd)
 		return ;
-	if (access(cmd + 3, F_OK) == 0)
+	if (access(cmd + 3, F_OK) == 0 || ft_strncmp("/", cmd + 3, 2) == 0)
 	{
 		ft_old_pwd(&shell->env, pwd->next);
 		tmp = ft_strdup(cmd + 3);
@@ -39,6 +39,7 @@ static void	ft_cd_route(t_minishell *shell, char *cmd)
 		chdir(cmd + 3);
 		return ;
 	}
+	write (2, "No such file or directory\n", 26);
 }
 
 char	*ft_cd_erraser(t_minishell *shell, char *cmd)
@@ -65,6 +66,7 @@ char	*ft_cd_erraser(t_minishell *shell, char *cmd)
 	if (access(pwd->next->value, F_OK) != 0)
 	{
 		ft_cd_home(shell);
+		write (2, "No such file or directory\n", 26);
 		return (NULL);
 	}
 	return (temp);

@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:16:20 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/03 14:58:10 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/23 16:46:39 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,11 @@ void	ft_pre_exec_command(t_pipex *pipex, t_token *cmd, t_minishell *shell)
 	}
 	else
 	{
+		if (!pipex->command)
+		{
+			write (2, "Command not found\n", 18);
+			return ;
+		}
 		temp = ft_strjoin("/", pipex->command[0]);
 		path_command = ft_strjoin(pipex->path, temp);
 		ft_safe_free((void **)&temp);

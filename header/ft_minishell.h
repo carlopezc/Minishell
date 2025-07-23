@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 11:59:23 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/23 12:57:17 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/23 17:54:54 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@
 # include <readline/history.h>
 # include <signal.h>
 # include <dirent.h>
+
+extern volatile int control_c;
 
 typedef enum e_token_type
 {

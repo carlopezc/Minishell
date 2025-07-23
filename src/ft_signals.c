@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 15:50:24 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/17 20:33:03 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/23 17:56:23 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ void	ft_manage_sigint(int signal)
 	rl_replace_line("", 0);
 	rl_on_new_line();
 	rl_redisplay();
+	control_c = 130;
 	return ;
 }
 

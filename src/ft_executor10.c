@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:17:41 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/21 19:56:23 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/23 15:34:15 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,12 +65,16 @@ int	ft_path2(t_pipex **pipex, char **split, char *cmd)
 int	ft_path(t_env **env, t_pipex **pipex, char *cmd)
 {
 	char	**split;
+	char	*temp;
 
 	if (!env || !*env)
 		return (0);
 	if ((*pipex)->path)
 		ft_safe_free((void **)&(*pipex)->path);
-	split = ft_split(ft_find_path(env), ':');
+	temp = ft_find_path(env);
+	if (!temp)
+		return (0);
+	split = ft_split(temp, ':');
 	if (!split)
 		return (0);
 	return (ft_path2(pipex, split, cmd));

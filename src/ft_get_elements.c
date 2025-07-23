@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 16:36:42 by carlopez          #+#    #+#             */
-/*   Updated: 2025/05/30 21:43:43 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/23 17:50:29 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,7 @@ char	*ft_get_value(char *str)
 	int		i;
 	char	*value;
 	char	*equal;
+	char	*tmp;
 
 	i = 0;
 	equal = ft_strchr(str, '=');
@@ -77,7 +78,15 @@ char	*ft_get_value(char *str)
 		i++;
 		value = ft_strdup("");
 		while (equal[i])
-			value = ft_strjoin_char(value, equal[i++]);
+		{
+			tmp = ft_strjoin_char(value, equal[i++]);
+			if (!tmp)
+			{
+				ft_safe_free((void **)value);
+				return (NULL);
+			}
+			value = tmp;
+		}
 	}
 	return (ft_clean_value(value));
 }
@@ -85,19 +94,26 @@ char	*ft_get_value(char *str)
 char	*ft_get_name(char *str)
 {
 	int		i;
+	int	init;
 	char	*name;
 
 	i = 0;
+	init = 0;
 	if (!str)
 		return (NULL);
+	if (str[i] && (str[i] == '\'' || str[i] == '\"'))
+	{
+		init++;
+		i++;
+	}
 	while (str && str[i])
 	{
-		if (str[i] == '=')
+		if (str[i] == '\'' || str[i] == '\"' || str[i] == '=')
 			break ;
 		else if (str[i] == '+' && str[i + 1] && str[i + 1] == '=')
 			break ;
 		i++;
 	}
-	name = ft_substr(str, 0, i);
+	name = ft_substr(str, init, i - init);
 	return (name);
 }

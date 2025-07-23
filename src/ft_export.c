@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 16:13:37 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/23 13:51:26 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/23 17:56:10 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ void	ft_change_value(char *str, t_env **node)
 			if (value > 999)
 				value = 1;
 			(*node)->value = ft_itoa(value);
+			ft_safe_free((void **)&str_value);
 		}
 		else
 		{	

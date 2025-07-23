@@ -6,14 +6,14 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:10:29 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/23 20:57:39 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/23 23:17:14 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
 #include <fcntl.h>
 #include <sys/wait.h>
-
+/*
 static void	ft_cd_route(t_minishell *shell, char *cmd)
 {
 	t_env	*pwd;
@@ -40,7 +40,7 @@ static void	ft_cd_route(t_minishell *shell, char *cmd)
 		return ;
 	}
 	write (2, "No such file or directory\n", 26);
-}
+}*/
 
 int	ft_check_erraser(t_env *pwd, t_minishell *shell)
 {

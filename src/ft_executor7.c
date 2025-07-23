@@ -6,14 +6,14 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:14:50 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/23 20:51:05 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/24 00:01:36 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
 #include <fcntl.h>
 #include <sys/wait.h>
-
+/*
 void	ft_echo_print(char *cmd)
 {
 	int		i;
@@ -84,7 +84,7 @@ void	ft_echo(char *cmd)
 		ft_printf("\n");
 	}
 	return ;
-}
+}*/
 
 void	ft_remove_var(t_minishell **shell, t_env *node, t_env **list)
 {

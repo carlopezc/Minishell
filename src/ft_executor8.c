@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:16:20 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/23 20:42:43 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/23 23:54:30 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ void	ft_join_docs(int fd)
 	close(fd);
 }
 
-static void	ft_docs_in_child(t_pipex *pipex)
+void	ft_docs_in_child(t_pipex *pipex)
 {
 	int	p;
 
@@ -104,7 +104,7 @@ int	ft_check_docs(int *docs)
 	}
 	return (0);
 }
-
+/*
 void	ft_docs_in(t_pipex *pipex)
 {
 	int		tmp_pipe[2];
@@ -129,4 +129,4 @@ void	ft_docs_in(t_pipex *pipex)
 		dup2(tmp_pipe[0], 0);
 		close(tmp_pipe[0]);
 	}
-}
+}*/

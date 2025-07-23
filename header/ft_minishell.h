@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 11:59:23 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/23 20:22:40 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/24 00:02:07 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -254,6 +254,10 @@ t_token			*ft_and(t_pipex *pipex, t_minishell *shell, t_token *save);
 t_token			*ft_or(t_pipex *pipex, t_minishell *shell, t_token *save);
 int				ft_check_name(char *var);
 char			*ft_quit_quotes(char **s_input, t_minishell **minishell);
-
+void	ft_cd_route(t_minishell *shell, char *cmd);
 int	ft_word_count(char const *w, char c);
+void	ft_docs_in_child(t_pipex *pipex);
+void	ft_docs_out_true(t_pipex *pipex);
+void	ft_heredoc_lonely(t_pipex *pipex);
+void	ft_echo(char *cmd);
 #endif

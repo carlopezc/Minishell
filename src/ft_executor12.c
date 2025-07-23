@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:19:49 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/23 20:32:27 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/23 23:16:30 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include "../header/ft_minishell.h"
 #include <fcntl.h>
 #include <sys/wait.h>
-
+/*
 t_pipex	*ft_init_pipex(void)
 {
 	t_pipex	*pipex;
@@ -35,7 +35,7 @@ t_pipex	*ft_init_pipex(void)
 	pipex->pipe[1][0] = 0;
 	pipex->pipe[1][1] = 0;
 	return (pipex);
-}
+}*/
 
 t_token	*ft_heredoc(t_token *save, t_pipex *pipex)
 {

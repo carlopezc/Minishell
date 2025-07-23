@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 11:26:24 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/17 19:34:29 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/24 00:49:49 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,18 +54,19 @@ int	ft_quit_brackets(t_token *token, int *open, int *close)
 	int		i;
 	int		j;
 
+	ft_printf("Entra en quit brakcets\n");
 	ft_set_to_quit(open, close, &to_quit);
 	value = token->str;
 	i = 0;
 	new_value = NULL;
 	j = to_quit;
-	while (value[i] && value[i] == '(' && (!value[i - 1]
+	while (value[i] && value[i] == '(' && (!i 
 			|| value[i - 1] != '\\') && (j-- > 0))
 		i++;
 	if (!ft_add_while(value, &i, ')', &new_value))
 		return (0);
 	j = to_quit;
-	while (value[i] == ')' && (!value[i - 1]
+	while (value[i] == ')' && (!i 
 			|| value[i - 1] != '\\') && (j-- > 0))
 		i++;
 	if (!ft_add_while(value, &i, 0, &new_value))
@@ -78,25 +79,32 @@ int	ft_quit_brckt_dup(t_token *tmp, char c)
 {
 	int		i;
 	char	*str;
+	char	*new_str;
 
 	i = 0;
 	str = tmp->str;
+	new_str = NULL;
 	if (c == '(')
 	{
 		while (str[i + 1] && str[i + 1] == c)
 			i++;
-		str = ft_substr(str, i, ft_strlen(str) - i);
-		tmp->str = str;
+		new_str = ft_substr(str, i, ft_strlen(str) - i);
+		ft_safe_free((void **)&(tmp->str));
+		tmp->str = new_str;
 	}
 	else if (c == ')')
 	{
-		while (str[i] && (str[i] != c || (str[i - 1] && str[i - 1] == '\\')))
+		while (str[i] && (str[i] != c || (!i || str[i - 1] == '\\')))
 			i++;
 		if (str[i] && str[i] == c)
-			str = ft_substr(str, 0, i + 1);
-		tmp->str = str;
+		{
+			new_str = ft_substr(str, 0, i + 1);
+			ft_safe_free((void **)&(tmp->str));
+			tmp->str = new_str;
+		}
+		//tmp->str = new_str;
 	}
-	if (!str)
+	if (!tmp->str)
 		return (0);
 	return (1);
 }

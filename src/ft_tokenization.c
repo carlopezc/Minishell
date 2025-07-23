@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/23 18:06:36 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/23 23:44:27 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,9 +88,11 @@ int	ft_group_command(t_minishell **minishell, char *input, int *i)
 	if (!ft_define_parts(input, &value, &type, i))
 		return (0);
 	token = ft_create_token(value, type);
+	ft_safe_free((void **)&value);
 	if (!token)
 		return (0);
 	ft_add_node_back(&((*minishell)->tokens), token);
+	ft_printf("🔸Token creado: [%s] tipo: %s\n", token->str, token_to_str(token->type));
 	return (1);
 }
 

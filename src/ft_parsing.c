@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 12:44:53 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/21 19:29:09 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/23 18:59:19 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,22 +46,35 @@ char	*ft_create_array(char **s_input)
 void	ft_quit_first_last(t_token **token)
 {
 	t_token	*tmp;
-	t_token	*next;
 	t_token	*prev;
 
-	next = *token;
-	*token = next->next;
-	free(next->str);
-	free(next);
+	if (!token || !*token)
+		return ;
 	tmp = *token;
+	*token = tmp->next;
+	prev = NULL;
+	if (tmp->str)
+		ft_safe_free((void **)&tmp->str);
+	ft_safe_free((void **)&tmp);
+	if (!*token)
+		return ;
+	tmp = *token;
+	prev = NULL;
 	while (tmp && tmp->next)
 	{
 		prev = tmp;
 		tmp = tmp->next;
 	}
-	free(tmp->str);
-	free(tmp);
-	prev->next = NULL;
+	if (tmp && tmp != *token)
+	{
+		if (tmp->str)
+			ft_safe_free((void **)&tmp->str);
+		ft_safe_free((void **)&tmp);
+	}
+	if (prev)
+		prev->next = NULL;
+	else
+		*token = NULL;
 	return ;
 }
 

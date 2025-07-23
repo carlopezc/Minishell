@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:17:06 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/21 19:57:55 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/23 23:31:38 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,7 +130,11 @@ void	ft_exec(t_minishell *shell, t_pipex *pipex, t_token *save)
 	{
 		ft_exec_build(shell, save->str);
 		if (pipex->childs != 0)
+		{
+			//ft_free_minishell(&shell);
+			//ft_free_pipex(&pipex);
 			exit (0);
+		}
 	}
 	else
 		ft_pre_exec_command(pipex, save, shell);

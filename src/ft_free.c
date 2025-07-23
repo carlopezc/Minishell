@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 15:52:48 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/21 20:54:02 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/23 21:57:47 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ void	ft_free_tokens(t_minishell **minishell)
 	while (token)
 	{
 		tmp = token->next;
+		printf("🧹 Liberando token: [%s]\n", token->str);
 		if (token->str)
 			ft_safe_free((void **)&(token->str));
 		ft_safe_free((void **)&token);

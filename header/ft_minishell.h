@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 11:59:23 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/23 17:54:54 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/23 21:50:58 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -254,6 +254,7 @@ t_token			*ft_and(t_pipex *pipex, t_minishell *shell, t_token *save);
 t_token			*ft_or(t_pipex *pipex, t_minishell *shell, t_token *save);
 int				ft_check_name(char *var);
 char			*ft_quit_quotes(char **s_input, t_minishell **minishell);
+char	*token_to_str(t_token_type type);
 
 int	ft_word_count(char const *w, char c);
 #endif

@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:15:05 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/23 18:29:52 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/24 00:02:52 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,7 @@ int	ft_main_loop(t_minishell **minishell)
 		if (!input)
 		{
 			ft_free_minishell(minishell);
+			rl_clear_history();
 			exit(0);
 		}
 		if (*input && !ft_just_space(input))
@@ -76,6 +77,7 @@ int	ft_main_loop(t_minishell **minishell)
 				return (ft_printf("Error in wildcard\n"), 2);
 			if (ft_check_otokens(*minishell))
 				ft_executor(*minishell);
+			ft_print_tokens((*minishell)->tokens);
 			ft_free_tokens(minishell);
 			(*minishell)->tokens = NULL;
 		}
@@ -85,8 +87,6 @@ int	ft_main_loop(t_minishell **minishell)
 			control_c = 0;
 		}
 	}
-	ft_safe_free((void **)&input);
-	rl_clear_history();
 }
 
 int	main(int argc, char **argv, char **env)

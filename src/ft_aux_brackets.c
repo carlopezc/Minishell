@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 01:52:34 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/21 20:36:17 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/24 00:24:14 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,50 +18,54 @@ int	ft_add_bracket_token2(t_token **tmp, t_token *prev, int *i, t_token **token)
 	int		start;
 	t_token	*new_token;
 
-	str = (*tmp)->str;
+	str = ft_strdup((*tmp)->str);
 	start = 0;
-	if (str[*i] == '(' && (*i == 0 || str[*i - 1] != '\\'))
+	if (str[*i] == '(' && (!*i || str[*i - 1] != '\\'))
 	{
 		start = *i;
 		new_token = ft_create_token("(", O_BRACKET);
 		if (!new_token)
-			return (0);
+			return (ft_safe_free((void **)&str), 0);
 		ft_connect_token(token, new_token, prev);
+		ft_printf("🔸Token creado: [%s] tipo: %s\n", new_token->str, token_to_str(new_token->type));
+		ft_safe_free((void **)&((*tmp)->str));
 		(*tmp)->str = ft_substr(str, start + 1,
 				ft_strlen(str) - (start + 1));
-		str = (*tmp)->str;
 		(*i)--;
-		return (2);
+		ft_printf("tokens en add token 2\n");
+		ft_printf("pasa por el 2\n");
+		ft_print_tokens(*token);
+		return (ft_safe_free((void **)&str), 2);
 	}
-	return (1);
+	return (ft_safe_free((void **)&str), 1);
 }
 
 int	ft_add_bracket_token3(t_token **tmp, int *i, t_token **token)
 {
 	char	*str;
 	t_token	*new_token;
-	char	*cpy;
 
-	str = (*tmp)->str;
-	cpy = NULL;
-	if (str[*i] == ')' && (*i == 0 || str[(*i) - 1] != '\\'))
+	str = ft_strdup((*tmp)->str);
+	if (str[*i] == ')' && (!*i || str[(*i) - 1] != '\\'))
 	{
-		cpy = ft_strdup(str);
+		ft_safe_free((void **)&((*tmp)->str));
 		(*tmp)->str = ft_substr(str, 0, *i);
-		while (tmp && cpy[*i]
-			&& cpy[*i] == ')' && (*i == 0 || cpy[(*i)] != '\\'))
+		while (str[*i]
+			&& str[*i] == ')' && (!*i || str[(*i) - 1] != '\\'))
 		{
 			new_token = ft_create_token(")", C_BRACKET);
 			if (!new_token)
-				return (0);
+				return (ft_safe_free((void **)&str), 0);
 			ft_connect_token(token, new_token, *tmp);
+			ft_printf("🔸Token creado: [%s] tipo: %s\n", new_token->str, token_to_str(new_token->type));
+			ft_printf("pasa por el 3\n");
 			(*tmp) = (*tmp)->next;
 			(*i)++;
 		}
-		if (!cpy[*i])
-			return (2);
+		if (!str[*i])
+			return (ft_safe_free((void **)&str), 2);
 	}
-	return (1);
+	return (ft_safe_free((void **)&str), 1);
 }
 
 int	ft_add_brackets_loop(t_token *prev, t_token **token, t_token **tmp)
@@ -74,6 +78,7 @@ int	ft_add_brackets_loop(t_token *prev, t_token **token, t_token **tmp)
 	str = (*tmp)->str;
 	while (str[i])
 	{
+		ft_printf("etra en el loop\n");
 		res = ft_add_bracket_token2(tmp, prev, &i, token);
 		if (!res)
 			return (0);
@@ -86,7 +91,10 @@ int	ft_add_brackets_loop(t_token *prev, t_token **token, t_token **tmp)
 				break ;
 		}
 		i++;
+		str = (*tmp)->str;
 	}
+	ft_printf("Tokens tras add brck loop\n");
+	ft_print_tokens(*token);
 	return (1);
 }
 
@@ -95,8 +103,12 @@ int	ft_add_bracket_token(t_token **token)
 	t_token	*tmp;
 	t_token	*prev;
 
+	ft_printf("Token list antes de manage bracket \n ");
+	ft_print_tokens(*token);
 	if (!ft_manage_brackets(*token))
 		return (0);
+	ft_printf("Token list tras manage bracket \n ");
+	ft_print_tokens(*token);
 	tmp = *token;
 	if (!tmp)
 		return (1);

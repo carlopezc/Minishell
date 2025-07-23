@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 00:41:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/23 12:26:42 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/23 13:51:48 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,7 @@ int	ft_check_duplicated(char *str, t_env **env, t_env **undefined)
 	name_to_add = ft_get_name(str);
 	value = ft_get_value(str);
 	if (!ft_check_duplicated2(&tmp, name_to_add, value, str))
-		return (ft_safe_free((void **)&value), 1);
-	ft_safe_free((void **)&value);
+		return (1);
 	if (undefined)
 	{
 		tmp = *undefined;

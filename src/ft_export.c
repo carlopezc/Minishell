@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 16:13:37 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/23 12:49:46 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/23 13:51:26 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,6 @@ void	ft_change_value(char *str, t_env **node)
 			(*node)->value = str_value;
 		}
 	}
-	ft_safe_free((void **)&str_value);
 	ft_safe_free((void **)&name);
 	return ;
 }
@@ -71,9 +70,9 @@ int	ft_export_aux(char **split, int i, t_minishell *shell, t_env **node)
 			name = ft_get_name(split[i]);
 			value = ft_get_value(split[i]);
 			*node = ft_create_node(name, value);
+			ft_printf("Name de la var es: %s\n", name);
+			ft_printf("value de la var es: %s\n", value);
 			ft_connect_node(&shell->env, *node);
-			//ft_safe_free((void **)&name);
-			//ft_safe_free((void **)&value);
 		}
 		return (1);
 	}

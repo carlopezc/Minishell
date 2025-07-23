@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:16:20 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/23 16:46:39 by marvin           ###   ########.fr       */
+/*   Updated: 2025/07/23 20:42:43 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,24 @@
 #include <fcntl.h>
 #include <sys/wait.h>
 
-void	ft_pre_exec_command(t_pipex *pipex, t_token *cmd, t_minishell *shell)
+void	ft_pre_exec_command2(t_pipex *pipex,
+		char **path_command, char ***command)
 {
 	char	*temp;
+
+	if (!pipex->command)
+	{
+		write (2, "Command not found\n", 18);
+		return ;
+	}
+	temp = ft_strjoin("/", pipex->command[0]);
+	*path_command = ft_strjoin(pipex->path, temp);
+	ft_safe_free((void **)&temp);
+	*command = pipex->command;
+}
+
+void	ft_pre_exec_command(t_pipex *pipex, t_token *cmd, t_minishell *shell)
+{
 	char	*path_command;
 	char	**command;
 	char	**env;
@@ -28,17 +43,7 @@ void	ft_pre_exec_command(t_pipex *pipex, t_token *cmd, t_minishell *shell)
 		path_command = command[0];
 	}
 	else
-	{
-		if (!pipex->command)
-		{
-			write (2, "Command not found\n", 18);
-			return ;
-		}
-		temp = ft_strjoin("/", pipex->command[0]);
-		path_command = ft_strjoin(pipex->path, temp);
-		ft_safe_free((void **)&temp);
-		command = pipex->command;
-	}
+		ft_pre_exec_command2(pipex, &path_command, &command);
 	if (pipex->path)
 		ft_safe_free((void **)&pipex->path);
 	env = ft_create_array_env(shell->env);

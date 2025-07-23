@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 11:59:23 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/23 17:54:54 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/23 20:22:40 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -218,7 +218,7 @@ void			ft_asterisk_init(int *i, int *in_word,
 void			ft_terminator(t_pipex *pipex);
 t_token			*ft_analisis_comands(t_pipex *pipex,
 					t_minishell *shell, t_token **save);
-t_token			*ft_analisis_redir(t_token *save, t_pipex *pipex);
+t_token			*ft_analisis_redir(t_token *save, t_pipex *pipex, t_token *tmp);
 t_token			*ft_exectime(t_pipex *pipex, t_minishell *shell,
 					t_token *tmp, t_token *save);
 void			ft_arrange_fd(t_pipex *pipex);

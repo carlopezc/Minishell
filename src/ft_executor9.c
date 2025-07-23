@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:17:06 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/21 19:57:55 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/23 20:37:08 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,8 @@ static void	ft_docs_out_true(t_pipex *pipex)
 
 void	ft_heredoc_lonely(t_pipex *pipex)
 {
-	char *str;
+	char	*str;
+
 	str = get_next_line(0);
 	while (str)
 	{
@@ -102,6 +103,20 @@ void	ft_heredoc_lonely(t_pipex *pipex)
 	}
 	ft_free_pipex(&pipex);
 	exit(0);
+}
+
+void	ft_decide_exec(t_minishell *shell, t_token *save, t_pipex *pipex)
+{
+	if (save->type == HEREDOC)
+		exit(0);
+	if (save->type == BUILTIN)
+	{
+		ft_exec_build(shell, save->str);
+		if (pipex->childs != 0)
+			exit (0);
+	}
+	else
+		ft_pre_exec_command(pipex, save, shell);
 }
 
 void	ft_exec(t_minishell *shell, t_pipex *pipex, t_token *save)
@@ -124,14 +139,5 @@ void	ft_exec(t_minishell *shell, t_pipex *pipex, t_token *save)
 	}
 	if (save->type == HEREDOC && (pipex->docs_out || pipex->pipe[1][1]))
 		ft_heredoc_lonely(pipex);
-	if (save->type == HEREDOC)
-		exit(0);
-	if (save->type == BUILTIN)
-	{
-		ft_exec_build(shell, save->str);
-		if (pipex->childs != 0)
-			exit (0);
-	}
-	else
-		ft_pre_exec_command(pipex, save, shell);
+	ft_decide_exec(shell, save, pipex);
 }

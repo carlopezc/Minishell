@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:17:41 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/23 15:34:15 by marvin           ###   ########.fr       */
+/*   Updated: 2025/07/23 20:33:15 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,6 +99,4 @@ void	ft_free_pipex(t_pipex **pipex)
 		ft_safe_free((void **)&(*pipex)->command);
 	}
 	ft_safe_free((void **)pipex);
-	//pipex->path = NULL;
-	//pipex->command = NULL;
 }

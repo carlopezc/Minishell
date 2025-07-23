@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:14:50 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/23 15:52:17 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/23 20:51:05 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,9 @@
 
 void	ft_echo_print(char *cmd)
 {
-	int	i;
+	int		i;
 	t_quote	q;
-	int	check;
+	int		check;
 
 	i = 0;
 	check = 0;
@@ -27,12 +27,14 @@ void	ft_echo_print(char *cmd)
 		return ;
 	while (cmd[i])
 	{
-		if (cmd[i] == '\\' && ((!i || cmd[i - 1] != '\\' || check) && q.type != '\'' /* && !q.flag*/))
+		if (cmd[i] == '\\'
+			&& ((!i || cmd[i - 1] != '\\' || check) && q.type != '\''))
 		{
 			i++;
 			check = 0;
 		}
-		else if ((cmd[i] == '\"' || cmd[i] == '\'') && (!i || cmd[i - 1] != '\\'))
+		else if ((cmd[i] == '\"' || cmd[i] == '\'')
+			&& (!i || cmd[i - 1] != '\\'))
 		{
 			if (q.flag && q.type != cmd[i])
 				ft_printf("%c", cmd[i]);
@@ -46,7 +48,6 @@ void	ft_echo_print(char *cmd)
 			ft_printf("%c", cmd[i++]);
 		}
 	}
-	return ;
 }
 
 int	ft_echo_flag(char *str, int *n)
@@ -69,7 +70,7 @@ int	ft_echo_flag(char *str, int *n)
 void	ft_echo(char *cmd)
 {
 	char	*temp;
-	int	n;
+	int		n;
 
 	n = 0;
 	temp = ft_strchr(cmd, ' ');
@@ -137,6 +138,17 @@ void	ft_unset(t_minishell *shell, char *cmd)
 	return ;
 }
 
+void	ft_check_pwd(t_minishell *shell, char *cmd)
+{
+	if (ft_strncmp(cmd, "pwd ", 4) == 0)
+	{
+		write(2, "pwd: too many arguments\n", 24);
+		exit (1);
+	}
+	if (ft_strncmp(cmd, "pwd", 3) == 0)
+		ft_pwd(shell);
+}
+
 void	ft_exec_build(t_minishell *shell, char *cmd)
 {
 	if (ft_strlen(cmd) == 4)
@@ -152,13 +164,7 @@ void	ft_exec_build(t_minishell *shell, char *cmd)
 		ft_merge_lists(&shell, shell->env, shell->undefined_var);
 		ft_sort_list(shell->export);
 	}
-	if (ft_strncmp(cmd, "pwd ", 4) == 0)
-	{
-		ft_printf("pwd: too many arguments");
-		exit (1);
-	}
-	if (ft_strncmp(cmd, "pwd", 3) == 0)
-		ft_pwd(shell);
+	ft_check_pwd(shell, cmd);
 	if (!ft_strncmp(cmd, "export", ft_strlen("export")))
 		ft_export(shell, cmd);
 	if (!ft_strncmp(cmd, "unset", ft_strlen("unset")))

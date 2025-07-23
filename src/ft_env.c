@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 16:16:23 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/11 18:02:03 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/23 13:08:34 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,9 +75,7 @@ t_env	*ft_create_env(char **env_array)
 			value = ft_create_env2(env_array[i]);
 		else
 			value = ft_get_value(env_array[i]);
-		node = ft_create_node(ft_strdup(name), ft_strdup(value));
-		ft_safe_free((void **)&value);
-		ft_safe_free((void **)&name);
+		node = ft_create_node(name, value);
 		if (!node)
 			return (ft_printf("Error creating environment node\n"), NULL);
 		ft_connect_node(&env, node);

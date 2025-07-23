@@ -6,11 +6,23 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/21 20:46:59 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/23 13:31:58 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
+
+int	ft_next_word(char *str)
+{
+	int	i;
+
+	i = 0;
+	while (str[i] && str[i] == ' ')
+		i++;
+	if (str[i] && !ft_check_operator(&str[i]))
+		return (1);
+	return (0);
+}
 
 char	*ft_group_input(char *input, int *i)
 {
@@ -23,6 +35,10 @@ char	*ft_group_input(char *input, int *i)
 	{
 		if (!q.flag)
 		{
+			if (input[*i] && input[*i]== ' ' && ft_next_word(&input[*i]))
+				value = ft_strjoin_char(value, input[(*i)++]);
+			while (input[*i] && input[*i] == ' ')
+				(*i)++;
 			if (ft_check_operator(&input[*i]))
 				return (value);
 		}

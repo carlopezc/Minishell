@@ -6,14 +6,14 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 09:31:50 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/23 12:43:30 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/23 12:57:02 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../printf/libft/libft.h"
 #include "../header/ft_minishell.h"
 
-static int	ft_word_count(char const *w, char c)
+int	ft_word_count(char const *w, char c)
 {
 	int		count;
 	int		in_word;

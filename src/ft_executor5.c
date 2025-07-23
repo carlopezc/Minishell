@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:12:04 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/06/11 15:20:13 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/07/23 13:11:42 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,13 +47,14 @@ void	ft_env(t_minishell *shell, char *cmd)
 	i = 0;
 	var = ft_split_cmd(cmd, ' ');
 	if (!var)
-		return ;
+		return (ft_free_array(var));
 	if (!ft_strncmp(var[i], "env", ft_max_strlen(var[i], "env")) && !var[++i])
-		return (ft_print_env(shell->env));
+		return (ft_free_array(var), ft_print_env(shell->env));
 	env_tmp = ft_strdup_env(shell->env);
 	while (i != -1 && var[i])
 		i = ft_env2(var, i, env_tmp);
 	ft_print_env(env_tmp);
+	ft_free_array(var);
 	return ;
 }
 

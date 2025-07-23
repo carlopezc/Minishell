@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 00:41:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/23 13:51:48 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/23 18:03:22 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ static int	ft_check_duplicated2(t_env **tmp, char *name_to_add,
 			if (value)
 				ft_change_value(str, tmp);
 			ft_safe_free((void **)&name_to_add);
+			ft_safe_free((void **)&value);
 			return (0);
 		}
 		*tmp = (*tmp)->next;
@@ -63,7 +64,7 @@ int	ft_check_duplicated(char *str, t_env **env, t_env **undefined)
 			tmp = tmp->next;
 		}
 	}
-	return (ft_safe_free((void **)&name_to_add), 0);
+	return (ft_safe_free((void **)&value), ft_safe_free((void **)&name_to_add), 0);
 }
 
 void	ft_check_next2(char *str, int *i, int *c_brckt)

@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:13:20 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/06/13 11:27:22 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/07/23 17:36:35 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,18 +87,18 @@ int	ft_check_name(char *var)
 	int	i;
 
 	i = 0;
-	if (!ft_isalpha(var[i]) && (var[i] != '_'))
+	if (!ft_isalpha(var[i]) && (var[i] != '_') && (var[i] != '\'') && (var[i] != '\"'))
 	{
-		ft_printf("Non valid name\n");
+		ft_printf("Not a valid identifier\n");
 		return (0);
 	}
 	while (var[++i] && (var[i] != '=' && var[i] != ' '))
 	{
 		if (var[i] == '+' && var[i + 1] == '=')
 			return (1);
-		if (!ft_isalnum(var[i]) && (var[i] != '_'))
+		if (!ft_isalnum(var[i]) && (var[i] != '_') && (var[i] != '\'') && (var[i] != '\"'))
 		{
-			ft_printf("Non valid name\n");
+			ft_printf("Not a valid identifier\n");
 			return (0);
 		}
 	}

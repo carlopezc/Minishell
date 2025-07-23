@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 15:15:42 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/21 19:13:12 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/23 17:28:15 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,6 @@ char	*ft_simp_unquote(char *input, int *i, t_quote q)
 		return (NULL);
 	if (!q.flag || (q.type == '\''))
 		(*i)++;	//me salto primera comilla simple
-	else
-		unquoted = ft_strjoin_char(unquoted, input[(*i)++]);
 	while (input[*i] && input[*i] != '\''/* && (!*i || input[*i - 1] != '\\')*/)
 	{
 		if (input[*i] == '*')
@@ -31,8 +29,6 @@ char	*ft_simp_unquote(char *input, int *i, t_quote q)
 	}
 	if (!q.flag || (q.type == '\''))
 		(*i)++;	//me salto segunda comilla simple
-	else
-		unquoted = ft_strjoin_char(unquoted, input[(*i)++]);
 	return (unquoted);
 }
 
@@ -45,33 +41,29 @@ void	ft_check_in_word(int *in_word, char c)
 	return ;
 }
 
-void	ft_unquote_except(char **input)
-{
-	(void)input;
-	return ;
-}
-
 void	ft_unquote(char **input, int flag)
 {
 	int	i;
 	t_quote	q;
 	int	in_word;
 	char	*final;
+	char	*simp;
 
 	i = 0;
 	ft_init_quote(&q);
 	final = NULL;
 	in_word = 1;
-	if (flag)
-		return (ft_unquote_except(input));
-	if (!input || !*input || !**input)
+	simp = NULL;
+	if (flag || !input || !*input || !**input)
 		return ;  
 	while (ft_strlen(*input) >= (size_t)i && (*input)[i])	
 	{
 		if ((*input)[i] == '\'' && (!i || (*input)[i - 1] != '\\'))
-			final = ft_strjoin(final, ft_simp_unquote(*input, &i, q));
-		if (ft_strlen(*input) < (size_t)i)
-			return ;
+		{
+			simp = ft_simp_unquote(*input, &i, q);
+			final = ft_strjoin(final, simp);
+			ft_safe_free((void **)&simp);
+		}
 		ft_check_in_word(&in_word, (*input)[i]);
 		if (((*input)[i] == '\'' || (*input)[i] == '\"') && (!i || (*input)[i - 1] != '\\'))
 		{

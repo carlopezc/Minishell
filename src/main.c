@@ -6,7 +6,11 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:15:05 by carlopez          #+#    #+#             */
+<<<<<<< Updated upstream
 /*   Updated: 2025/07/23 18:14:45 by marvin           ###   ########.fr       */
+=======
+/*   Updated: 2025/07/23 18:13:18 by carlopez         ###   ########.fr       */
+>>>>>>> Stashed changes
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +39,18 @@ int	ft_check_otokens(t_minishell *shell)
 	return (1);
 }
 
+int	ft_just_space(char *str)
+{
+	int	i;
+
+	i = 0;
+	while (str[i] && str[i] == ' ')
+		i++;
+	if (!str[i] || str[i] == '\n')
+		return (1);
+	return (0);
+}
+
 int	ft_main_loop(t_minishell **minishell)
 {
 	char	*input;
@@ -53,7 +69,7 @@ int	ft_main_loop(t_minishell **minishell)
 			ft_free_minishell(minishell);
 			exit(0);
 		}
-		if (*input)
+		if (*input && !ft_just_space(input))
 		{
 			add_history(input);
 			if (!ft_process_input(minishell, input))
@@ -62,7 +78,6 @@ int	ft_main_loop(t_minishell **minishell)
 				return (ft_printf("Error in brackets tokenization \n"), 2);
 			if (!ft_check_wildcard(&((*minishell)->tokens)))
 				return (ft_printf("Error in wildcard\n"), 2);
-			ft_print_tokens((*minishell)->tokens);
 			if (ft_check_otokens(*minishell))
 				ft_executor(*minishell);
 			ft_free_tokens(minishell);

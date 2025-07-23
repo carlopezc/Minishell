@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 09:31:50 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/23 12:57:02 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/23 17:10:32 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,14 +26,14 @@ int	ft_word_count(char const *w, char c)
 	ft_init_quote(&quote);
 	while (w && w[p])
 	{
-		if (p > 0 && (!w[p - 1] || w[p - 1] != '\\'))
+		if (!p || w[p - 1] != '\\')
 			ft_check_quote(&quote, w[p]);
-		if (w[p] != c && in_word == 0)
+		if (w[p] != c && !in_word)
 		{
 			in_word = 1;
 			count++;
 		}
-		else if (w[p] == c && quote.flag == 0)
+		else if (w[p] == c && !quote.flag)
 			in_word = 0;
 		p++;
 	}
@@ -66,14 +66,14 @@ int	ft_cpy(char const *s, char **word, char c, int count)
 		word[p] = NULL;
 		while (s[i] == c)
 			i++;
-		if (i > 0 && (!s[i - 1] || s[i - 1] != '\\'))
+		if (!i || s[i - 1] != '\\')
 			ft_check_quote(&quote, s[i]);
 		while (s[i] && (s[i] != c || (quote.flag)))
 		{
 			word[p] = ft_strjoin_char(word[p], s[i++]);
 			if (!word[p])
 				return (0);
-			if (i > 0 && (!s[i - 1] || s[i - 1] != '\\'))
+			if (!i || s[i - 1] != '\\')
 				ft_check_quote(&quote, s[i]);
 		}
 	}

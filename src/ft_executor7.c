@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:14:50 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/19 12:16:19 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/07/23 15:52:17 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,18 +25,15 @@ void	ft_echo_print(char *cmd)
 	ft_init_quote(&q);
 	if (!cmd)
 		return ;
-	ft_printf("entra en echo print con %s\n", cmd);
 	while (cmd[i])
 	{
 		if (cmd[i] == '\\' && ((!i || cmd[i - 1] != '\\' || check) && q.type != '\'' /* && !q.flag*/))
 		{
-			//ft_printf("1 con %c\n", cmd[i]);
 			i++;
 			check = 0;
 		}
 		else if ((cmd[i] == '\"' || cmd[i] == '\'') && (!i || cmd[i - 1] != '\\'))
 		{
-			//ft_printf("2 con %c\n", cmd[i]);
 			if (q.flag && q.type != cmd[i])
 				ft_printf("%c", cmd[i]);
 			ft_check_quote(&q, cmd[i]);
@@ -52,15 +49,34 @@ void	ft_echo_print(char *cmd)
 	return ;
 }
 
+int	ft_echo_flag(char *str, int *n)
+{
+	if (!str)
+		return (0);
+	if (str[*n] && str[*n] == '-' && str[*n + 1] == 'n')
+		(*n) += 2;
+	while (str[*n] && str[*n] == 'n')
+		(*n)++;
+	if (!str[*n] || str[*n] == ' ')
+	{
+		while (str[*n] && str[*n] == ' ')
+			(*n)++;
+		return (1);
+	}
+	return (0);
+}
+
 void	ft_echo(char *cmd)
 {
 	char	*temp;
+	int	n;
 
+	n = 0;
 	temp = ft_strchr(cmd, ' ');
 	if (!temp)
 		ft_printf("\n");
-	if (ft_strncmp(temp + 1, "-n", 2) == 0)
-		ft_echo_print(temp + 4);
+	if (!ft_strncmp(temp + 1, "-n", 2) && ft_echo_flag(temp + 1, &n))
+		ft_echo_print(temp + n + 1);
 	else
 	{
 		ft_echo_print(temp + 1);

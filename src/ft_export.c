@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 16:13:37 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/15 11:58:20 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/23 12:49:46 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,16 +16,20 @@ void	ft_change_value(char *str, t_env **node)
 {
 	char	*equal;
 	int	value;
+	char	*str_value;
+	char	*name;
 
 	equal = ft_strchr(str, '=');
 	value = 0;
+	name = ft_get_name(str);
+	str_value = ft_get_value(str);
 	if (*(equal - 1) == '+')
-		(*node)->value = ft_strjoin((*node)->value, ft_get_value(str));
+		(*node)->value = ft_strjoin((*node)->value, str_value);
 	else
 	{
-		if (!ft_strncmp(ft_get_name(str), "SHLVL", 6))
+		if (!ft_strncmp(name, "SHLVL", 6))
 		{
-			value = ft_atoi(ft_get_value(str));
+			value = ft_atoi(str_value);
 			if (value > 999)
 				value = 1;
 			(*node)->value = ft_itoa(value);
@@ -33,9 +37,11 @@ void	ft_change_value(char *str, t_env **node)
 		else
 		{	
 			ft_safe_free((void **)&((*node)->value));
-			(*node)->value = ft_get_value(str);
+			(*node)->value = str_value;
 		}
 	}
+	ft_safe_free((void **)&str_value);
+	ft_safe_free((void **)&name);
 	return ;
 }
 
@@ -53,15 +59,21 @@ void	ft_empty_export(t_minishell **shell)
 
 int	ft_export_aux(char **split, int i, t_minishell *shell, t_env **node)
 {
+	char	*name;
+	char	*value;
+
+	name = NULL;
+	value = NULL;
 	if (ft_strchr(split[i], '='))
 	{
 		if (!ft_check_duplicated(split[i], &shell->env, &shell->undefined_var))
 		{
-			*node = ft_create_node(ft_get_name(split[i]),
-					ft_get_value(split[i]));
+			name = ft_get_name(split[i]);
+			value = ft_get_value(split[i]);
+			*node = ft_create_node(name, value);
 			ft_connect_node(&shell->env, *node);
-			ft_printf("Nodo anadido es %s\n", (*node)->name);
-			ft_printf("Nodo anadido es %s\n", (*node)->value);
+			//ft_safe_free((void **)&name);
+			//ft_safe_free((void **)&value);
 		}
 		return (1);
 	}
@@ -72,19 +84,23 @@ static int	ft_export_loop(char **split, t_minishell *shell)
 {
 	int		i;
 	t_env	*node;
+	char	*name;
 
 	i = 1;
+	name = NULL;
 	while (split[i])
 	{
 		if (!ft_check_name(split[i]))
-			return (ft_free_todo(i, split), 0);
+			return (0);
 		if (!ft_export_aux(split, i, shell, &node))
 		{
 			if (!ft_check_duplicated(split[i],
 					&shell->env, &shell->undefined_var))
 			{
-				node = ft_create_node(ft_get_name(split[i]), NULL);
+				name = ft_get_name(split[i]);
+				node = ft_create_node(name, NULL);
 				ft_connect_node(&shell->undefined_var, node);
+				ft_safe_free((void **)name);
 			}
 		}
 		i++;
@@ -100,13 +116,13 @@ void	ft_export(t_minishell *shell, char *cmd)
 	i = 0;
 	split = ft_split_cmd(cmd, ' ');
 	if (!split || !*split)
-		return (ft_free_todo(i, split));
+		return (ft_free_array(split));
 	if (!ft_strncmp(split[i], "export",
 			ft_max_strlen(split[i], "export")) && !split[i + 1])
-		return (ft_free_todo(i, split), ft_print_export(shell));
+		return (ft_free_array(split), ft_print_export(shell));
 	if (!ft_export_loop(split, shell))
-		return ;
+		return (ft_free_array(split));
 	ft_merge_lists(&shell, shell->env, shell->undefined_var);
 	ft_sort_list(shell->export);
-	return (ft_free_todo(i, split));
+	return (ft_free_array(split));
 }

@@ -6,14 +6,14 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:10:29 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/23 16:47:10 by marvin           ###   ########.fr       */
+/*   Updated: 2025/07/23 23:17:14 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
 #include <fcntl.h>
 #include <sys/wait.h>
-
+/*
 static void	ft_cd_route(t_minishell *shell, char *cmd)
 {
 	t_env	*pwd;
@@ -40,6 +40,17 @@ static void	ft_cd_route(t_minishell *shell, char *cmd)
 		return ;
 	}
 	write (2, "No such file or directory\n", 26);
+}*/
+
+int	ft_check_erraser(t_env *pwd, t_minishell *shell)
+{
+	if (access(pwd->next->value, F_OK) != 0)
+	{
+		ft_cd_home(shell);
+		write (2, "No such file or directory\n", 26);
+		return (0);
+	}
+	return (1);
 }
 
 char	*ft_cd_erraser(t_minishell *shell, char *cmd)
@@ -63,12 +74,8 @@ char	*ft_cd_erraser(t_minishell *shell, char *cmd)
 	}
 	else
 		return (ft_strchr(cmd, ' '));
-	if (access(pwd->next->value, F_OK) != 0)
-	{
-		ft_cd_home(shell);
-		write (2, "No such file or directory\n", 26);
+	if (ft_check_erraser(pwd, shell) == 0)
 		return (NULL);
-	}
 	return (temp);
 }
 
@@ -81,7 +88,8 @@ void	ft_cd(t_minishell *shell, char *cmd)
 	while (pwd && pwd->next && ft_strncmp((pwd->next)->name,
 			"PWD", ft_max_strlen("PWD", (pwd->next)->name)))
 		pwd = pwd->next;
-	if ((!pwd || !pwd->next) || !ft_strncmp(cmd, "cd", 3) || !(ft_strncmp(cmd, "cd ~", 5)))
+	if ((!pwd || !pwd->next) || !ft_strncmp(cmd, "cd", 3)
+		|| !(ft_strncmp(cmd, "cd ~", 5)))
 		return (ft_cd_home(shell));
 	if (!(ft_strncmp(cmd, "cd ~", 4)))
 	{
@@ -116,9 +124,9 @@ void	ft_pwd(t_minishell *shell)
 	}
 	env = shell->env;
 	while (env && ft_strncmp(env->name, "OLDPWD", 3))
-                env = env->next;
-        if (!env)
-                ft_printf("no env\n");
+		env = env->next;
+	if (!env)
+		ft_printf("no env\n");
 	ft_printf("%s\n", ft_strchr(env->value, '/'));
 }
 

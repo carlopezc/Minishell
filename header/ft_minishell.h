@@ -6,7 +6,11 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 11:59:23 by carlopez          #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2025/07/23 21:50:58 by carlopez         ###   ########.fr       */
+=======
+/*   Updated: 2025/07/24 00:02:07 by lbellmas         ###   ########.fr       */
+>>>>>>> b554039e1f183fe85846742e42adc85392281bce
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -218,7 +222,7 @@ void			ft_asterisk_init(int *i, int *in_word,
 void			ft_terminator(t_pipex *pipex);
 t_token			*ft_analisis_comands(t_pipex *pipex,
 					t_minishell *shell, t_token **save);
-t_token			*ft_analisis_redir(t_token *save, t_pipex *pipex);
+t_token			*ft_analisis_redir(t_token *save, t_pipex *pipex, t_token *tmp);
 t_token			*ft_exectime(t_pipex *pipex, t_minishell *shell,
 					t_token *tmp, t_token *save);
 void			ft_arrange_fd(t_pipex *pipex);
@@ -255,6 +259,10 @@ t_token			*ft_or(t_pipex *pipex, t_minishell *shell, t_token *save);
 int				ft_check_name(char *var);
 char			*ft_quit_quotes(char **s_input, t_minishell **minishell);
 char	*token_to_str(t_token_type type);
-
+void	ft_cd_route(t_minishell *shell, char *cmd);
 int	ft_word_count(char const *w, char c);
+void	ft_docs_in_child(t_pipex *pipex);
+void	ft_docs_out_true(t_pipex *pipex);
+void	ft_heredoc_lonely(t_pipex *pipex);
+void	ft_echo(char *cmd);
 #endif

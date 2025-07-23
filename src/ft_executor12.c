@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:19:49 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/23 17:45:00 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/23 23:16:30 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include "../header/ft_minishell.h"
 #include <fcntl.h>
 #include <sys/wait.h>
-
+/*
 t_pipex	*ft_init_pipex(void)
 {
 	t_pipex	*pipex;
@@ -35,7 +35,7 @@ t_pipex	*ft_init_pipex(void)
 	pipex->pipe[1][0] = 0;
 	pipex->pipe[1][1] = 0;
 	return (pipex);
-}
+}*/
 
 t_token	*ft_heredoc(t_token *save, t_pipex *pipex)
 {
@@ -66,7 +66,8 @@ t_token	*ft_heredoc(t_token *save, t_pipex *pipex)
 
 static int	ft_mega_if(t_token **save)
 {
-	if ((*save)->type == COMMAND || (*save)->type == EXEC || (*save)->type == HEREDOC
+	if ((*save)->type == COMMAND || (*save)->type == EXEC
+		|| (*save)->type == HEREDOC
 		|| !ft_strncmp("pwd", (*save)->str, 3)
 		|| !ft_strncmp("echo", (*save)->str, 4)
 		|| ((!ft_strncmp("env", (*save)->str, 3)
@@ -126,8 +127,10 @@ t_token	*ft_analisis_comands(t_pipex *pipex, t_minishell *shell, t_token **save)
 	return (tmp);
 }
 
-t_token	*ft_analisis_redir(t_token *save, t_pipex *pipex)
+t_token	*ft_analisis_redir(t_token *save, t_pipex *pipex, t_token *tmp)
 {
+	int	temp;
+
 	if (pipex->childs != 0)
 	{
 		if (save->type == REDIR_IN)
@@ -141,7 +144,13 @@ t_token	*ft_analisis_redir(t_token *save, t_pipex *pipex)
 		if (save && save->type == PIPE)
 			return (save);
 	}
-	else
+	else if (!tmp)
+	{
+		if (save && save->type == REDIR_OUT)
+			temp = open(save->str, O_CREAT, 0777);
+		else if (save && save->type == APPEND)
+			temp = open(save->str, O_CREAT, 0777);
 		save = save->next;
+	}
 	return (save);
 }

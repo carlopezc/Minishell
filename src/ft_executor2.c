@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:08:11 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/23 16:57:42 by marvin           ###   ########.fr       */
+/*   Updated: 2025/07/23 20:58:13 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,8 @@ int	ft_check_cd(char *file, char *pwd)
 	final = ft_strjoin(temp, file);
 	ft_safe_free((void **)&temp);
 	if (access(final, F_OK) != 0 || access(final, X_OK) != 0)
-		return (write (2, "Cannot be accessed\n", 19), ft_safe_free((void **)&final), 0);
+		return (write (2, "Cannot be accessed\n", 19),
+			ft_safe_free((void **)&final), 0);
 	else
 		return (ft_safe_free((void **)&final), 1);
 }

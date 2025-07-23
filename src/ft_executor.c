@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/23 13:11:04 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/23 20:24:37 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,9 +82,9 @@ static t_token	*ft_executor2(t_pipex *pipex, t_token *save, t_minishell *shell,
 	if (save->type == COMMAND || save->type == BUILTIN
 		|| save->type == EXEC || save->type == HEREDOC)
 		tmp = ft_analisis_comands(pipex, shell, &save);
-	while (pipex->pid == 0 && save && (save->type == REDIR_IN || save->type
+	while (save && (save->type == REDIR_IN || save->type
 			== REDIR_OUT || save->type == HEREDOC || save->type == APPEND))
-		save = ft_analisis_redir(save, pipex);
+		save = ft_analisis_redir(save, pipex, tmp);
 	save = ft_exectime(pipex, shell, tmp, save);
 	if (save && save->type == C_BRACKET)
 	{

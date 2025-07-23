@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:17:06 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/23 23:31:38 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/24 00:52:07 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ void	ft_docs_out(t_pipex *pipex)
 	}
 }
 
-static void	ft_docs_out_true(t_pipex *pipex)
+void	ft_docs_out_true(t_pipex *pipex)
 {
 	if (ft_check_docs(pipex->docs_out) == -1)
 		exit (1);
@@ -91,7 +91,8 @@ static void	ft_docs_out_true(t_pipex *pipex)
 
 void	ft_heredoc_lonely(t_pipex *pipex)
 {
-	char *str;
+	char	*str;
+
 	str = get_next_line(0);
 	while (str)
 	{
@@ -102,40 +103,4 @@ void	ft_heredoc_lonely(t_pipex *pipex)
 	}
 	ft_free_pipex(&pipex);
 	exit(0);
-}
-
-void	ft_exec(t_minishell *shell, t_pipex *pipex, t_token *save)
-{
-	if (pipex->pipe[0][0] && !pipex->docs_in && !pipex->heredoc)
-	{
-		close(pipex->pipe[0][1]);
-		dup2(pipex->pipe[0][0], 0);
-		close(pipex->pipe[0][0]);
-	}
-	else if (pipex->docs_in || pipex->pipe[0][0] || pipex->heredoc)
-		ft_docs_in(pipex);
-	if (pipex->docs_out)
-		ft_docs_out_true(pipex);
-	else if (pipex->pipe[1][1])
-	{
-		close(pipex->pipe[1][0]);
-		dup2(pipex->pipe[1][1], 1);
-		close(pipex->pipe[1][1]);
-	}
-	if (save->type == HEREDOC && (pipex->docs_out || pipex->pipe[1][1]))
-		ft_heredoc_lonely(pipex);
-	if (save->type == HEREDOC)
-		exit(0);
-	if (save->type == BUILTIN)
-	{
-		ft_exec_build(shell, save->str);
-		if (pipex->childs != 0)
-		{
-			//ft_free_minishell(&shell);
-			//ft_free_pipex(&pipex);
-			exit (0);
-		}
-	}
-	else
-		ft_pre_exec_command(pipex, save, shell);
 }

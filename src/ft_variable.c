@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 19:24:52 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 04:24:19 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/24 16:34:35 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,10 +52,10 @@ char	*ft_check_final(char *str)
 		return (str);
 	while (str[i])
 	{
-		if (str[i] == '\'' && (!i
+		if (str[i] == '\'' && (!i || !str[i + 1]
 				|| (str[i - 1] == '\'' || str[i + 1] == '\'')))
 			i++;
-		else if (str[i] == '\"' && (!i
+		else if (str[i] == '\"' && (!i || !str[i + 1]
 				|| (str[i - 1] == '\"' || str[i + 1] == '\"')))
 			i++;
 		else
@@ -65,15 +65,57 @@ char	*ft_check_final(char *str)
 	return (final);
 }
 
+static int	ft_variable_expand(char **input, int *i,
+	t_minishell **minishell, char **final)
+{
+	if (!ft_variable2(input, i, minishell, final))
+	{
+		ft_safe_free((void **)input);
+		*input = *final;
+		return (1);
+	}
+	return (0);
+}
+
 int	ft_variable(char **input, t_minishell **minishell)
 {
 	t_quote	quote;
 	int		i;
 	char	*final;
 
-	ft_init_quote(&quote);
 	i = 0;
 	final = NULL;
+	ft_init_quote(&quote);
+	if (!*input || !(*input)[0] || !ft_strchr(*input, '$'))
+		return (0);
+	while ((*input)[i])
+	{
+		if (!i || (!(*input)[i - 1] || (*input)[i - 1] != '\\'))
+			ft_check_quote(&quote, (*input)[i]);
+		if ((*input)[i] == '$' && quote.type != '\''
+			&& (!i || (*input)[i - 1] != '\\'))
+		{
+			if (ft_variable_expand(input, &i, minishell, &final))
+				return (1);
+		}
+		else
+			final = ft_strjoin_char(final, (*input)[i++]);
+	}
+	ft_safe_free((void **)input);
+	*input = ft_check_final(final);
+	return (1);
+}
+
+/*
+int	ft_variable(char **input, t_minishell **minishell)
+{
+	t_quote	quote;
+	int		i;
+	char	*final;
+
+	i = 0;
+	final = NULL;
+	ft_init_quote(&quote);
 	if (!*input || !(*input)[0] || !ft_strchr(*input, '$'))
 		return (0);
 	while ((*input)[i])
@@ -97,3 +139,4 @@ int	ft_variable(char **input, t_minishell **minishell)
 	*input = ft_check_final(final);
 	return (1);
 }
+*/

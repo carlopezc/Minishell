@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:19:49 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/23 23:16:30 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/24 02:03:24 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,7 @@ t_token	*ft_analisis_comands(t_pipex *pipex, t_minishell *shell, t_token **save)
 			pipe(pipex->pipe[1]);
 		pipex->pid = fork();
 		pipex->childs++;
-		if (pipex->pid == 0)
+		if (pipex->pid == 0 && pipex->childs)
 			ft_manage_child_signals();
 		if (pipex->pid == 0 && tmp->type == COMMAND)
 			ft_analisis_comands2(pipex, shell, tmp);

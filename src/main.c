@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:15:05 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 00:02:52 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/24 02:03:37 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,14 +70,13 @@ int	ft_main_loop(t_minishell **minishell)
 		{
 			add_history(input);
 			if (!ft_process_input(minishell, input))
-				return (ft_printf("Error processing input \n"), 2);
+				return (ft_safe_free((void **)&input), ft_printf("Error processing input \n"), 2);
 			if (!ft_add_bracket_token(&((*minishell)->tokens)))
-				return (ft_printf("Error in brackets tokenization \n"), 2);
+				return (ft_safe_free((void **)&input), ft_printf("Error in brackets tokenization \n"), 2);
 			if (!ft_check_wildcard(&((*minishell)->tokens)))
-				return (ft_printf("Error in wildcard\n"), 2);
+				return (ft_safe_free((void **)&input), ft_printf("Error in wildcard\n"), 2);
 			if (ft_check_otokens(*minishell))
 				ft_executor(*minishell);
-			ft_print_tokens((*minishell)->tokens);
 			ft_free_tokens(minishell);
 			(*minishell)->tokens = NULL;
 		}
@@ -86,6 +85,7 @@ int	ft_main_loop(t_minishell **minishell)
 			(*minishell)->status = 130;
 			control_c = 0;
 		}
+		ft_safe_free((void **)&input);
 	}
 }
 

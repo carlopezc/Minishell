@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 11:26:24 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 00:49:49 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/24 01:26:35 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,6 @@ int	ft_quit_brackets(t_token *token, int *open, int *close)
 	int		i;
 	int		j;
 
-	ft_printf("Entra en quit brakcets\n");
 	ft_set_to_quit(open, close, &to_quit);
 	value = token->str;
 	i = 0;
@@ -71,6 +70,7 @@ int	ft_quit_brackets(t_token *token, int *open, int *close)
 		i++;
 	if (!ft_add_while(value, &i, 0, &new_value))
 		return (0);
+	ft_safe_free((void **)&(token->str));
 	token->str = new_value;
 	return (1);
 }
@@ -102,7 +102,6 @@ int	ft_quit_brckt_dup(t_token *tmp, char c)
 			ft_safe_free((void **)&(tmp->str));
 			tmp->str = new_str;
 		}
-		//tmp->str = new_str;
 	}
 	if (!tmp->str)
 		return (0);

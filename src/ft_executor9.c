@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:17:06 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/24 00:52:07 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/24 01:57:33 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,6 +93,7 @@ void	ft_heredoc_lonely(t_pipex *pipex)
 {
 	char	*str;
 
+	ft_manage_child_signals();
 	str = get_next_line(0);
 	while (str)
 	{

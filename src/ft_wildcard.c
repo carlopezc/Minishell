@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 17:57:16 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/16 20:12:11 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/07/24 02:19:15 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,6 @@ int	ft_get_pattern(char *str, int *i, char **str_final, t_token **tmp)
 	while (str[*i] && str[*i] != ' ')
 		(*i)++;
 	sub = ft_substr(str, start, *i - start);
-	ft_printf("sub: %s\n", sub);
 	expanded = ft_expand_wildcard(sub, (*tmp)->type);
 	if (!expanded)
 		return (0);
@@ -107,15 +106,6 @@ int	ft_wildcard_loop(char *str, char **str_final, t_token **tmp)
 				i++;
 				s_flag = 0;
 			}
-			/*
-			if (quote.flag && quote.type == str[i])
-				i++;
-			else if (quote.flag && (str[i] == '\'' || str[i] == '\"'))
-			{
-				*str_final = ft_strjoin_char(*str_final, '\\');
-				*str_final = ft_strjoin_char(*str_final, str[i]);
-			}
-			*/
 		}
 		if (str[i] && str[i] == '\\' && quote.type == '\'')
 		{

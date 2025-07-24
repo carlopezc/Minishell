@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 11:59:23 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 00:54:16 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/24 02:14:34 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -261,4 +261,5 @@ void	ft_docs_in_child(t_pipex *pipex);
 void	ft_docs_out_true(t_pipex *pipex);
 void	ft_heredoc_lonely(t_pipex *pipex);
 void	ft_echo(char *cmd);
+size_t	ft_max_strlen(char *s1, char *s2);
 #endif

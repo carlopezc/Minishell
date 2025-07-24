@@ -6,26 +6,13 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 23:59:05 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/24 00:01:17 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/24 02:14:42 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
 #include <fcntl.h>
 #include <sys/wait.h>
-
-size_t	ft_max_strlen(char *s1, char *s2)
-{
-	size_t	len1;
-	size_t	len2;
-
-	len1 = ft_strlen(s1);
-	len2 = ft_strlen(s2);
-	if (len1 > len2)
-		return (len1);
-	else
-		return (len2);
-}
 
 void	ft_sort_list(t_env *head)
 {
@@ -55,6 +42,24 @@ void	ft_sort_list(t_env *head)
 	}
 }
 
+void	ft_aux_echo_print(char *cmd, int *i, t_quote *q, int *check)
+{
+	if ((cmd[*i] == '\"' || cmd[*i] == '\'')
+		&& (!(*i) || cmd[(*i) - 1] != '\\'))
+	{
+		if (q->flag && q->type != cmd[*i])
+			ft_printf("%c", cmd[*i]);
+		ft_check_quote(q, cmd[*i]);
+		(*i)++;
+	}
+	else
+	{
+		if (cmd[*i] == '\\')
+			*check = 1;
+		ft_printf("%c", cmd[(*i)++]);
+	}
+}
+
 void	ft_echo_print(char *cmd)
 {
 	int		i;
@@ -74,20 +79,8 @@ void	ft_echo_print(char *cmd)
 			i++;
 			check = 0;
 		}
-		else if ((cmd[i] == '\"' || cmd[i] == '\'')
-			&& (!i || cmd[i - 1] != '\\'))
-		{
-			if (q.flag && q.type != cmd[i])
-				ft_printf("%c", cmd[i]);
-			ft_check_quote(&q, cmd[i]);
-			i++;
-		}
 		else
-		{
-			if (cmd[i] == '\\')
-				check = 1;
-			ft_printf("%c", cmd[i++]);
-		}
+			ft_aux_echo_print(cmd, &i, &q, &check);
 	}
 }
 

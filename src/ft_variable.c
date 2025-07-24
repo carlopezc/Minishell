@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 19:24:52 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/21 19:39:27 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/24 02:27:03 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ char	*ft_check_final(char *str)
 		else
 			final = ft_strjoin_char(final, str[i++]);
 	}
+	ft_safe_free((void **)&str);
 	return (final);
 }
 
@@ -77,12 +78,12 @@ int	ft_variable(char **input, t_minishell **minishell)
 	{
 		if (!i || (!(*input)[i - 1] || (*input)[i - 1] != '\\'))
 			ft_check_quote(&quote, (*input)[i]);
-		if ((*input)[i] == '$' && (quote.type != '\''
-				&& (!i || (!(*input)[i - 1] || (*input)[i - 1] != '\\'))))
+		if ((*input)[i] == '$' && (quote.type != '\'' && (*input)[i] != '\''
+					&& (!i || (*input)[i - 1] != '\\')))
 		{
 			if (!ft_variable2(input, &i, minishell, &final))
 			{
-				free(*input);
+				ft_safe_free((void **)input);
 				*input = final;
 				return (1);
 			}
@@ -90,7 +91,7 @@ int	ft_variable(char **input, t_minishell **minishell)
 		else
 			final = ft_strjoin_char(final, (*input)[i++]);
 	}
-	free(*input);
+	ft_safe_free((void **)input);
 	*input = ft_check_final(final);
 	return (1);
 }

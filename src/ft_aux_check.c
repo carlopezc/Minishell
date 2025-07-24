@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 18:31:30 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 18:50:06 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/24 20:12:15 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ int	ft_brackets_loop(char *value, int *i, char c)
 
 int	ft_cmp_except(char *str, char *str2, int n)
 {
-	if (!strncmp(str, str2, n - 1) && (!str[n] || (str[n] == ' ' || str[n] == ')')))
+	if (!ft_strncmp(str, str2, n - 1) && (!str[n - 1] || (str[n - 1] == ' ' || str[n - 1] == ')')))
 		return (0);
 	return (1);
 }

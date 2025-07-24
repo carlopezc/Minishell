@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:09:11 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/23 13:01:40 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/24 20:21:54 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,6 +110,8 @@ void	ft_cd_add(t_minishell *shell, char *temp)
 	t_env	*pwd;
 	t_env	*node;
 	char	*join;
+	char	*new_temp;
+	char	*corrected;
 
 	pwd = shell->env;
 	while (pwd && pwd->next && ft_strncmp((pwd->next)->name,
@@ -120,11 +122,17 @@ void	ft_cd_add(t_minishell *shell, char *temp)
 	if (!ft_check_cd(temp + 1, (pwd->next)->value))
 		return ;
 	join = ft_strjoin((pwd->next)->value, "/");
-	temp = ft_strjoin(join, temp + 1);
-	if (temp[ft_strlen(temp) - 1] == '/')
-		temp[ft_strlen(temp) - 1] = '\0';
-	while (ft_strnstr(temp, "../", ft_strlen(temp)))
-		temp = ft_correct_cd(temp);
-	node = ft_create_node(ft_strdup("PWD"), temp);
+	new_temp = ft_strjoin(join, temp + 1);
+	ft_safe_free((void **)&join);
+	if (new_temp[ft_strlen(new_temp) - 1] == '/')
+		new_temp[ft_strlen(new_temp) - 1] = '\0';
+	while (ft_strnstr(new_temp, "../", ft_strlen(new_temp)))
+	{
+		corrected = ft_correct_cd(new_temp);
+		ft_safe_free((void **)&new_temp);
+		new_temp = corrected;
+	}
+	node = ft_create_node(ft_strdup("PWD"), ft_strdup(new_temp));
 	ft_add_node(&shell->env, pwd, node);
+	ft_safe_free((void **)&new_temp);
 }

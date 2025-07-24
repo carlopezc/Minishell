@@ -6,11 +6,30 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 16:05:18 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/21 20:19:00 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/24 19:59:28 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
+
+void	ft_set_to_quit(int *open, int *close, int *to_quit)
+{
+	*to_quit = *open;
+	if (*open > *close)
+		*to_quit = *close;
+	*open -= *to_quit;
+	*close -= *to_quit;
+	return ;
+}
+
+void	ft_check_in_word(int *in_word, char c)
+{
+	if (*in_word && c == ' ')
+		*in_word = 0;
+	else if (!*in_word && c != ' ')
+		*in_word = 1;
+	return ;
+}
 
 void	ft_check_quote(t_quote *quote, char c)
 {

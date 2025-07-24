@@ -6,11 +6,35 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 01:52:34 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 01:27:07 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/24 19:58:57 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
+
+int	ft_add_while(char *value, int *i, char c, char **new_value)
+{
+	if (c == 0)
+	{
+		while (value[*i])
+		{
+			*new_value = ft_strjoin_char(*new_value, value[*i]);
+			if (!(*new_value))
+				return (0);
+			(*i)++;
+		}
+		return (1);
+	}
+	while (value[*i] && (value[*i] != c
+			|| (value[*i - 1] && value[*i - 1] == '\\')))
+	{
+		*new_value = ft_strjoin_char(*new_value, value[*i]);
+		if (!(*new_value))
+			return (0);
+		(*i)++;
+	}
+	return (1);
+}
 
 int	ft_add_bracket_token2(t_token **tmp, t_token *prev, int *i, t_token **token)
 {

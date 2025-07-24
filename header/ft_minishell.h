@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 11:59:23 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 17:16:58 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/24 20:00:36 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -297,6 +297,9 @@ t_token_type	ft_handle_redirect_in(char **value,
 int				ft_check_error(char *input, int i, int c);
 t_token			*ft_and(t_pipex *pipex, t_minishell *shell, t_token *save);
 t_token			*ft_or(t_pipex *pipex, t_minishell *shell, t_token *save);
+void			ft_check_in_word(int *in_word, char c);
+void			ft_set_to_quit(int *open, int *close, int *to_quit);
+int				ft_add_while(char *value, int *i, char c, char **new_value);
 
 
 

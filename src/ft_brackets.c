@@ -6,45 +6,11 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 11:26:24 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 04:16:14 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/24 20:01:17 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
-
-void	ft_set_to_quit(int *open, int *close, int *to_quit)
-{
-	*to_quit = *open;
-	if (*open > *close)
-		*to_quit = *close;
-	*open -= *to_quit;
-	*close -= *to_quit;
-	return ;
-}
-
-int	ft_add_while(char *value, int *i, char c, char **new_value)
-{
-	if (c == 0)
-	{
-		while (value[*i])
-		{
-			*new_value = ft_strjoin_char(*new_value, value[*i]);
-			if (!(*new_value))
-				return (0);
-			(*i)++;
-		}
-		return (1);
-	}
-	while (value[*i] && (value[*i] != c
-			|| (value[*i - 1] && value[*i - 1] == '\\')))
-	{
-		*new_value = ft_strjoin_char(*new_value, value[*i]);
-		if (!(*new_value))
-			return (0);
-		(*i)++;
-	}
-	return (1);
-}
 
 int	ft_quit_brackets(t_token *token, int *open, int *close)
 {
@@ -75,36 +41,48 @@ int	ft_quit_brackets(t_token *token, int *open, int *close)
 	return (1);
 }
 
-int	ft_quit_brckt_dup(t_token *tmp, char c)
+static int	ft_trim_open_paren(t_token *tmp, char *str)
 {
 	int		i;
-	char	*str;
 	char	*new_str;
 
 	i = 0;
-	str = tmp->str;
-	new_str = NULL;
-	if (c == '(')
-	{
-		while (str[i + 1] && str[i + 1] == c)
-			i++;
-		new_str = ft_substr(str, i, ft_strlen(str) - i);
-		ft_safe_free((void **)&(tmp->str));
-		tmp->str = new_str;
-	}
-	else if (c == ')')
-	{
-		while (str[i] && (str[i] != c || (!i || str[i - 1] == '\\')))
-			i++;
-		if (str[i] && str[i] == c)
-		{
-			new_str = ft_substr(str, 0, i + 1);
-			ft_safe_free((void **)&(tmp->str));
-			tmp->str = new_str;
-		}
-	}
-	if (!tmp->str)
+	while (str[i + 1] && str[i + 1] == '(')
+		i++;
+	new_str = ft_substr(str, i, ft_strlen(str) - i);
+	if (!new_str)
 		return (0);
+	ft_safe_free((void **)&(tmp->str));
+	tmp->str = new_str;
+	return (1);
+}
+
+static int	ft_trim_close_paren(t_token *tmp, char *str)
+{
+	int		i;
+	char	*new_str;
+
+	i = 0;
+	while (str[i] && (str[i] != ')' || (!i || str[i - 1] == '\\')))
+		i++;
+	if (str[i] != ')')
+		return (1);
+	new_str = ft_substr(str, 0, i + 1);
+	if (!new_str)
+		return (0);
+	ft_safe_free((void **)&(tmp->str));
+	tmp->str = new_str;
+	return (1);
+}
+
+int	ft_quit_brckt_dup(t_token *tmp, char c)
+{
+	if (!tmp || !tmp->str)
+		return (0);
+	if (c == '(')
+		return (ft_trim_open_paren(tmp, tmp->str));
+	else if (c == ')')
+		return (ft_trim_close_paren(tmp, tmp->str));
 	return (1);
 }
 

@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 16:54:52 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/24 19:34:33 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ char	*ft_group_input(char *input, int *i)
 
 	value = NULL;
 	ft_init_quote(&q);
-	while ((size_t)*i <= ft_strlen(input) && input[*i])
+	while ((size_t)(*i) <= ft_strlen(input) && input[*i])
 	{
 		if (!q.flag)
 		{

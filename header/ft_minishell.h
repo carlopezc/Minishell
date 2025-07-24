@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 11:59:23 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 02:14:34 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/24 03:52:51 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -262,4 +262,13 @@ void	ft_docs_out_true(t_pipex *pipex);
 void	ft_heredoc_lonely(t_pipex *pipex);
 void	ft_echo(char *cmd);
 size_t	ft_max_strlen(char *s1, char *s2);
+int	ft_handle_real_asterisk(char *str, int *i, t_quote *q,
+	char **final, t_token **tmp);
+int	ft_handle_quotes_in_word(char *str, int i, char **final);
+int	ft_handle_normal_chars(char *str, int i, t_quote *q, char **final);
+void	ft_handle_quotes_and_skip(char *str, int *i, t_quote *q, int *s_flag);
+int	ft_handle_backslash_quotes(char *str, int i, t_quote *q, char **final);
+int	ft_find_asterisk_in_word(const char *str, int index);
+int	ft_get_pattern(char *str, int *i, char **str_final, t_token **tmp);
+int	ft_handle_escaped_asterisk(char *str, int *i, int *flag, char **final);
 #endif

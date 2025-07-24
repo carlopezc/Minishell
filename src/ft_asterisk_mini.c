@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 22:19:44 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/02 19:46:51 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/24 03:50:28 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,12 +122,12 @@ int	ft_check_asterisk(char *input, char ***elements)
 	while ((*elements)[i[1]])
 	{
 		if (!ft_main_asterisk(s_input, elements, &i, &flag))
-			return (0);
+			return (ft_free_array(s_input), 0);
 		i[0] = 0;
 		i[2] = 0;
 		if (flag != 1)
 			i[1]++;
 		flag = 0;
 	}
-	return (1);
+	return (ft_free_array(s_input), 1);
 }

@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 17:57:16 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 05:39:42 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/24 16:13:39 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,11 +64,13 @@ int	ft_get_pattern(char *str, int *i, char **str_final, t_token **tmp)
 	char	*sub;
 	char	*expanded;
 	char	*str_tmp;
+	char	*str_tmp2;
 
 	start = *i;
 	sub = NULL;
 	expanded = NULL;
 	str_tmp = NULL;
+	str_tmp2 = NULL;
 	while (start > 0 && (str[start - 1]
 			&& str[start - 1] != ' ' && start > 0))
 		start--;
@@ -80,7 +82,11 @@ int	ft_get_pattern(char *str, int *i, char **str_final, t_token **tmp)
 	if (!expanded)
 		return (free(sub), 0);
 	if (str[*i] && str[*i] == ' ')
+	{
+		str_tmp2 = expanded;
 		expanded = ft_strjoin(expanded, " ");
+		ft_safe_free((void **)&str_tmp2);
+	}
 	str_tmp = ft_strdup(*str_final);
 	ft_safe_free((void **)str_final);
 	*str_final = ft_strjoin(str_tmp, expanded);
@@ -137,7 +143,8 @@ int	ft_check_wildcard(t_token **tokens)
 			if (!ft_wildcard_loop(tmp->str, &str_final, &tmp))
 				return (0);
 			ft_safe_free((void **)&(tmp->str));
-			tmp->str = str_final;
+			tmp->str = ft_strdup(str_final);
+			ft_safe_free((void **)&(str_final));
 		}
 		tmp = tmp->next;
 	}

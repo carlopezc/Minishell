@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/24 15:54:33 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/24 16:11:27 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ void	ft_exit(t_pipex *pipex, t_minishell *shell, t_token *save)
 static t_token	*ft_executor2(t_pipex *pipex, t_token *save, t_minishell *shell,
 	t_token *tmp)
 {
-	if (ft_strncmp("exit", save->str, 4) == 0)
+	if (!ft_strncmp("exit", save->str, 5) || !ft_strncmp("exit ", save->str, 5))
 		ft_exit(pipex, shell, save);
 	if (save->type == COMMAND || save->type == BUILTIN
 		|| save->type == EXEC || save->type == HEREDOC)

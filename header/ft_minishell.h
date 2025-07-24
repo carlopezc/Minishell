@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 11:59:23 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 15:41:42 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/24 16:32:27 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -178,6 +178,7 @@ void			ft_change_value(char *str, t_env **node);
 //ft_signals.c
 void			ft_manage_shell_signals(void);
 void			ft_normal_signals(void);
+void			ft_manage_here_signals(void);
 
 //ft_testing_tools.c
 char			*token_to_str(t_token_type type);

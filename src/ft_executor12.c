@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:19:49 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/24 06:43:07 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/24 16:31:37 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,34 +14,43 @@
 #include "../header/ft_minishell.h"
 #include <fcntl.h>
 #include <sys/wait.h>
-/*
-t_pipex	*ft_init_pipex(void)
+
+t_token	*ft_heredoc(t_token *save, t_pipex *pipex)
 {
-	t_pipex	*pipex;
+	int		fd;
+	char	*line;
 
-	pipex = (t_pipex *)malloc(sizeof(t_pipex));
-	if (!pipex)
-		return (NULL);
-	pipex->childs = 0;
-	pipex->docs_in = NULL;
-	pipex->docs_out = NULL;
-	pipex->command = NULL;
-	pipex->path = NULL;
-	pipex->pid = 0;
-	pipex->brackets_count = 0;
-	pipex->heredoc = 0;
-	pipex->pipe[0][0] = 0;
-	pipex->pipe[0][1] = 0;
-	pipex->pipe[1][0] = 0;
-	pipex->pipe[1][1] = 0;
-	return (pipex);
-}*/
+	ft_manage_here_signals();
+	fd = open(".heredoc", O_CREAT | O_WRONLY | O_TRUNC, 0,644);
+	while (save && save->type == HEREDOC)
+	{
+		line = readline("> ");
+		while (line && !ft_strncmp(line, save->str, ft_strlen(save->str) - 1))
+		{
+			write(fd, line, ft_strlen(line));
+			write(fd, "\n", 1);
+			free(line);
+			line = NULL;
+		}
+		if (line)
+		{
+			free(line);
+			line = NULL;
+		}
+		save = save->next;
+	}
+	close(fd);
+	pipex->heredoc = open(".heredoc", O_RDONLY);
+	return (save);
+}
 
+/*
 t_token	*ft_heredoc(t_token *save, t_pipex *pipex)
 {
 	char	*str;
 	int		temp;
 
+	ft_manage_shell_signals();
 	open(".heredoc", O_CREAT, 0777);
 	temp = open(".heredoc", O_WRONLY);
 	while (save && save->type == HEREDOC)
@@ -62,7 +71,7 @@ t_token	*ft_heredoc(t_token *save, t_pipex *pipex)
 	close(temp);
 	pipex->heredoc = open(".heredoc", O_RDONLY);
 	return (save);
-}
+}*/
 
 static int	ft_mega_if(t_token **save)
 {

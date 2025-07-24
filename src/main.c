@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:15:05 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 20:28:22 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/24 20:37:56 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,9 +48,38 @@ int	ft_just_space(char *str)
 	return (0);
 }
 
+int	ft_check_main_loop(t_minishell **minishell, char *input)
+{
+	if (*input && !ft_just_space(input))
+	{
+		add_history(input);
+		if (!ft_process_input(minishell, input))
+			return (ft_safe_free((void **)&input),
+				ft_printf("Error processing input \n"), 2);
+		if (!ft_add_bracket_token(&((*minishell)->tokens)))
+			return (ft_safe_free((void **)&input),
+				ft_printf("Error in brackets tokenization \n"), 2);
+		if (!ft_check_wildcard(&((*minishell)->tokens)))
+			return (ft_safe_free((void **)&input),
+				ft_printf("Error in wildcard\n"), 2);
+		ft_print_tokens((*minishell)->tokens);
+		if (ft_check_otokens(*minishell))
+			ft_executor(*minishell);
+		ft_free_tokens(minishell);
+		(*minishell)->tokens = NULL;
+	}
+	if (g_control_c)
+	{
+		(*minishell)->status = 130;
+		g_control_c = 0;
+	}
+	return (0);
+}
+
 int	ft_main_loop(t_minishell **minishell)
 {
 	char	*input;
+	int		check;
 
 	while (1)
 	{
@@ -67,29 +96,9 @@ int	ft_main_loop(t_minishell **minishell)
 			rl_clear_history();
 			exit(0);
 		}
-		if (*input && !ft_just_space(input))
-		{
-			add_history(input);
-			if (!ft_process_input(minishell, input))
-				return (ft_safe_free((void **)&input),
-					ft_printf("Error processing input \n"), 2);
-			if (!ft_add_bracket_token(&((*minishell)->tokens)))
-				return (ft_safe_free((void **)&input),
-					ft_printf("Error in brackets tokenization \n"), 2);
-			if (!ft_check_wildcard(&((*minishell)->tokens)))
-				return (ft_safe_free((void **)&input),
-					ft_printf("Error in wildcard\n"), 2);
-			ft_print_tokens((*minishell)->tokens);
-			if (ft_check_otokens(*minishell))
-				ft_executor(*minishell);
-			ft_free_tokens(minishell);
-			(*minishell)->tokens = NULL;
-		}
-		if (g_control_c)
-		{
-			(*minishell)->status = 130;
-			g_control_c = 0;
-		}
+		check = ft_check_main_loop(minishell, input);
+		if (check != 0)
+			return (check);
 		ft_safe_free((void **)&input);
 	}
 }

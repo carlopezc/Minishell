@@ -6,85 +6,13 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:14:50 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/24 00:01:36 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/24 21:24:35 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
 #include <fcntl.h>
 #include <sys/wait.h>
-/*
-void	ft_echo_print(char *cmd)
-{
-	int		i;
-	t_quote	q;
-	int		check;
-
-	i = 0;
-	check = 0;
-	ft_init_quote(&q);
-	if (!cmd)
-		return ;
-	while (cmd[i])
-	{
-		if (cmd[i] == '\\'
-			&& ((!i || cmd[i - 1] != '\\' || check) && q.type != '\''))
-		{
-			i++;
-			check = 0;
-		}
-		else if ((cmd[i] == '\"' || cmd[i] == '\'')
-			&& (!i || cmd[i - 1] != '\\'))
-		{
-			if (q.flag && q.type != cmd[i])
-				ft_printf("%c", cmd[i]);
-			ft_check_quote(&q, cmd[i]);
-			i++;
-		}
-		else
-		{
-			if (cmd[i] == '\\')
-				check = 1;
-			ft_printf("%c", cmd[i++]);
-		}
-	}
-}
-
-int	ft_echo_flag(char *str, int *n)
-{
-	if (!str)
-		return (0);
-	if (str[*n] && str[*n] == '-' && str[*n + 1] == 'n')
-		(*n) += 2;
-	while (str[*n] && str[*n] == 'n')
-		(*n)++;
-	if (!str[*n] || str[*n] == ' ')
-	{
-		while (str[*n] && str[*n] == ' ')
-			(*n)++;
-		return (1);
-	}
-	return (0);
-}
-
-void	ft_echo(char *cmd)
-{
-	char	*temp;
-	int		n;
-
-	n = 0;
-	temp = ft_strchr(cmd, ' ');
-	if (!temp)
-		ft_printf("\n");
-	if (!ft_strncmp(temp + 1, "-n", 2) && ft_echo_flag(temp + 1, &n))
-		ft_echo_print(temp + n + 1);
-	else
-	{
-		ft_echo_print(temp + 1);
-		ft_printf("\n");
-	}
-	return ;
-}*/
 
 void	ft_remove_var(t_minishell **shell, t_env *node, t_env **list)
 {
@@ -135,6 +63,8 @@ void	ft_unset(t_minishell *shell, char *cmd)
 			ft_check_in(shell, &shell->undefined_var, vars[i]);
 		i++;
 	}
+	if (vars)
+		free(vars);
 	return ;
 }
 

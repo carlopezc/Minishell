@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:09:11 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/24 20:21:54 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/24 21:43:10 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,10 +87,7 @@ void	ft_cd_home(t_minishell *shell)
 
 	home = NULL;
 	node = NULL;
-	pwd = shell->env;
-	while (pwd && pwd->next && ft_strncmp((pwd->next)->name,
-			"PWD", ft_max_strlen("PWD", (pwd->next)->name)))
-		pwd = pwd->next;
+	pwd = ft_search_pwd(shell);
 	home = shell->env;
 	while (home && ft_strncmp(home->name, "HOME",
 			ft_max_strlen("HOME", home->name)))
@@ -113,12 +110,7 @@ void	ft_cd_add(t_minishell *shell, char *temp)
 	char	*new_temp;
 	char	*corrected;
 
-	pwd = shell->env;
-	while (pwd && pwd->next && ft_strncmp((pwd->next)->name,
-			"PWD", ft_max_strlen("PWD", (pwd->next)->name)))
-		pwd = pwd->next;
-	if (!pwd)
-		return ;
+	pwd = ft_search_pwd(shell);
 	if (!ft_check_cd(temp + 1, (pwd->next)->value))
 		return ;
 	join = ft_strjoin((pwd->next)->value, "/");

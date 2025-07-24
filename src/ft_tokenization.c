@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 04:25:15 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/24 16:54:52 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ char	*ft_group_input(char *input, int *i)
 
 	value = NULL;
 	ft_init_quote(&q);
-	while (input[*i])
+	while ((size_t)*i <= ft_strlen(input) && input[*i])
 	{
 		if (!q.flag)
 		{
@@ -107,7 +107,7 @@ int	ft_process_input(t_minishell **minishell, char *input)
 	final_input = ft_parsing(input, minishell);
 	if (!final_input)
 		return (0);
-	while (final_input[i])
+	while ((size_t)i <= ft_strlen(final_input) && final_input[i])
 	{
 		while (final_input[i] && final_input[i] == ' ')
 			i++;

@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 11:59:23 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 20:04:57 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/24 20:16:57 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@
 # include <readline/history.h>
 # include <signal.h>
 # include <dirent.h>
+# include <sys/wait.h>
+# include <fcntl.h>
 
 extern volatile int	control_c;
 
@@ -285,7 +287,16 @@ int				ft_is_real_asterisk(char *str, int i, t_quote *q);
 void			ft_check_exit(t_pipex *pipex, t_minishell *shell);
 void			ft_exit(t_pipex *pipex, t_minishell *shell, t_token *save);
 void			ft_check_exit(t_pipex *pipex, t_minishell *shell);
-
+t_token_type	ft_is_operator4(char **value, char *input, int *i, int flag);
+t_token_type	ft_handle_redirect_append(char **value,
+					char *input, int *i, int flag);
+t_token_type	ft_handle_redirect_out(char **value,
+					char *input, int *i, int flag);
+t_token_type	ft_handle_pipe_or(char **value,
+					char *input, int *i, int flag);
+t_token_type	ft_handle_redirect_in(char **value,
+					char *input, int *i, int flag);
+int				ft_check_error(char *input, int i, int c);
 // ft_heredoc.
 int				ft_heredoc(t_token *save, t_pipex *pipex);
 #endif

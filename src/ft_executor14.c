@@ -6,13 +6,11 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 23:12:59 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/24 17:09:19 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/24 20:13:55 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
-#include <fcntl.h>
-#include <sys/wait.h>
 
 void	ft_decide_exec(t_minishell *shell, t_token *save, t_pipex *pipex)
 {

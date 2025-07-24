@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:16:20 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/24 17:13:19 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/24 20:14:16 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,9 @@ void	ft_pre_exec_command(t_pipex *pipex, t_token *cmd, t_minishell *shell)
 	char	**command;
 	char	**env;
 
+	env = NULL;
+	path_command = NULL;
+	command = NULL;
 	if (cmd->type == EXEC)
 	{
 		command = ft_split(cmd->str, ' ');
@@ -47,8 +50,10 @@ void	ft_pre_exec_command(t_pipex *pipex, t_token *cmd, t_minishell *shell)
 	if (pipex->path)
 		ft_safe_free((void **)&pipex->path);
 	env = ft_create_array_env(shell->env);
-	ft_free_minishell(&shell);
 	execve(path_command, command, env);
+	ft_free_array(env);
+	ft_safe_free((void **)&path_command);
+	exit(126);
 }
 
 void	ft_join_docs(int fd)

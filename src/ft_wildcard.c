@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 17:57:16 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 02:19:15 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/24 03:18:41 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,48 +14,47 @@
 
 int	ft_find_asterisk_in_word(const char *str, int index)
 {
-    int	start = index;
-    int	end = index;
+    int	start;
+    int	end;
+    int	i;
 
-    // Encuentra el inicio de la palabra delimitada por espacios
+    start = index;
+    end = index;
     while (start > 0 && str[start - 1] != ' ')
         start--;
-
-    // Encuentra el final de la palabra delimitada por espacios
     while (str[end] && str[end] != ' ')
         end++;
-
-    // Recorre la palabra y busca un asterisco usando while
-    int i = start;
+    i = start;
     while (i < end)
     {
         if (str[i] == '*')
-		{
-			ft_printf("Devuelve uno con %s\n", str + start);
             return (1);
-		}
         i++;
     }
-	ft_printf("devuelve cero con %s\n", str + start);
     return (0);
 }
 
 char	*ft_expand_wildcard(char *input, t_token_type type)
 {
 	char	**elements;
+	char	*elements_input;
 
 	elements = ft_get_elements();
 	if (!elements)
 		return (ft_free_array(elements), NULL);
 	if (!ft_strncmp(input, "*", 2))
-		return (ft_create_array(elements));
+	{
+		elements_input = ft_create_array(elements);
+		return (ft_free_array(elements), elements_input);
+	}
 	if (!ft_check_asterisk(input, &elements))
 		return (NULL);
 	if ((type == REDIR_IN || type == REDIR_OUT) && (ft_arraylen(elements) > 1))
-		return (ft_printf("Error in files to redirect\n"), NULL);
+		return (ft_free_array(elements), ft_printf("Error in files to redirect\n"), NULL);
 	if (!ft_arraylen(elements))
-		return (ft_strdup(input));
-	return (ft_create_array(elements));
+		return (ft_free_array(elements), ft_strdup(input));
+	elements_input = ft_create_array(elements);
+	return (ft_free_array(elements), elements_input);
 }
 
 int	ft_get_pattern(char *str, int *i, char **str_final, t_token **tmp)
@@ -63,10 +62,12 @@ int	ft_get_pattern(char *str, int *i, char **str_final, t_token **tmp)
 	int		start;
 	char	*sub;
 	char	*expanded;
+	char	*str_tmp;
 
 	start = *i;
 	sub = NULL;
 	expanded = NULL;
+	str_tmp = NULL;
 	while (start > 0 && (str[start - 1]
 			&& str[start - 1] != ' ' && start > 0))
 		start--;
@@ -76,11 +77,13 @@ int	ft_get_pattern(char *str, int *i, char **str_final, t_token **tmp)
 	sub = ft_substr(str, start, *i - start);
 	expanded = ft_expand_wildcard(sub, (*tmp)->type);
 	if (!expanded)
-		return (0);
+		return (free(sub), 0);
 	if (str[*i] && str[*i] == ' ')
 		expanded = ft_strjoin(expanded, " ");
-	*str_final = ft_strjoin(*str_final, expanded);
-	return (free(sub), free(expanded), 1);
+	str_tmp = ft_strdup(*str_final);
+	ft_safe_free((void **)str_final);
+	*str_final = ft_strjoin(str_tmp, expanded);
+	return (free(sub), free(expanded), free(str_tmp), 1);
 }
 
 int	ft_wildcard_loop(char *str, char **str_final, t_token **tmp)
@@ -143,7 +146,6 @@ int	ft_wildcard_loop(char *str, char **str_final, t_token **tmp)
 int	ft_check_wildcard(t_token **tokens)
 {
 	t_token	*tmp;
-	char	*str;
 	char	*str_final;
 	char	*asterisk;
 
@@ -156,14 +158,13 @@ int	ft_check_wildcard(t_token **tokens)
 		asterisk = ft_strchr(tmp->str, '*');
 		if (asterisk)
 		{
-			str = tmp->str;
 			//ft_unquote(&str, 0);
-			if (!ft_parse_asterisk(&str))
+			if (!ft_parse_asterisk(&(tmp->str)))
 				return (0);
-			if (!ft_wildcard_loop(str, &str_final, &tmp))
+			if (!ft_wildcard_loop(tmp->str, &str_final, &tmp))
 				return (0);
-			tmp->str = ft_strdup(str_final);
-			ft_safe_free((void **)&str_final);
+			ft_safe_free((void **)&(tmp->str));
+			tmp->str = str_final;
 		}
 		tmp = tmp->next;
 	}

@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 09:31:50 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/23 17:10:32 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/24 02:29:38 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,9 +85,7 @@ char	**ft_split_cmd(char const *s, char c)
 {
 	char	**word;
 	int		count;
-	int	i;
 
-	i = 0;
 	count = ft_word_count(s, c);
 	word = (char **)malloc((count + 1) * sizeof(char *));
 	if (!word)

@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 20:03:11 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/19 11:34:19 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/07/24 02:47:32 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,32 +49,39 @@ int	ft_delete_item(char ***elements, char *delete)
 	return (1);
 }
 
+int	ft_fill_files_loop(DIR **dir, struct dirent **entry, char ***files, int *i)
+{
+	while (*entry)
+	{
+		if ((*entry)->d_name[0] != '.')
+		{
+			(*files)[*i] = ft_strdup((*entry)->d_name);
+			if (!(*files)[(*i)++])
+					return (0);
+		}
+		(*entry) = readdir(*dir);
+	}
+	return (1);
+}
+
 char	**ft_fill_files(int size)
 {
 	char			**files;
 	struct dirent	*entry;
 	int				i;
-	DIR	*dir;
+	DIR				*dir;
 
+	i = 0;
 	dir = opendir(".");
 	if (!dir)
 		return (ft_printf("Error opening dir\n"), NULL);
-	i = 0;
 	files = (char **)malloc((size + 1) * sizeof(char *));
 	if (!files)
 		return (NULL);
 	entry = readdir(dir);
 	files[size] = NULL;
-	while (entry)
-	{
-		if (entry->d_name[0] != '.')
-		{
-			files[i] = ft_strdup(entry->d_name);
-			if (!files[i++])
-				return (closedir(dir), ft_free_array(files), NULL);
-		}
-		entry = readdir(dir);
-	}
+	if (!ft_fill_files_loop(&dir, &entry, &files, &i))
+			return (closedir(dir), ft_free_array(files), NULL);
 	closedir(dir);
 	return (files);
 }

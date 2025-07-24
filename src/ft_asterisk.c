@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 20:06:41 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/02 20:46:07 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/24 03:24:24 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,7 @@ int	ft_parse_asterisk(char **input)
 		else
 			final_input = ft_strjoin_char(final_input, (*input)[i++]);
 	}
+	ft_safe_free((void **)input);
 	*input = final_input;
 	return (1);
 }

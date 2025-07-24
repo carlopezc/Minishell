@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:19:49 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/24 16:31:37 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/24 17:26:14 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ t_token	*ft_heredoc(t_token *save, t_pipex *pipex)
 	char	*line;
 
 	ft_manage_here_signals();
-	fd = open(".heredoc", O_CREAT | O_WRONLY | O_TRUNC, 0,644);
+	fd = open(".heredoc", O_CREAT | O_WRONLY | O_TRUNC, 0.644);
 	while (save && save->type == HEREDOC)
 	{
 		line = readline("> ");

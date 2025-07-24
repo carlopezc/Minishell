@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 18:31:30 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 06:21:05 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/24 16:24:31 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,39 +71,7 @@ int	ft_brackets_loop(char *value, int *i, char c)
 	}
 	return (count);
 }
-/*
-int	ft_check_brackets(t_token *token)
-{
-	char	*value;
-	int		i;
-	int		open;
-	int		close;
-	int		flag;
 
-	value = token->str;
-	i = 0;
-	open = ft_brackets_loop(value, &i, '(');
-	close = 0;
-	flag = 0;
-	while (value[i] && (value[i] != '(' && value[i] != ')'))
-	{
-		flag = 1;
-		i++;
-	}
-	if (value[i] && value[i] == '(' && (i == 0 || value[i - 1] != '\\'))
-		return (ft_printf("syntax error near unsexpected token ')'\n"), 0);
-	close = ft_brackets_loop(value, &i, ')');
-	if (!flag && open == close)
-		return (ft_printf("syntax error near unexpected token ')'\n"), 0);
-	while (value[i] && value[i] == ' ')
-		i++;
-	if (close && value[i])
-		return (ft_printf("syntax error near unsexpected token blabla\n"), 0);
-	else if (open && close)
-		ft_quit_brackets(token, &open, &close);
-	return (1);
-}
-*/
 int	ft_is_builtin(char *input)
 {
 	int	flag;

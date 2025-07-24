@@ -6,45 +6,13 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/24 17:12:46 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/24 20:20:13 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
-
-void	ft_check_exit(t_pipex *pipex, t_minishell *shell)
-{
-	int	temp;
-	int	sig;
-
-	while (pipex->childs > 0)
-	{
-		wait(&temp);
-		if (WIFEXITED(temp))
-			shell->status = WEXITSTATUS(temp);
-		pipex->childs--;
-	}
-	if (WIFSIGNALED(temp))
-	{
-		sig = WTERMSIG(temp);
-		if (sig == SIGINT)
-			write(1, "\n", 1);
-		else if (sig == SIGQUIT)
-			write(1, "Quit (core dumped)\n", 19);
-	}
-}
-
-void	ft_exit(t_pipex *pipex, t_minishell *shell, t_token *save)
-{
-	unsigned int	temp;
-
-	temp = 0;
-	if (ft_strlen(save->str) > 5)
-		temp = ft_atoi(save->str + 4);
-	ft_free_pipex(&pipex);
-	ft_free_minishell(&shell);
-	exit(temp);
-}
+#include <fcntl.h>
+#include <sys/wait.h>
 
 static t_token	*ft_executor2(t_pipex *pipex, t_token *save, t_minishell *shell,
 	t_token *tmp)

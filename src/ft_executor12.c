@@ -6,72 +6,30 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:19:49 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/24 17:26:14 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/24 20:13:32 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../get_next_line/get_next_line_bonus.h"
 #include "../header/ft_minishell.h"
 #include <fcntl.h>
 #include <sys/wait.h>
 
-t_token	*ft_heredoc(t_token *save, t_pipex *pipex)
+int	ft_check_heredoc(t_token *save, t_pipex *pipex)
 {
-	int		fd;
-	char	*line;
+	t_token	*tmp;
 
-	ft_manage_here_signals();
-	fd = open(".heredoc", O_CREAT | O_WRONLY | O_TRUNC, 0.644);
-	while (save && save->type == HEREDOC)
+	tmp = save;
+	while (tmp && tmp->type != PIPE && tmp->type != AND && tmp->type != OR)
 	{
-		line = readline("> ");
-		while (line && !ft_strncmp(line, save->str, ft_strlen(save->str) - 1))
+		if (tmp->type == HEREDOC)
 		{
-			write(fd, line, ft_strlen(line));
-			write(fd, "\n", 1);
-			free(line);
-			line = NULL;
+			if (!ft_heredoc(tmp, pipex))
+				return (0);
 		}
-		if (line)
-		{
-			free(line);
-			line = NULL;
-		}
-		save = save->next;
+		tmp = tmp->next;
 	}
-	close(fd);
-	pipex->heredoc = open(".heredoc", O_RDONLY);
-	return (save);
+	return (1);
 }
-
-/*
-t_token	*ft_heredoc(t_token *save, t_pipex *pipex)
-{
-	char	*str;
-	int		temp;
-
-	ft_manage_shell_signals();
-	open(".heredoc", O_CREAT, 0777);
-	temp = open(".heredoc", O_WRONLY);
-	while (save && save->type == HEREDOC)
-	{
-		str = get_next_line(0);
-		while (str && !(ft_strncmp(str, save->str, ft_strlen(save->str)) == 0
-				&& str[ft_strlen(save->str)] == '\n'))
-		{
-			if (write(temp, str, ft_strlen(str)) == -1)
-				return (save->next);
-			free(str);
-			str = get_next_line(0);
-		}
-		if (str)
-			free(str);
-		save = save->next;
-	}
-	close(temp);
-	pipex->heredoc = open(".heredoc", O_RDONLY);
-	return (save);
-}*/
 
 static int	ft_mega_if(t_token **save)
 {
@@ -122,6 +80,8 @@ t_token	*ft_analisis_comands(t_pipex *pipex, t_minishell *shell, t_token **save)
 			*save = (*save)->next;
 		if (*save && (*save)->type == PIPE)
 			pipe(pipex->pipe[1]);
+		if (!ft_check_heredoc(tmp, pipex))
+			return (NULL);
 		pipex->pid = fork();
 		pipex->childs++;
 		if (pipex->pid && pipex->childs)
@@ -130,8 +90,6 @@ t_token	*ft_analisis_comands(t_pipex *pipex, t_minishell *shell, t_token **save)
 			ft_analisis_comands2(pipex, shell, tmp);
 		if (tmp->type != HEREDOC)
 			*save = tmp->next;
-		else
-			*save = tmp;
 	}
 	return (tmp);
 }
@@ -147,7 +105,7 @@ t_token	*ft_analisis_redir(t_token *save, t_pipex *pipex, t_token *tmp)
 		if (save && save->type == REDIR_OUT)
 			save = ft_redir(save, REDIR_OUT, pipex);
 		if (save && save->type == HEREDOC)
-			save = ft_heredoc(save, pipex);
+			save = save->next;
 		if (save && save->type == APPEND)
 			save = ft_redir(save, APPEND, pipex);
 		if (save && save->type == PIPE)

@@ -6,13 +6,13 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:15:05 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 06:10:20 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/24 20:28:22 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
 
-volatile int	control_c;
+volatile int	g_control_c;
 
 int	ft_check_otokens(t_minishell *shell)
 {
@@ -56,10 +56,10 @@ int	ft_main_loop(t_minishell **minishell)
 	{
 		ft_manage_shell_signals();
 		input = readline("minishell> ");
-		if (control_c)
+		if (g_control_c)
 		{
 			(*minishell)->status = 130;
-			control_c = 0;
+			g_control_c = 0;
 		}
 		if (!input)
 		{
@@ -85,10 +85,10 @@ int	ft_main_loop(t_minishell **minishell)
 			ft_free_tokens(minishell);
 			(*minishell)->tokens = NULL;
 		}
-		if (control_c)
+		if (g_control_c)
 		{
 			(*minishell)->status = 130;
-			control_c = 0;
+			g_control_c = 0;
 		}
 		ft_safe_free((void **)&input);
 	}
@@ -98,7 +98,7 @@ int	main(int argc, char **argv, char **env)
 {
 	t_minishell	*minishell;
 
-	control_c = 0;
+	g_control_c = 0;
 	minishell = NULL;
 	if (argc != 1 || !argv[0])
 		return (ft_printf("Wrong number of arguments (no arguments needed)\n"),

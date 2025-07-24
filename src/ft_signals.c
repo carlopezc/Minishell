@@ -6,11 +6,17 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 15:50:24 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 17:27:57 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/24 20:27:58 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
+
+void	ft_normal_signals(void)
+{
+	signal(SIGINT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
+}
 
 void	ft_manage_sigint(int signal)
 {
@@ -19,7 +25,7 @@ void	ft_manage_sigint(int signal)
 	rl_replace_line("", 0);
 	rl_on_new_line();
 	rl_redisplay();
-	control_c = 130;
+	g_control_c = 130;
 	return ;
 }
 

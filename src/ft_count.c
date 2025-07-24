@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 18:28:50 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/19 13:31:16 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/07/24 04:14:59 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ int	ft_check_qorder(char *str)
 	{
 		if (str[i] == '\'' && (!i || str[i - 1] != '\\') && !doub)
 			sing = !sing;
-		else if (str[i] == '\"' && (!i || str[i - 1] != '\\') && !sing) 
+		else if (str[i] == '\"' && (!i || str[i - 1] != '\\') && !sing)
 			doub = !doub;
 		i++;
 	}

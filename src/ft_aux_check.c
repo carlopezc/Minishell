@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 18:31:30 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/21 20:35:32 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/24 04:22:48 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ int	ft_last_check(t_token *tokens)
 	{
 		while ((tmp->str)[i])
 		{
-			if ((tmp->str)[i] && (tmp->str)[i] == '(' && ((i == 0 
+			if ((tmp->str)[i] && (tmp->str)[i] == '(' && ((i == 0
 								|| (tmp->str)[i - 1] != '\\')))
 				o_brckt++;
 			i++;
@@ -114,7 +114,8 @@ int	ft_is_builtin(char *input)
 		return (1);
 	else if (!ft_strncmp(input, "pwd", 4) || !ft_strncmp(input, "pwd ", 4))
 		return (1);
-	else if (!ft_strncmp(input, "export", 7) || !ft_strncmp(input, "export ", 7))
+	else if (!ft_strncmp(input, "export", 7)
+		|| !ft_strncmp(input, "export ", 7))
 		return (1);
 	else if (!ft_strncmp(input, "unset", 6) || !ft_strncmp(input, "unset ", 6))
 		return (1);

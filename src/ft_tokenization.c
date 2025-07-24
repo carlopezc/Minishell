@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 01:37:10 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/24 04:25:15 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ char	*ft_group_input(char *input, int *i)
 	{
 		if (!q.flag)
 		{
-			if (input[*i] && input[*i]== ' ' && ft_next_word(&input[*i]))
+			if (input[*i] && input[*i] == ' ' && ft_next_word(&input[*i]))
 				value = ft_strjoin_char(value, input[(*i)++]);
 			while (input[*i] && input[*i] == ' ')
 				(*i)++;
@@ -97,7 +97,7 @@ int	ft_group_command(t_minishell **minishell, char *input, int *i)
 
 int	ft_process_input(t_minishell **minishell, char *input)
 {
-	int	i;
+	int		i;
 	char	*final_input;
 
 	i = 0;
@@ -105,7 +105,6 @@ int	ft_process_input(t_minishell **minishell, char *input)
 	if (!minishell || !input)
 		return (0);
 	final_input = ft_parsing(input, minishell);
-//	ft_safe_free((void **)&input);
 	if (!final_input)
 		return (0);
 	while (final_input[i])

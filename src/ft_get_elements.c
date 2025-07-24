@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 16:36:42 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/23 17:50:29 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/24 04:18:03 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ char	*ft_get_value(char *str)
 char	*ft_get_name(char *str)
 {
 	int		i;
-	int	init;
+	int		init;
 	char	*name;
 
 	i = 0;

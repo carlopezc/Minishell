@@ -6,13 +6,13 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:15:05 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 02:03:37 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/24 04:17:46 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
 
-volatile int control_c;
+volatile int	control_c;
 
 int	ft_check_otokens(t_minishell *shell)
 {
@@ -26,7 +26,8 @@ int	ft_check_otokens(t_minishell *shell)
 	while (tokens && tokens->next)
 	{
 		if ((tokens->type == PIPE || tokens->type == AND || tokens->type == OR)
-				&& (tokens->next->type == PIPE || tokens->next->type == AND || tokens->next->type == OR))
+			&& (tokens->next->type == PIPE
+				|| tokens->next->type == AND || tokens->next->type == OR))
 			return (ft_printf("Error with operators\n"), 0);
 		tokens = tokens->next;
 	}
@@ -70,11 +71,14 @@ int	ft_main_loop(t_minishell **minishell)
 		{
 			add_history(input);
 			if (!ft_process_input(minishell, input))
-				return (ft_safe_free((void **)&input), ft_printf("Error processing input \n"), 2);
+				return (ft_safe_free((void **)&input),
+					ft_printf("Error processing input \n"), 2);
 			if (!ft_add_bracket_token(&((*minishell)->tokens)))
-				return (ft_safe_free((void **)&input), ft_printf("Error in brackets tokenization \n"), 2);
+				return (ft_safe_free((void **)&input),
+					ft_printf("Error in brackets tokenization \n"), 2);
 			if (!ft_check_wildcard(&((*minishell)->tokens)))
-				return (ft_safe_free((void **)&input), ft_printf("Error in wildcard\n"), 2);
+				return (ft_safe_free((void **)&input),
+					ft_printf("Error in wildcard\n"), 2);
 			if (ft_check_otokens(*minishell))
 				ft_executor(*minishell);
 			ft_free_tokens(minishell);

@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 19:24:52 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 02:27:03 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/24 04:24:19 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,17 +44,19 @@ static int	ft_variable2(char **input, int *i,
 char	*ft_check_final(char *str)
 {
 	char	*final;
-	int	i;
+	int		i;
 
 	final = NULL;
 	i = 0;
 	if (!str || (!ft_strchr(str, '\"') && (!ft_strchr(str, '\''))))
 		return (str);
-	while (str[i])	
+	while (str[i])
 	{
-		if (str[i] == '\'' && (!i || (str[i - 1] == '\'' || str[i + 1] == '\'')))
+		if (str[i] == '\'' && (!i
+				|| (str[i - 1] == '\'' || str[i + 1] == '\'')))
 			i++;
-		else if (str[i] == '\"' && (!i || (str[i - 1] == '\"' || str[i + 1] == '\"')))
+		else if (str[i] == '\"' && (!i
+				|| (str[i - 1] == '\"' || str[i + 1] == '\"')))
 			i++;
 		else
 			final = ft_strjoin_char(final, str[i++]);

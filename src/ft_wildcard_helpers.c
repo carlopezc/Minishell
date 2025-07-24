@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/24 03:43:07 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 03:59:27 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/24 04:13:52 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,19 +15,15 @@
 int	ft_is_real_asterisk(char *str, int i, t_quote *q)
 {
 	return (str[i] && str[i] == '*' && !q->flag
-	&& (!i || str[i - 1] != '\\'));
+		&& (!i || str[i - 1] != '\\'));
 }
 
-int	ft_handle_real_asterisk(char *str, int *i, t_quote *q,
-	char **final, t_token **tmp)
+int	ft_process_asterisk_pattern(char *str,
+		int *i, char **str_final, t_token **tmp)
 {
-	if (ft_is_real_asterisk(str, *i, q))
-	{
-		if (!ft_get_pattern(str, i, final, tmp))
-			return (0);
-		return (1);
-	}
-	return (0);
+	if (!ft_get_pattern(str, i, str_final, tmp))
+		return (0);
+	return (1);
 }
 
 int	ft_handle_quotes_in_word(char *str, int i, char **final)

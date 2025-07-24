@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 11:26:24 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 01:26:35 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/24 04:16:14 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,13 +59,13 @@ int	ft_quit_brackets(t_token *token, int *open, int *close)
 	i = 0;
 	new_value = NULL;
 	j = to_quit;
-	while (value[i] && value[i] == '(' && (!i 
+	while (value[i] && value[i] == '(' && (!i
 			|| value[i - 1] != '\\') && (j-- > 0))
 		i++;
 	if (!ft_add_while(value, &i, ')', &new_value))
 		return (0);
 	j = to_quit;
-	while (value[i] == ')' && (!i 
+	while (value[i] == ')' && (!i
 			|| value[i - 1] != '\\') && (j-- > 0))
 		i++;
 	if (!ft_add_while(value, &i, 0, &new_value))

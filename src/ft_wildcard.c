@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 17:57:16 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 03:55:02 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/24 04:12:46 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,19 +94,22 @@ int	ft_wildcard_loop(char *str, char **str_final, t_token **tmp)
 	int		flag;
 	int		s_flag;
 
+	ft_init_quote(&quote);
 	i = 0;
 	s_flag = 0;
-	ft_init_quote(&quote);
 	while (str[i])
 	{
 		flag = 0;
 		ft_handle_quotes_and_skip(str, &i, &quote, &s_flag);
 		if (ft_handle_backslash_quotes(str, i, &quote, str_final)
-			|| ft_handle_escaped_asterisk(str, &i, &flag, str_final)
-			|| ft_handle_real_asterisk(str, &i, &quote, str_final, tmp)
-			|| ft_handle_quotes_in_word(str, i, str_final)
-			|| ft_handle_normal_chars(str, i, &quote, str_final))
-			;
+			|| ft_handle_escaped_asterisk(str, &i, &flag, str_final));
+		else if (ft_is_real_asterisk(str, i, &quote))
+		{
+			if (!ft_process_asterisk_pattern(str, &i, str_final, tmp))
+				return (0);
+		}
+		else if (ft_handle_quotes_in_word(str, i, str_final)
+			|| ft_handle_normal_chars(str, i, &quote, str_final));
 		if (str[i] && !flag)
 			i++;
 	}

@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 11:59:23 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 03:52:51 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/24 04:31:24 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 # include <signal.h>
 # include <dirent.h>
 
-extern volatile int control_c;
+extern volatile int	control_c;
 
 typedef enum e_token_type
 {
@@ -254,21 +254,27 @@ t_token			*ft_and(t_pipex *pipex, t_minishell *shell, t_token *save);
 t_token			*ft_or(t_pipex *pipex, t_minishell *shell, t_token *save);
 int				ft_check_name(char *var);
 char			*ft_quit_quotes(char **s_input, t_minishell **minishell);
-char	*token_to_str(t_token_type type);
-void	ft_cd_route(t_minishell *shell, char *cmd);
-int	ft_word_count(char const *w, char c);
-void	ft_docs_in_child(t_pipex *pipex);
-void	ft_docs_out_true(t_pipex *pipex);
-void	ft_heredoc_lonely(t_pipex *pipex);
-void	ft_echo(char *cmd);
-size_t	ft_max_strlen(char *s1, char *s2);
-int	ft_handle_real_asterisk(char *str, int *i, t_quote *q,
-	char **final, t_token **tmp);
-int	ft_handle_quotes_in_word(char *str, int i, char **final);
-int	ft_handle_normal_chars(char *str, int i, t_quote *q, char **final);
-void	ft_handle_quotes_and_skip(char *str, int *i, t_quote *q, int *s_flag);
-int	ft_handle_backslash_quotes(char *str, int i, t_quote *q, char **final);
-int	ft_find_asterisk_in_word(const char *str, int index);
-int	ft_get_pattern(char *str, int *i, char **str_final, t_token **tmp);
-int	ft_handle_escaped_asterisk(char *str, int *i, int *flag, char **final);
+char			*token_to_str(t_token_type type);
+void			ft_cd_route(t_minishell *shell, char *cmd);
+int				ft_word_count(char const *w, char c);
+void			ft_docs_in_child(t_pipex *pipex);
+void			ft_docs_out_true(t_pipex *pipex);
+void			ft_heredoc_lonely(t_pipex *pipex);
+void			ft_echo(char *cmd);
+size_t			ft_max_strlen(char *s1, char *s2);
+int				ft_handle_quotes_in_word(char *str, int i, char **final);
+int				ft_handle_normal_chars(char *str,
+					int i, t_quote *q, char **final);
+void			ft_handle_quotes_and_skip(char *str,
+					int *i, t_quote *q, int *s_flag);
+int				ft_handle_backslash_quotes(char *str,
+					int i, t_quote *q, char **final);
+int				ft_find_asterisk_in_word(const char *str, int index);
+int				ft_get_pattern(char *str, int *i,
+					char **str_final, t_token **tmp);
+int				ft_handle_escaped_asterisk(char *str,
+					int *i, int *flag, char **final);
+int				ft_process_asterisk_pattern(char *str,
+					int *i, char **str_final, t_token **tmp);
+int				ft_is_real_asterisk(char *str, int i, t_quote *q);
 #endif

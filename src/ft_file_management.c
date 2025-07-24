@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 20:03:11 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 02:47:32 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/24 04:14:32 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ int	ft_fill_files_loop(DIR **dir, struct dirent **entry, char ***files, int *i)
 		{
 			(*files)[*i] = ft_strdup((*entry)->d_name);
 			if (!(*files)[(*i)++])
-					return (0);
+				return (0);
 		}
 		(*entry) = readdir(*dir);
 	}
@@ -81,7 +81,7 @@ char	**ft_fill_files(int size)
 	entry = readdir(dir);
 	files[size] = NULL;
 	if (!ft_fill_files_loop(&dir, &entry, &files, &i))
-			return (closedir(dir), ft_free_array(files), NULL);
+		return (closedir(dir), ft_free_array(files), NULL);
 	closedir(dir);
 	return (files);
 }

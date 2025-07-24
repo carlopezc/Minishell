@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:21:00 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/23 20:32:48 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/24 06:06:05 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,8 @@ t_token	*ft_exectime(t_pipex *pipex, t_minishell *shell,
 	if (pipex->pid == 0 && tmp)
 	{
 		ft_exec(shell, pipex, tmp);
-		save = save->next;
+		if (save)
+			save = save->next;
 	}
 	else
 	{

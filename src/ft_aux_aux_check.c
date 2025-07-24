@@ -6,18 +6,11 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 00:41:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 04:25:39 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/24 05:48:54 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
-
-int	ft_is_quote(char c)
-{
-	if (c == '\'' || c == '\"')
-		return (1);
-	return (0);
-}
 
 static int	ft_check_duplicated2(t_env **tmp, char *name_to_add,
 	char *value, char *str)
@@ -38,34 +31,42 @@ static int	ft_check_duplicated2(t_env **tmp, char *name_to_add,
 	return (1);
 }
 
-int	ft_check_duplicated(char *str, t_env **env, t_env **undefined)
+int	ft_check_undefined(char *name, t_env **undefined)
 {
-	char	*name_to_add;
-	char	*value;
 	t_env	*tmp;
 
-	tmp = *env;
-	name_to_add = ft_get_name(str);
-	value = ft_get_value(str);
-	if (!ft_check_duplicated2(&tmp, name_to_add, value, str))
-		return (1);
-	if (undefined)
+	tmp = *undefined;
+	while (tmp)
 	{
-		tmp = *undefined;
-		while (tmp)
+		if (!ft_strncmp(name, tmp->name, ft_max_strlen(name, tmp->name)))
 		{
-			if (!ft_strncmp(name_to_add, tmp->name,
-					ft_max_strlen(name_to_add, tmp->name)))
-			{
-				ft_free_node(tmp, undefined);
-				ft_safe_free((void **)&name_to_add);
-				return (0);
-			}
-			tmp = tmp->next;
+			ft_free_node(tmp, undefined);
+			return (1);
 		}
+		tmp = tmp->next;
 	}
-	return (ft_safe_free((void **)&value),
-		ft_safe_free((void **)&name_to_add), 0);
+	return (0);
+}
+
+int	ft_check_duplicated(char *str, t_env **env, t_env **undefined)
+{
+	t_env	*tmp;
+	char	*name;
+	char	*value;
+
+	tmp = *env;
+	name = ft_get_name(str);
+	value = ft_get_value(str);
+	if (!ft_check_duplicated2(&tmp, name, value, str))
+		return (1);
+	if (undefined && ft_check_undefined(name, undefined))
+	{
+		ft_safe_free((void **)&name);
+		return (0);
+	}
+	ft_safe_free((void **)&value);
+	ft_safe_free((void **)&name);
+	return (0);
 }
 
 void	ft_check_next2(char *str, int *i, int *c_brckt)

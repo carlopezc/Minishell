@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 11:59:23 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 04:31:24 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/24 05:54:03 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,6 +133,9 @@ int				ft_add_bracket_token(t_token **token);
 int				ft_check_wildcard(t_token **tokens);
 char			*ft_create_array(char **s_input);
 void			ft_free_todo(int p, char **word);
+int				ft_is_quote(char c);
+int				ft_check_brackets(t_token *token);
+int				ft_brackets_loop(char *value, int *i, char c);
 
 //ft_token_utils.c
 void			ft_add_node_back(t_token **lst, t_token *new);

@@ -6,11 +6,18 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 15:15:42 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 04:27:09 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/24 05:48:16 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
+
+int	ft_is_quote(char c)
+{
+	if (c == '\'' || c == '\"')
+		return (1);
+	return (0);
+}
 
 char	*ft_simp_unquote(char *input, int *i, t_quote q)
 {

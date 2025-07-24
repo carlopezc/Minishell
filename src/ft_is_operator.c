@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 20:12:24 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/21 21:35:37 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/24 06:27:41 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int	ft_check_error(char *input, int i, int c)
 t_token_type	ft_is_operator4(char **value,
 		char *input, int *i, int flag)
 {
-	if (!ft_strncmp(input + *i, "|", 1))
+	if (!ft_strncmp(input + *i + flag, "|", 1))
 	{
 		if (flag)
 			return (ft_printf("syntax error\n"), ERROR);
@@ -32,7 +32,7 @@ t_token_type	ft_is_operator4(char **value,
 		*i += 1;
 		return (PIPE);
 	}
-	else if (!ft_strncmp(input + *i, "&&", 2))
+	else if (!ft_strncmp(input + *i + flag, "&&", 2))
 	{
 		if (flag)
 			return (ft_printf("syntax error\n"), ERROR);
@@ -48,7 +48,7 @@ t_token_type	ft_is_operator4(char **value,
 t_token_type	ft_is_operator3(char **value,
 		char *input, int *i, int flag)
 {
-	if (!ft_strncmp(input + *i, "||", 2))
+	if (!ft_strncmp(input + *i + flag, "||", 2))
 	{
 		if (flag)
 			return (ft_printf("syntax error\n"), ERROR);
@@ -59,11 +59,12 @@ t_token_type	ft_is_operator3(char **value,
 		}
 		return (OR);
 	}
-	else if (!ft_strncmp(input + *i, "<", 1))
+	else if (!ft_strncmp(input + *i + flag, "<", 1))
 	{
 		*i += 1;
 		if (flag)
 		{
+			(*i)++;
 			if (*(input + *i) == ')' || !ft_check_error(input, *i, ')'))
 				return (ft_printf("syntax error\n"), ERROR);
 		}
@@ -78,11 +79,12 @@ t_token_type	ft_is_operator3(char **value,
 
 t_token_type	ft_is_operator2(char **value, char *input, int *i, int flag)
 {
-	if (!ft_strncmp(input + *i, ">>", 2))
+	if (!ft_strncmp(input + *i + flag, ">>", 2))
 	{
 		*i += 2;
 		if (flag)
 		{
+			(*i)++;
 			if (*(input + *i) == ')' || !ft_check_error(input, *i, ')'))
 				return (ft_printf("syntax error\n"), ERROR);
 		}
@@ -92,11 +94,12 @@ t_token_type	ft_is_operator2(char **value, char *input, int *i, int flag)
 			return (ft_safe_free((void **)value), ERROR);
 		return (APPEND);
 	}
-	else if (!ft_strncmp(input + *i, ">", 1))
+	else if (!ft_strncmp(input + *i + flag, ">", 1))
 	{
 		*i += 1;
 		if (flag)
 		{
+			(*i)++;
 			if (*(input + *i) == ')' || !ft_check_error(input, *i, ')'))
 				return (ft_printf("syntax error\n"), ERROR);
 		}
@@ -124,16 +127,14 @@ t_token_type	ft_is_operator(char **value, char *input, int *i)
 
 	flag = 0;
 	if (*(input + *i) == '(')
-	{
 		flag = 1;
-		(*i)++;
-	}
-	ft_skip_spaces(input, i);
-	if (!ft_strncmp(input + *i, "<<", 2))
+	ft_skip_spaces(input + flag, i);
+	if (!ft_strncmp(input + *i + flag, "<<", 2))
 	{
 		*i += 2;
 		if (flag)
 		{
+			(*i)++;
 			if (*(input + *i) == ')' || !ft_check_error(input, *i, ')'))
 				return (ft_printf("syntax error\n"), ERROR);
 		}

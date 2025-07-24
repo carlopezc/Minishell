@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 18:31:30 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 04:22:48 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/24 06:21:05 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ int	ft_brackets_loop(char *value, int *i, char c)
 	}
 	return (count);
 }
-
+/*
 int	ft_check_brackets(t_token *token)
 {
 	char	*value;
@@ -103,25 +103,28 @@ int	ft_check_brackets(t_token *token)
 		ft_quit_brackets(token, &open, &close);
 	return (1);
 }
-
+*/
 int	ft_is_builtin(char *input)
 {
+	int	flag;
+
+	flag = 0;
 	if (*input == '(')
-		input = input + 1;
-	if (!ft_strncmp(input, "echo", 5) || !ft_strncmp(input, "echo ", 5))
+		flag = 1;
+	if (!ft_strncmp(input + flag, "echo", 5) || !ft_strncmp(input + flag, "echo ", 5))
 		return (1);
-	else if (!ft_strncmp(input, "cd", 3) || !ft_strncmp(input, "cd ", 3))
+	else if (!ft_strncmp(input + flag, "cd", 3) || !ft_strncmp(input + flag, "cd ", 3))
 		return (1);
-	else if (!ft_strncmp(input, "pwd", 4) || !ft_strncmp(input, "pwd ", 4))
+	else if (!ft_strncmp(input + flag, "pwd", 4) || !ft_strncmp(input + flag, "pwd ", 4))
 		return (1);
-	else if (!ft_strncmp(input, "export", 7)
-		|| !ft_strncmp(input, "export ", 7))
+	else if (!ft_strncmp(input + flag, "export", 7)
+		|| !ft_strncmp(input + flag, "export ", 7))
 		return (1);
-	else if (!ft_strncmp(input, "unset", 6) || !ft_strncmp(input, "unset ", 6))
+	else if (!ft_strncmp(input + flag, "unset", 6) || !ft_strncmp(input + flag, "unset ", 6))
 		return (1);
-	else if (!ft_strncmp(input, "env", 4) || !ft_strncmp(input, "env ", 4))
+	else if (!ft_strncmp(input + flag, "env", 4) || !ft_strncmp(input + flag, "env ", 4))
 		return (1);
-	else if (!ft_strncmp(input, "exit", 5) || !ft_strncmp(input, "exit ", 5))
+	else if (!ft_strncmp(input + flag, "exit", 5) || !ft_strncmp(input + flag, "exit ", 5))
 		return (1);
 	else
 		return (0);

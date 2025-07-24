@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 17:57:16 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 04:12:46 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/24 05:39:42 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,8 @@ int	ft_wildcard_loop(char *str, char **str_final, t_token **tmp)
 				return (0);
 		}
 		else if (ft_handle_quotes_in_word(str, i, str_final)
-			|| ft_handle_normal_chars(str, i, &quote, str_final));
+			|| ft_handle_normal_chars(str, i, &quote, str_final))
+			;
 		if (str[i] && !flag)
 			i++;
 	}

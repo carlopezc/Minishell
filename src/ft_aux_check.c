@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 18:31:30 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 20:12:15 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/24 21:28:52 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,11 +72,18 @@ int	ft_brackets_loop(char *value, int *i, char c)
 	return (count);
 }
 
-int	ft_cmp_except(char *str, char *str2, int n)
+int	ft_is_builtin2(char *input, int flag)
 {
-	if (!ft_strncmp(str, str2, n - 1) && (!str[n - 1] || (str[n - 1] == ' ' || str[n - 1] == ')')))
-		return (0);
-	return (1);
+	if (!ft_strncmp(input + flag, "unset", 6)
+		|| !ft_cmp_except(input + flag, "unset", 6))
+		return (1);
+	else if (!ft_strncmp(input + flag, "env", 4)
+		|| !ft_cmp_except(input + flag, "env", 4))
+		return (1);
+	else if (!ft_strncmp(input + flag, "exit", 5)
+		|| !ft_cmp_except(input + flag, "exit", 5))
+		return (1);
+	return (0);
 }
 
 int	ft_is_builtin(char *input)
@@ -98,15 +105,7 @@ int	ft_is_builtin(char *input)
 	else if (!ft_strncmp(input + flag, "export", 7)
 		|| !ft_cmp_except(input + flag, "export", 7))
 		return (1);
-	else if (!ft_strncmp(input + flag, "unset", 6)
-		|| !ft_cmp_except(input + flag, "unset", 6))
+	if (ft_is_builtin2(input, flag))
 		return (1);
-	else if (!ft_strncmp(input + flag, "env", 4)
-		|| !ft_cmp_except(input + flag, "env", 4))
-		return (1);
-	else if (!ft_strncmp(input + flag, "exit", 5)
-		|| !ft_cmp_except(input + flag, "exit", 5))
-		return (1);
-	else
-		return (0);
+	return (0);
 }

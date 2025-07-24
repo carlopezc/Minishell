@@ -6,12 +6,12 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 16:36:42 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 04:18:03 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/24 20:49:51 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
-
+/*
 int	ft_get_size(char *input, char c)
 {
 	int		i;
@@ -28,7 +28,7 @@ int	ft_get_size(char *input, char c)
 	if (input[i - 1] != c)
 		size++;
 	return (size);
-}
+}*/
 
 char	*ft_get_next(char *input, int *i)
 {
@@ -60,6 +60,18 @@ static char	*ft_clean_value(char *value)
 	return (value);
 }
 
+int	ft_get_value_join(char **value, char *equal, int *i, char **tmp)
+{
+	*tmp = ft_strjoin_char(*value, equal[(*i)++]);
+	if (!*tmp)
+	{
+		ft_safe_free((void **)(*value));
+		return (0);
+	}
+	*value = *tmp;
+	return (1);
+}
+
 char	*ft_get_value(char *str)
 {
 	int		i;
@@ -79,13 +91,8 @@ char	*ft_get_value(char *str)
 		value = ft_strdup("");
 		while (equal[i])
 		{
-			tmp = ft_strjoin_char(value, equal[i++]);
-			if (!tmp)
-			{
-				ft_safe_free((void **)value);
-				return (NULL);
-			}
-			value = tmp;
+			if (ft_get_value_join(&value, equal, &i, &tmp) == 0)
+				return (0);
 		}
 	}
 	return (ft_clean_value(value));

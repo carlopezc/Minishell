@@ -6,18 +6,18 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:37:21 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/24 16:11:27 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/24 20:04:24 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../get_next_line/get_next_line_bonus.h"
 #include "../header/ft_minishell.h"
 #include <fcntl.h>
 #include <sys/wait.h>
-
+/*
 void	ft_check_exit(t_pipex *pipex, t_minishell *shell)
 {
 	int	temp;
+	int	sig;
 
 	while (pipex->childs > 0)
 	{
@@ -28,13 +28,13 @@ void	ft_check_exit(t_pipex *pipex, t_minishell *shell)
 	}
 	if (WIFSIGNALED(temp))
 	{
-		int sig = WTERMSIG(temp);
+		sig = WTERMSIG(temp);
 		if (sig == SIGINT)
 			write(1, "\n", 1);
 		else if (sig == SIGQUIT)
 			write(1, "Quit (core dumped)\n", 19);
 	}
-}
+}*/
 
 t_token	*ft_and(t_pipex *pipex, t_minishell *shell, t_token *save)
 {
@@ -78,7 +78,7 @@ t_token	*ft_or(t_pipex *pipex, t_minishell *shell, t_token *save)
 	}
 	return (save);
 }
-
+/*
 void	ft_exit(t_pipex *pipex, t_minishell *shell, t_token *save)
 {
 	unsigned int	temp;
@@ -89,7 +89,7 @@ void	ft_exit(t_pipex *pipex, t_minishell *shell, t_token *save)
 	ft_free_pipex(&pipex);
 	ft_free_minishell(&shell);
 	exit(temp);
-}
+}*/
 
 static t_token	*ft_executor2(t_pipex *pipex, t_token *save, t_minishell *shell,
 	t_token *tmp)

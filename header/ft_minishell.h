@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 11:59:23 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 16:32:27 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/24 20:04:57 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -283,4 +283,9 @@ int				ft_process_asterisk_pattern(char *str,
 					int *i, char **str_final, t_token **tmp);
 int				ft_is_real_asterisk(char *str, int i, t_quote *q);
 void			ft_check_exit(t_pipex *pipex, t_minishell *shell);
+void			ft_exit(t_pipex *pipex, t_minishell *shell, t_token *save);
+void			ft_check_exit(t_pipex *pipex, t_minishell *shell);
+
+// ft_heredoc.
+int				ft_heredoc(t_token *save, t_pipex *pipex);
 #endif

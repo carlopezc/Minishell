@@ -6,24 +6,11 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 15:50:24 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 16:21:14 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/24 19:59:13 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
-
-void	ft_signals_here(int sig)
-{
-	(void)sig;
-	write(1, "\n", 1);
-	exit(130);
-}
-
-void	ft_manage_here_signals(void)
-{
-	signal(SIGINT, ft_signals_here);
-	signal(SIGQUIT, SIG_IGN);
-}
 
 void	ft_manage_sigint(int signal)
 {

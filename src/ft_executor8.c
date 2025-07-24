@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:16:20 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/23 23:54:30 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/24 17:13:19 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,29 +104,3 @@ int	ft_check_docs(int *docs)
 	}
 	return (0);
 }
-/*
-void	ft_docs_in(t_pipex *pipex)
-{
-	int		tmp_pipe[2];
-
-	pipe(tmp_pipe);
-	if (pipex->docs_in && ft_check_docs(pipex->docs_in) == -1)
-		exit (1);
-	pipex->pid = fork();
-	if (pipex->pid == 0)
-	{
-		close(tmp_pipe[0]);
-		dup2(tmp_pipe[1], 1);
-		close(tmp_pipe[1]);
-		ft_docs_in_child(pipex);
-	}
-	else
-	{
-		close(tmp_pipe[1]);
-		close(pipex->pipe[0][0]);
-		close(pipex->pipe[0][1]);
-		waitpid(pipex->pid, NULL, 0);
-		dup2(tmp_pipe[0], 0);
-		close(tmp_pipe[0]);
-	}
-}*/

@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 23:12:59 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/23 23:51:48 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/24 06:44:06 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,10 @@ void	ft_decide_exec(t_minishell *shell, t_token *save, t_pipex *pipex)
 			exit (0);
 	}
 	else
+	{
+		ft_manage_child_signals();
 		ft_pre_exec_command(pipex, save, shell);
+	}
 }
 
 void	ft_exec(t_minishell *shell, t_pipex *pipex, t_token *save)

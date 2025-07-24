@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:21:00 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/24 06:06:05 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/24 15:42:46 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,15 +21,7 @@ t_token	*ft_killchilds(t_pipex *pipex, t_minishell *shell, t_token *save)
 	else if (save && save->type == OR)
 		save = ft_or(pipex, shell, save->next);
 	else
-	{
-		while (pipex->childs > 0)
-		{
-			wait(&shell->status);
-			if (WIFEXITED(shell->status))
-				shell->status = WEXITSTATUS(shell->status);
-			pipex->childs--;
-		}
-	}
+		ft_check_exit(pipex, shell);
 	if (save)
 		return (save);
 	return (ft_terminator(pipex), NULL);

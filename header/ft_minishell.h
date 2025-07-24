@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 11:59:23 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 05:54:03 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/24 15:41:42 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,6 +177,7 @@ void			ft_change_value(char *str, t_env **node);
 
 //ft_signals.c
 void			ft_manage_shell_signals(void);
+void			ft_normal_signals(void);
 
 //ft_testing_tools.c
 char			*token_to_str(t_token_type type);
@@ -280,4 +281,5 @@ int				ft_handle_escaped_asterisk(char *str,
 int				ft_process_asterisk_pattern(char *str,
 					int *i, char **str_final, t_token **tmp);
 int				ft_is_real_asterisk(char *str, int i, t_quote *q);
+void			ft_check_exit(t_pipex *pipex, t_minishell *shell);
 #endif

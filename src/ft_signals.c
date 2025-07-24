@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 15:50:24 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/23 17:56:23 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/24 06:40:52 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,12 @@ void	ft_csignal_child(int signal)
 {
 	(void)signal;
 	exit(130);
+}
+
+void	ft_normal_signals(void)
+{
+	signal(SIGINT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
 }
 
 void	ft_manage_child_signals(void)

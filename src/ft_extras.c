@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/24 20:49:32 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/24 21:41:19 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/25 17:30:15 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,28 +28,6 @@ int	ft_get_size(char *input, char c)
 	if (input[i - 1] != c)
 		size++;
 	return (size);
-}
-
-int	ft_find_asterisk_in_word(const char *str, int index)
-{
-	int	start;
-	int	end;
-	int	i;
-
-	start = index;
-	end = index;
-	while (start > 0 && str[start - 1] != ' ')
-		start--;
-	while (str[end] && str[end] != ' ')
-		end++;
-	i = start;
-	while (i < end)
-	{
-		if (str[i] == '*')
-			return (1);
-		i++;
-	}
-	return (0);
 }
 
 char	*ft_expand_wildcard(char *input, t_token_type type)

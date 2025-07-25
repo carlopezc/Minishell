@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 23:12:59 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/24 20:13:55 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/25 22:21:26 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,28 +76,6 @@ void	ft_docs_in(t_pipex *pipex)
 		dup2(tmp_pipe[0], 0);
 		close(tmp_pipe[0]);
 	}
-}
-
-t_pipex	*ft_init_pipex(void)
-{
-	t_pipex	*pipex;
-
-	pipex = (t_pipex *)malloc(sizeof(t_pipex));
-	if (!pipex)
-		return (NULL);
-	pipex->childs = 0;
-	pipex->docs_in = NULL;
-	pipex->docs_out = NULL;
-	pipex->command = NULL;
-	pipex->path = NULL;
-	pipex->pid = 0;
-	pipex->brackets_count = 0;
-	pipex->heredoc = 0;
-	pipex->pipe[0][0] = 0;
-	pipex->pipe[0][1] = 0;
-	pipex->pipe[1][0] = 0;
-	pipex->pipe[1][1] = 0;
-	return (pipex);
 }
 
 void	ft_cd_route(t_minishell *shell, char *cmd)

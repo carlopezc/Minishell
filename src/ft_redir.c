@@ -1,18 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_executor11.c                                    :+:      :+:    :+:   */
+/*   ft_redir.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/31 18:18:41 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/05/31 19:02:06 by lbellmas         ###   ########.fr       */
+/*   Created: 2025/07/25 22:18:20 by lbellmas          #+#    #+#             */
+/*   Updated: 2025/07/25 22:18:37 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
-#include <fcntl.h>
-#include <sys/wait.h>
 
 static t_token	*ft_redir2(t_pipex *pipex, t_token *save,
 		t_token_type type, int count)

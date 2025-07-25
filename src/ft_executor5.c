@@ -6,13 +6,11 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:12:04 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/23 13:11:42 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/26 00:52:47 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
-#include <fcntl.h>
-#include <sys/wait.h>
 
 static int	ft_env2(char **var, int i, t_env *env_tmp)
 {
@@ -53,6 +51,7 @@ void	ft_env(t_minishell *shell, char *cmd)
 	env_tmp = ft_strdup_env(shell->env);
 	while (i != -1 && var[i])
 		i = ft_env2(var, i, env_tmp);
+	//sale si i == -1 con exitstatus = 
 	ft_print_env(env_tmp);
 	ft_free_array(var);
 	return ;

@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 16:05:18 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 19:59:28 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/25 22:15:33 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,24 @@ void	ft_check_quote(t_quote *quote, char c)
 		}
 	}
 	return ;
+}
+
+int	ft_check_heredoc(t_token *save, t_pipex *pipex)
+{
+	t_token	*tmp;
+
+	tmp = save;
+	while (tmp && tmp->type != PIPE && tmp->type != AND && tmp->type != OR)
+	{
+		if (tmp->type == HEREDOC)
+		{
+			tmp = ft_heredoc(tmp, pipex);
+			if (!tmp)
+				return (0);
+		}
+		tmp = tmp->next;
+	}
+	return (1);
 }
 
 int	ft_check_operator(char *input)

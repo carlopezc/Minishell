@@ -6,29 +6,11 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 16:36:42 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 20:49:51 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/26 01:38:29 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
-/*
-int	ft_get_size(char *input, char c)
-{
-	int		i;
-	int		size;
-
-	i = 0;
-	size = 0;
-	while (input[i])
-	{
-		if (input[i] == c)
-			size++;
-		i++;
-	}
-	if (input[i - 1] != c)
-		size++;
-	return (size);
-}*/
 
 char	*ft_get_next(char *input, int *i)
 {
@@ -47,16 +29,31 @@ char	*ft_get_next(char *input, int *i)
 static char	*ft_clean_value(char *value)
 {
 	char	*tmp;
-
+	char	flag;
+	int		i;
+	
 	tmp = NULL;
-	if ((value[0] == '\"' || value[0] == '\'')
-		&& ((value[ft_strlen(value) - 1] == '\"')
-			|| (value[ft_strlen(value) - 1] == '\'')))
+	flag = 0;
+	i = 0;
+	if ((value[i] == '\'') || value[i] == '\"')
 	{
-		tmp = ft_substr(value, 1, ft_strlen(value) - 2);
-		ft_safe_free((void **)&value);
-		value = tmp;
+		flag = value[i];
+		i++;
 	}
+	while (value[i] && value[i + 1])
+	{
+		if ((value[i] == '\'' || value[i] == '\"') && (!i || value[i - 1] != '\\')
+				&& value[i] == flag)
+			i++;
+		else
+			tmp = ft_strjoin_char(tmp, value[i++]);
+	}
+	if (flag == value[i])
+		i++;
+	else
+		tmp = ft_strjoin_char(tmp, value[i++]);
+	ft_safe_free((void **)&value);
+	value = tmp;
 	return (value);
 }
 

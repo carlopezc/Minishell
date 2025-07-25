@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 11:59:23 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/25 12:54:58 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/25 14:36:46 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,7 +126,7 @@ void			ft_merge_lists(t_minishell **shell,
 size_t			ft_max_strlen(char *s1, char *s2);
 void			ft_free_node(t_env *node, t_env **list);
 void			ft_print_array(char **arr);
-char			*ft_parsing(char *input, t_minishell **minishell);
+char			*ft_parsing(char **input, t_minishell **minishell);
 int				ft_manage_brackets(t_token *tokens);
 char			*ft_check_var(t_minishell *minishell, char *input, int *i);
 t_token			*ft_create_token(char *str, t_token_type type);
@@ -141,6 +141,7 @@ int				ft_brackets_loop(char *value, int *i, char c);
 char			*ft_expand_wildcard(char *input, t_token_type type);
 int				ft_cmp_except(char *str, char *str2, int n);
 t_env			*ft_search_pwd(t_minishell *shell);
+int	ft_parse_spaces(char **input);
 
 //ft_token_utils.c
 void			ft_add_node_back(t_token **lst, t_token *new);

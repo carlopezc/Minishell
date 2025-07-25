@@ -1,18 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_executor15.c                                    :+:      :+:    :+:   */
+/*   ft_echo.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
+/*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/23 23:59:05 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/24 02:14:42 by carlopez         ###   ########.fr       */
+/*   Created: 2025/07/25 13:48:46 by carlopez          #+#    #+#             */
+/*   Updated: 2025/07/25 13:53:15 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
-#include <fcntl.h>
-#include <sys/wait.h>
 
 void	ft_sort_list(t_env *head)
 {

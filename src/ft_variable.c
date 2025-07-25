@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 19:24:52 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 16:34:35 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/25 14:12:30 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@ static int	ft_variable2(char **input, int *i,
 		free(expanded);
 		return (0);
 	}
+	else if (!(*input)[*i] || (*input)[*i] == ' ')
+		*final = ft_strjoin_char(*final, (*input)[*i - 1]);
 	else
 	{
 		old = *final;
@@ -102,41 +104,7 @@ int	ft_variable(char **input, t_minishell **minishell)
 			final = ft_strjoin_char(final, (*input)[i++]);
 	}
 	ft_safe_free((void **)input);
-	*input = ft_check_final(final);
+	*input = final;
+	//*input = ft_check_final(final);
 	return (1);
 }
-
-/*
-int	ft_variable(char **input, t_minishell **minishell)
-{
-	t_quote	quote;
-	int		i;
-	char	*final;
-
-	i = 0;
-	final = NULL;
-	ft_init_quote(&quote);
-	if (!*input || !(*input)[0] || !ft_strchr(*input, '$'))
-		return (0);
-	while ((*input)[i])
-	{
-		if (!i || (!(*input)[i - 1] || (*input)[i - 1] != '\\'))
-			ft_check_quote(&quote, (*input)[i]);
-		if ((*input)[i] == '$' && (quote.type != '\'' && (*input)[i] != '\''
-					&& (!i || (*input)[i - 1] != '\\')))
-		{
-			if (!ft_variable2(input, &i, minishell, &final))
-			{
-				ft_safe_free((void **)input);
-				*input = final;
-				return (1);
-			}
-		}
-		else
-			final = ft_strjoin_char(final, (*input)[i++]);
-	}
-	ft_safe_free((void **)input);
-	*input = ft_check_final(final);
-	return (1);
-}
-*/

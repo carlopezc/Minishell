@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 12:44:53 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/25 13:15:00 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/25 14:36:39 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,7 +131,36 @@ void	ft_last(t_token **token)
 	return ;
 }
 
-char	*ft_parsing(char *input, t_minishell **minishell)
+int	ft_parse_spaces(char **input)
+{
+	int	i;
+	t_quote	q;
+	char	*final;
+	char	*tmp;
+
+	i = 0;
+	tmp = *input;
+	ft_init_quote(&q);
+	final = NULL;
+	while (tmp[i])
+	{
+		if ((tmp[i] == '\'' || tmp[i] == '\"') && (!i || tmp[i - 1] != '\\'))
+			ft_check_quote(&q, tmp[i]);
+		if (tmp[i] == ' ')
+			final = ft_strjoin_char(final, tmp[i++]);
+		while (tmp[i] && tmp[i] == ' ' && !q.flag)
+			i++;
+		if (tmp[i])
+			final = ft_strjoin_char(final, tmp[i++]);
+		if (!final)
+			return (0);
+	}
+	free(*input);
+	*input = final;
+	return (1);
+}
+
+char	*ft_parsing(char **input, t_minishell **minishell)
 {
 	char	**s_input;
 	char	*input_final;
@@ -139,11 +168,11 @@ char	*ft_parsing(char *input, t_minishell **minishell)
 	s_input = NULL;
 	if (!input | !*input)
 		return (NULL);
-	if (!ft_count_quotes(input))
+	if (!ft_count_quotes(*input))
 		return (ft_printf("Quotes not closed\n"), NULL);
-	if (!ft_count_brackets(input))
+	if (!ft_count_brackets(*input))
 		return (ft_printf("Brackets not closed\n"), NULL);
-	s_input = ft_split_cmd(input, ' ');
+	s_input = ft_split_cmd(*input, ' ');
 	if (!s_input || !*s_input)
 		return (ft_free_array(s_input), NULL);
 	input_final = ft_quit_quotes(s_input, minishell);

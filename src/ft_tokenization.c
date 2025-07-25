@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/25 13:09:55 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/25 14:22:40 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,7 +126,7 @@ int	ft_process_input(t_minishell **minishell, char *input)
 	final_input = NULL;
 	if (!minishell || !input)
 		return (0);
-	final_input = ft_parsing(input, minishell);
+	final_input = ft_parsing(&input, minishell);
 	if (!final_input)
 		return (0);
 	while ((size_t)i <= ft_strlen(final_input) && final_input[i])

@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:19:49 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/25 18:25:05 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/25 20:36:57 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ void	ft_analisis_comands2(t_pipex *pipex, t_minishell *shell, t_token *tmp)
 {
 	char	*temp;
 
-	if (ft_strchr(tmp->str, '/'))
+	if (tmp->str[0] == '/')
 	{
 		temp = ft_strrchr(tmp->str, '/');
 		pipex->command = ft_split(temp + 1, ' ');

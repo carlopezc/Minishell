@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 15:15:42 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 19:50:39 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/25 21:19:03 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,13 +57,17 @@ void	ft_unquote_loop(char **input, int *i, char **final, t_quote *q)
 {
 	char	*simp;
 	int		in_word;
+	char	*tmp;
 
 	simp = NULL;
 	in_word = 1;
+	tmp = NULL;
 	if ((*input)[*i] == '\'' && (!(*i) || (*input)[*i - 1] != '\\'))
 	{
 		simp = ft_simp_unquote(*input, i, *q);
-		*final = ft_strjoin(*final, simp);
+		tmp = *final;
+		*final = ft_strjoin(tmp, simp);
+		ft_safe_free((void **)&tmp);
 		ft_safe_free((void **)&simp);
 		return ;
 	}

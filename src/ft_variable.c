@@ -6,11 +6,17 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 19:24:52 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/25 14:12:30 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/25 19:10:18 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
+
+static void	ft_init_variable(char **old, char **expanded)
+{
+	*old = NULL;
+	*expanded = NULL;
+}
 
 static int	ft_variable2(char **input, int *i,
 		t_minishell **minishell, char **final)
@@ -18,8 +24,7 @@ static int	ft_variable2(char **input, int *i,
 	char	*old;
 	char	*expanded;
 
-	old = NULL;
-	expanded = NULL;
+	ft_init_variable(&old, &expanded);
 	if ((*input)[++(*i)] == '?')
 	{
 		old = *final;
@@ -105,6 +110,5 @@ int	ft_variable(char **input, t_minishell **minishell)
 	}
 	ft_safe_free((void **)input);
 	*input = final;
-	//*input = ft_check_final(final);
 	return (1);
 }

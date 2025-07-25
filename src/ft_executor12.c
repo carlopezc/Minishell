@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:19:49 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/24 20:13:32 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/25 18:25:05 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,8 @@ int	ft_check_heredoc(t_token *save, t_pipex *pipex)
 	{
 		if (tmp->type == HEREDOC)
 		{
-			if (!ft_heredoc(tmp, pipex))
+			tmp = ft_heredoc(tmp, pipex);
+			if (!tmp)
 				return (0);
 		}
 		tmp = tmp->next;

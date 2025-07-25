@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 18:28:50 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 04:14:59 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/25 13:18:18 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,15 +34,19 @@ int	ft_count_brackets(char *str)
 	int	i;
 	int	o_bracket;
 	int	c_bracket;
+	t_quote	q;
 
 	o_bracket = 0;
 	c_bracket = 0;
+	ft_init_quote(&q);
 	i = 0;
 	while (str[i])
 	{
-		if (str[i] == '(' && (!i || (!str[i - 1] || str[i - 1] != '\\')))
+		if (str[i] && (str[i] == '\'' || str[i] == '\"') && (!i || str[i - 1] != '\\'))
+			ft_check_quote(&q, str[i]);
+		if (!q.flag && str[i] == '(' && (!i || (!str[i - 1] || str[i - 1] != '\\')))
 			o_bracket++;
-		else if (str[i] == ')' && (!i || (!str[i - 1] || str[i - 1] != '\\')))
+		else if (!q.flag && str[i] == ')' && (!i || (!str[i - 1] || str[i - 1] != '\\')))
 			c_bracket++;
 		i++;
 	}

@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/24 05:51:14 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/25 12:45:51 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/25 13:19:27 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ int	ft_check_brackets(t_token *token)
 	while (value[i] && value[i] == ' ')
 		i++;
 	if (close && value[i])
-		return (ft_printf("syntax error"), 0);
+		return (ft_printf("syntax error\n"), 0);
 	else if (open && close)
 		ft_quit_brackets(token, &open, &close);
 	return (1);

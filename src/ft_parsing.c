@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 12:44:53 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/25 10:51:14 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/25 13:15:00 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,60 +131,18 @@ void	ft_last(t_token **token)
 	return ;
 }
 
-static int	ft_check_outer_parens(char *str)
-{
-	int	i;
-	int	len;
-	int	level;
-
-	i = 0;
-	len = ft_strlen(str);
-	if (len < 2 || str[0] != '(' || str[len - 1] != ')')
-		return (0);
-	level = 0;
-	while (i < len - 1)
-	{
-		if (str[i] == '(')
-			level++;
-		else if (str[i] == ')')
-			level--;
-		if (level == 0)
-			return (0);
-		i++;
-	}
-	return (level == 1);
-}
-
-char	*ft_parse_brackets(char *str)
-{
-	char	*trimmed;
-
-	trimmed = NULL;
-	while (ft_check_outer_parens(str))
-	{
-		trimmed = ft_substr(str, 1, ft_strlen(str) - 2);
-		//ft_safe_free((void **)&str);
-		str = trimmed;
-	}
-	return (str);
-}
-
-
 char	*ft_parsing(char *input, t_minishell **minishell)
 {
 	char	**s_input;
 	char	*input_final;
-	//char	*clean;
 
 	s_input = NULL;
-	//clean = NULL;
 	if (!input | !*input)
 		return (NULL);
 	if (!ft_count_quotes(input))
 		return (ft_printf("Quotes not closed\n"), NULL);
 	if (!ft_count_brackets(input))
 		return (ft_printf("Brackets not closed\n"), NULL);
-	//clean = ft_parse_brackets(input);
 	s_input = ft_split_cmd(input, ' ');
 	if (!s_input || !*s_input)
 		return (ft_free_array(s_input), NULL);

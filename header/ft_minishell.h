@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 11:59:23 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/25 17:26:56 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/25 18:45:15 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -308,6 +308,7 @@ void			ft_check_in_word(int *in_word, char c);
 void			ft_set_to_quit(int *open, int *close, int *to_quit);
 int				ft_add_while(char *value, int *i, char c, char **new_value);
 int				ft_first_or_last(char *str, int i);
+void			ft_skip_spaces(char *input, int *i);
 
 // ft_heredoc.
 int				ft_heredoc(t_token *save, t_pipex *pipex);

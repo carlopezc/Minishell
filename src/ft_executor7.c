@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:14:50 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/24 21:24:35 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/25 13:35:01 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ void	ft_unset(t_minishell *shell, char *cmd)
 		i++;
 	}
 	if (vars)
-		free(vars);
+		ft_free_array(vars);
 	return ;
 }
 

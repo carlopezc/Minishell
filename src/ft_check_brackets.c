@@ -6,12 +6,55 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/24 05:51:14 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 06:04:25 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/25 12:45:51 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
 
+int	ft_check_brackets(t_token *token)
+{
+	char	*value;
+	int		i;
+	int		open;
+	int		close;
+	int	flag;
+
+	value = token->str;
+	i = 0;
+	open = 0;
+	close = 0;
+	flag = 0;
+	while (value[i] && (value[i] == '('
+			&& (!i || value[i - 1] != '\\')))
+	{
+		i++;
+		open++;
+	}
+	while (value[i] && (value[i] != '(' && value[i] != ')'))
+	{
+		if (value[i] != ' ')
+			flag = 1;
+		i++;
+	}
+	if (value[i] && ((value[i] == '(' && (!i || value[i - 1] != '\\')) || !flag))
+		return (ft_printf("syntax error\n"), 0);
+	while (value[i] && (value[i] == ')'
+			&& (!i || value[i - 1] != '\\')))
+	{
+		i++;
+		close++;
+	}
+	while (value[i] && value[i] == ' ')
+		i++;
+	if (close && value[i])
+		return (ft_printf("syntax error"), 0);
+	else if (open && close)
+		ft_quit_brackets(token, &open, &close);
+	return (1);
+}
+
+/*
 int	ft_check_mid_brackets(char *value, int *i, int *flag)
 {
 	while (value[*i] && value[*i] != '(' && value[*i] != ')')
@@ -63,3 +106,4 @@ int	ft_check_brackets(t_token *token)
 		ft_quit_brackets(token, &data[0], &data[1]);
 	return (1);
 }
+*/

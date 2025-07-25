@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/24 16:57:48 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 17:00:51 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/25 12:15:30 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,8 @@ t_token_type	ft_is_operator4(char **value,
 		*i += 2;
 		return (AND);
 	}
-	else if (flag)
-		(*i)--;
+	//else if (flag)
+	//	(*i)--;
 	return (NOT_SET);
 }
 
@@ -100,8 +100,14 @@ t_token_type	ft_handle_pipe_or(
 			ft_printf("syntax error\n");
 			return (ERROR);
 		}
-		*value = ft_strdup("||");
 		*i += 2;
+		if (*(input + *i + flag) == ')')
+		{
+			*value = ft_strdup("||)");
+			(*i)++;
+		}
+		else
+			*value = ft_strdup("||");
 		return (OR);
 	}
 	return (NOT_SET);

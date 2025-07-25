@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 18:31:30 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 21:28:52 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/25 12:54:04 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,9 +42,9 @@ int	ft_last_check(t_token *tokens)
 	i = 0;
 	while (tmp)
 	{
-		while ((tmp->str)[i])
+		while (tmp->str && (tmp->str)[i])
 		{
-			if ((tmp->str)[i] && (tmp->str)[i] == '(' && ((i == 0
+			if ((tmp->str)[i] && (tmp->str)[i] == '(' && ((!i
 				|| (tmp->str)[i - 1] != '\\')))
 				o_brckt++;
 			i++;
@@ -72,16 +72,16 @@ int	ft_brackets_loop(char *value, int *i, char c)
 	return (count);
 }
 
-int	ft_is_builtin2(char *input, int flag)
+int	ft_is_builtin2(char *input, int flag, int i)
 {
-	if (!ft_strncmp(input + flag, "unset", 6)
-		|| !ft_cmp_except(input + flag, "unset", 6))
+	if (!ft_strncmp(input + flag + i, "unset", 6)
+		|| !ft_cmp_except(input + flag + i, "unset", 6))
 		return (1);
-	else if (!ft_strncmp(input + flag, "env", 4)
-		|| !ft_cmp_except(input + flag, "env", 4))
+	else if (!ft_strncmp(input + flag + i, "env", 4)
+		|| !ft_cmp_except(input + flag + i, "env", 4))
 		return (1);
-	else if (!ft_strncmp(input + flag, "exit", 5)
-		|| !ft_cmp_except(input + flag, "exit", 5))
+	else if (!ft_strncmp(input + flag + i, "exit", 5)
+		|| !ft_cmp_except(input + flag + i, "exit", 5))
 		return (1);
 	return (0);
 }
@@ -89,23 +89,26 @@ int	ft_is_builtin2(char *input, int flag)
 int	ft_is_builtin(char *input)
 {
 	int	flag;
+	int	i;
 
 	flag = 0;
+	i = 0;
 	if (*input == '(')
 		flag = 1;
-	if (!ft_strncmp(input + flag, "echo", 5)
-		|| !ft_cmp_except(input + flag, "echo", 5))
+	ft_skip_spaces(input + flag, &i);
+	if (!ft_strncmp(input + flag + i, "echo", 5)
+		|| !ft_cmp_except(input + flag + i, "echo", 5))
 		return (1);
-	else if (!ft_strncmp(input + flag, "cd", 3)
-		|| !ft_cmp_except(input + flag, "cd", 3))
+	else if (!ft_strncmp(input + flag + i, "cd", 3)
+		|| !ft_cmp_except(input + flag + i, "cd", 3))
 		return (1);
-	else if (!ft_strncmp(input + flag, "pwd", 4)
-		|| !ft_cmp_except(input + flag, "pwd", 4))
+	else if (!ft_strncmp(input + flag + i, "pwd", 4)
+		|| !ft_cmp_except(input + flag + i, "pwd", 4))
 		return (1);
-	else if (!ft_strncmp(input + flag, "export", 7)
-		|| !ft_cmp_except(input + flag, "export", 7))
+	else if (!ft_strncmp(input + flag + i, "export", 7)
+		|| !ft_cmp_except(input + flag + i, "export", 7))
 		return (1);
-	if (ft_is_builtin2(input, flag))
+	if (ft_is_builtin2(input, flag, i))
 		return (1);
 	return (0);
 }

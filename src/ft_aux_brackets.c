@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 01:52:34 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 19:58:57 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/25 12:40:31 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ int	ft_add_brackets_loop(t_token *prev, t_token **token, t_token **tmp)
 
 	i = 0;
 	str = (*tmp)->str;
-	while (str[i])
+	while (str && str[i])
 	{
 		res = ft_add_bracket_token2(tmp, prev, &i, token);
 		if (!res)
@@ -131,6 +131,8 @@ int	ft_add_bracket_token(t_token **token)
 		prev = tmp;
 		tmp = tmp->next;
 	}
+	if (!(*token)->str)
+		return (0);
 	ft_last(token);
 	return (1);
 }

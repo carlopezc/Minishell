@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 12:44:53 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 22:03:16 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/25 10:51:14 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,32 @@ void	ft_quit_first_last(t_token **token)
 	return ;
 }
 
+int	ft_check_to_quit(t_token *token)
+{
+	t_token	*tmp;
+	int	open;
+	int	close;
+
+	open = 0;
+	close = 0;
+	tmp = token;
+	if (tmp->type == O_BRACKET)
+		tmp = tmp->next;
+	while (tmp)
+	{
+		if (tmp->type == C_BRACKET && !open && tmp->next)
+			return (0);
+		else if (tmp->type == O_BRACKET)
+			open++;
+		else if (tmp->type == C_BRACKET && tmp->next)
+			close++;
+		tmp = tmp->next;	
+	}
+	if (open == close)
+		return (1);
+	return (0);
+}
+
 void	ft_last(t_token **token)
 {
 	t_token	*tmp;
@@ -100,7 +126,7 @@ void	ft_last(t_token **token)
 	}
 	if (o_bracket != c_bracket)
 		return ;
-	if (tmp->type == C_BRACKET)
+	if (tmp->type == C_BRACKET && (*token)->type == O_BRACKET && ft_check_to_quit(*token))
 		ft_quit_first_last(token);
 	return ;
 }
@@ -133,9 +159,11 @@ char	*ft_parse_brackets(char *str)
 {
 	char	*trimmed;
 
+	trimmed = NULL;
 	while (ft_check_outer_parens(str))
 	{
 		trimmed = ft_substr(str, 1, ft_strlen(str) - 2);
+		//ft_safe_free((void **)&str);
 		str = trimmed;
 	}
 	return (str);
@@ -146,18 +174,18 @@ char	*ft_parsing(char *input, t_minishell **minishell)
 {
 	char	**s_input;
 	char	*input_final;
-	char	*str_brckt_clean;
+	//char	*clean;
 
 	s_input = NULL;
-	str_brckt_clean = NULL;
+	//clean = NULL;
 	if (!input | !*input)
 		return (NULL);
 	if (!ft_count_quotes(input))
 		return (ft_printf("Quotes not closed\n"), NULL);
 	if (!ft_count_brackets(input))
 		return (ft_printf("Brackets not closed\n"), NULL);
-	str_brckt_clean = ft_parse_brackets(input);
-	s_input = ft_split_cmd(str_brckt_clean, ' ');
+	//clean = ft_parse_brackets(input);
+	s_input = ft_split_cmd(input, ' ');
 	if (!s_input || !*s_input)
 		return (ft_free_array(s_input), NULL);
 	input_final = ft_quit_quotes(s_input, minishell);

@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 00:41:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 05:48:54 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/25 11:06:49 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ void	ft_check_next2(char *str, int *i, int *c_brckt)
 {
 	while ((str)[*i])
 	{
-		if ((str)[*i] && (str)[*i] == ')' && ((!(str)[*i - 1]
+		if ((str)[*i] && (str)[*i] == ')' && ((!(*i)
 				|| (str)[*i - 1] != '\\')))
 			(*c_brckt)++;
 		(*i)++;
@@ -99,7 +99,7 @@ int	ft_check_next(t_token *tokens, int o_brckt)
 			return (2);
 		}
 		c_brckt = 0;
-		i = -1;
+		i = 0;
 		tmp = tmp->next;
 	}
 	return (1);

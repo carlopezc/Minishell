@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 11:59:23 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 21:41:50 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/25 12:54:58 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -308,4 +308,5 @@ int				ft_add_while(char *value, int *i, char c, char **new_value);
 
 // ft_heredoc.
 int				ft_heredoc(t_token *save, t_pipex *pipex);
+void			ft_skip_spaces(char *input, int *i);
 #endif

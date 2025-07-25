@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:14:58 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 19:34:33 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/25 13:09:55 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,27 @@ int	ft_next_word(char *str)
 	return (0);
 }
 
+int	ft_first_or_last(char *str, int i)
+{
+	int	cpy;
+
+	cpy = i;
+	while (i > 0)
+	{
+		if (str[i] && (str[i] != ' ' && str[i] != '('))
+		{
+			while (str[cpy])
+			{
+				if (str[cpy] != ' ' && str[cpy] != ')')
+					return (0);
+				cpy++;
+			}
+		}
+		i--;
+	}
+	return (1);
+}
+
 char	*ft_group_input(char *input, int *i)
 {
 	char	*value;
@@ -35,7 +56,8 @@ char	*ft_group_input(char *input, int *i)
 	{
 		if (!q.flag)
 		{
-			if (input[*i] && input[*i] == ' ' && ft_next_word(&input[*i]))
+			if (input[*i] && input[*i] == ' ' && ft_next_word(&input[*i])
+				&& !ft_first_or_last(input, *i))
 				value = ft_strjoin_char(value, input[(*i)++]);
 			while (input[*i] && input[*i] == ' ')
 				(*i)++;

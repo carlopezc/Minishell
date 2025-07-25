@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 11:26:24 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 20:01:17 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/25 09:48:25 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,13 +63,15 @@ static int	ft_trim_close_paren(t_token *tmp, char *str)
 	char	*new_str;
 
 	i = 0;
+	new_str = NULL;
 	while (str[i] && (str[i] != ')' || (!i || str[i - 1] == '\\')))
 		i++;
-	if (str[i] != ')')
-		return (1);
-	new_str = ft_substr(str, 0, i + 1);
-	if (!new_str)
-		return (0);
+	if (str[i] && str[i] == ')')
+	{
+		new_str = ft_substr(str, 0, i + 1);
+		if (!new_str)
+			return (0);
+	}
 	ft_safe_free((void **)&(tmp->str));
 	tmp->str = new_str;
 	return (1);

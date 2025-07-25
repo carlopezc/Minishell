@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 20:12:24 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 17:09:31 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/25 12:25:22 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,11 +68,9 @@ t_token_type	ft_is_operator(char **value, char *input, int *i)
 	{
 		*i += 2;
 		if (flag)
-		{
 			(*i)++;
-			if (*(input + *i) == ')' || !ft_check_error(input, *i, ')'))
-				return (ft_printf("syntax error\n"), ERROR);
-		}
+		if (*(input + *i) == ')' || !ft_check_error(input, *i, ')'))
+			return (ft_printf("syntax error\n"), ERROR);
 		ft_safe_free((void **)value);
 		*value = ft_get_next(input, i);
 		if (!ft_strncmp(*value, "", ft_strlen(*value)))

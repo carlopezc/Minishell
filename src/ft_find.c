@@ -6,11 +6,18 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/24 06:40:15 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/25 14:43:15 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/25 21:31:04 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
+
+int	ft_is_quote(char c)
+{
+	if (c == '\'' || c == '\"')
+		return (1);
+	return (0);
+}
 
 int	ft_first_or_last(char *str, int i)
 {

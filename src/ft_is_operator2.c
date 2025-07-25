@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/24 16:57:48 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/25 12:15:30 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/25 14:46:13 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,6 @@ t_token_type	ft_is_operator4(char **value,
 		*i += 2;
 		return (AND);
 	}
-	//else if (flag)
-	//	(*i)--;
 	return (NOT_SET);
 }
 

@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/24 05:51:14 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/25 13:19:27 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/25 14:49:05 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int	ft_check_brackets(t_token *token)
 	int		i;
 	int		open;
 	int		close;
-	int	flag;
+	int		flag;
 
 	value = token->str;
 	i = 0;
@@ -37,7 +37,8 @@ int	ft_check_brackets(t_token *token)
 			flag = 1;
 		i++;
 	}
-	if (value[i] && ((value[i] == '(' && (!i || value[i - 1] != '\\')) || !flag))
+	if (value[i] && ((value[i] == '('
+				&& (!i || value[i - 1] != '\\')) || !flag))
 		return (ft_printf("syntax error\n"), 0);
 	while (value[i] && (value[i] == ')'
 			&& (!i || value[i - 1] != '\\')))

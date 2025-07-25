@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 12:44:53 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/25 14:36:39 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/25 14:48:13 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,8 +81,8 @@ void	ft_quit_first_last(t_token **token)
 int	ft_check_to_quit(t_token *token)
 {
 	t_token	*tmp;
-	int	open;
-	int	close;
+	int		open;
+	int		close;
 
 	open = 0;
 	close = 0;
@@ -97,7 +97,7 @@ int	ft_check_to_quit(t_token *token)
 			open++;
 		else if (tmp->type == C_BRACKET && tmp->next)
 			close++;
-		tmp = tmp->next;	
+		tmp = tmp->next;
 	}
 	if (open == close)
 		return (1);
@@ -126,14 +126,15 @@ void	ft_last(t_token **token)
 	}
 	if (o_bracket != c_bracket)
 		return ;
-	if (tmp->type == C_BRACKET && (*token)->type == O_BRACKET && ft_check_to_quit(*token))
+	if (tmp->type == C_BRACKET
+		&& (*token)->type == O_BRACKET && ft_check_to_quit(*token))
 		ft_quit_first_last(token);
 	return ;
 }
 
 int	ft_parse_spaces(char **input)
 {
-	int	i;
+	int		i;
 	t_quote	q;
 	char	*final;
 	char	*tmp;

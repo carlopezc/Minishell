@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:17:06 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/24 17:08:20 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/26 16:01:21 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,13 +19,17 @@ static char	*ft_get_docs_out2(int tmp_pipe[2])
 {
 	char	*str;
 	char	*trash;
+	char	*tmp;
 
 	trash = NULL;
 	str = get_next_line(tmp_pipe[0]);
+	tmp = NULL;
 	while (str)
 	{
-		trash = ft_strjoin(trash, str);
-		free(str);
+		tmp = trash;
+		trash = ft_strjoin(tmp, str);
+		ft_safe_free((void **)&tmp);
+		ft_safe_free((void **)&str);
 		str = get_next_line(tmp_pipe[0]);
 	}
 	return (trash);

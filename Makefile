@@ -6,7 +6,7 @@
 #    By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/27 15:14:10 by carlopez          #+#    #+#              #
-#    Updated: 2025/07/26 03:13:55 by lbellmas         ###   ########.fr        #
+#    Updated: 2025/07/26 16:28:32 by carlopez         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,7 @@ CC	= cc
 INCLUDES = -I/opt/homebrew/opt/readline/include
 LDFLAGS = -L/opt/homebrew/opt/readline/lib
 LDLIBS = -lreadline -lhistory -lcurses
-CFLAGS	= -g -Wall -Wextra -Werror -fsanitize=address 
+CFLAGS	= -g -Wall -Wextra -Werror #-fsanitize=address 
 OFLAGS	= -MMD -MF $(@:.o=.d)
 
 # Directorios
@@ -131,7 +131,7 @@ $(OBJS): $(OBJDIR)/%.o : $(SRCDIR)/%.c Makefile | $(OBJDIR) $(DEPDIR)
 
 $(BOBJ): $(BOBJDIR)/%.o : $(BSRCDIR)/%.c Makefile | $(BOBJDIR) $(DEPDIR)
 	@: printf "%-42b%b" "$(PURPLE)$<:" "$(BLUE)$(@F)$(RESET)\n"
-	$(CC) $(CFLAGS) $(OFLAGS) -c $< -o $@
+	@$(CC) $(CFLAGS) $(OFLAGS) -c $< -o $@
 	@mv $(OBJDIR)/*.d $(DEPDIR)
 
 $(OBJS_GET): $(OBJ_GETDIR)/%.o : $(GETDIR)/%.c Makefile | $(OBJ_GETDIR) $(DEPDIR)
@@ -165,7 +165,8 @@ $(LIBPRINTF):
 $(NAME): $(MAIN) $(OBJS) $(OBJS_GET) $(OUTILS) $(LIBPRINTF)
 	# $(call progress)
 	@: printf "%-42b%b" "$(PURPLE)$<:" "$(BLUE)$(@F)$(RESET)\n"
-	$(CC) $(CFLAGS) $(MAIN) $(OBJS) $(OBJS_GET) $(OUTILS) $(LIBPRINTF) -o $(NAME) $(LDFLAGS) $(LDLIBS)
+	@$(CC) $(CFLAGS) $(MAIN) $(OBJS) $(OBJS_GET) $(OUTILS) $(LIBPRINTF) -o $(NAME) $(LDFLAGS) $(LDLIBS)
+
 
 bonus: $(BONUS) $(LIBPRINTF) $(LIB) Makefile
 

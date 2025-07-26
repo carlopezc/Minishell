@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 16:36:42 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/26 03:15:43 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/26 03:18:18 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ int	ft_get_value_join(char **value, char *equal, int *i, char **tmp)
 	*tmp = ft_strjoin_char(*value, equal[(*i)++]);
 	if (!*tmp)
 	{
-		ft_safe_free((void **)(value));
+		ft_safe_free((void **)value);
 		return (0);
 	}
 	*value = *tmp;

@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 16:13:37 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 02:40:17 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/26 01:42:03 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,12 +51,16 @@ static int	ft_export_loop(char **split, t_minishell *shell)
 	t_env	*node;
 	char	*name;
 
+	//wexit status 1??????
 	i = 1;
 	name = NULL;
 	while (split[i])
 	{
 		if (!ft_check_name(split[i]))
+		{
+			//aqui si da error non valid identifier == 1 (creo) y acaba
 			return (0);
+		}
 		if (!ft_export_aux(split, i, shell, &node))
 		{
 			if (!ft_check_duplicated(split[i],
@@ -70,6 +74,7 @@ static int	ft_export_loop(char **split, t_minishell *shell)
 		}
 		i++;
 	}
+	//wexit status 0 si todo bien
 	return (1);
 }
 

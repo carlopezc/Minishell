@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 16:36:42 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/26 01:38:29 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/26 02:10:31 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,15 +46,22 @@ static char	*ft_clean_value(char *value)
 				&& value[i] == flag)
 			i++;
 		else
+		{
 			tmp = ft_strjoin_char(tmp, value[i++]);
+			if (!tmp)
+				return (NULL);
+		}
 	}
 	if (flag == value[i])
 		i++;
 	else
-		tmp = ft_strjoin_char(tmp, value[i++]);
+	{
+			tmp = ft_strjoin_char(tmp, value[i++]);
+			if (!tmp)
+				return (NULL);
+	}
 	ft_safe_free((void **)&value);
-	value = tmp;
-	return (value);
+	return (tmp);
 }
 
 int	ft_get_value_join(char **value, char *equal, int *i, char **tmp)
@@ -62,7 +69,7 @@ int	ft_get_value_join(char **value, char *equal, int *i, char **tmp)
 	*tmp = ft_strjoin_char(*value, equal[(*i)++]);
 	if (!*tmp)
 	{
-		ft_safe_free((void **)(*value));
+		ft_safe_free((void **)(value));
 		return (0);
 	}
 	*value = *tmp;

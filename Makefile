@@ -6,7 +6,7 @@
 #    By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/27 15:14:10 by carlopez          #+#    #+#              #
-#    Updated: 2025/07/26 16:28:32 by carlopez         ###   ########.fr        #
+#    Updated: 2025/07/26 16:47:39 by lbellmas         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,7 @@ CC	= cc
 INCLUDES = -I/opt/homebrew/opt/readline/include
 LDFLAGS = -L/opt/homebrew/opt/readline/lib
 LDLIBS = -lreadline -lhistory -lcurses
-CFLAGS	= -g -Wall -Wextra -Werror #-fsanitize=address 
+CFLAGS	= -g -Wall -Wextra -Werror -fsanitize=address 
 OFLAGS	= -MMD -MF $(@:.o=.d)
 
 # Directorios
@@ -42,7 +42,7 @@ LIBGET	= $(GETDIR)/get_next_line_bonus.h
 
 # Archivos fuente
 SRC	= ft_get_elements2.c ft_token_utils2.c ft_spaces.c ft_if.c ft_parsing2.c ft_find.c ft_operators.c ft_is_operator2.c ft_check_brackets.c ft_wildcard_helpers.c ft_wildcard_helpers2.c ft_aux_export.c ft_is_operator.c ft_unquote_if.c ft_unquote_inside.c ft_unquote_inside2.c ft_asterisk_mini.c ft_aux_aux_check.c ft_aux_brackets.c ft_variable.c ft_free_aux.c ft_asterisk.c ft_file_management.c ft_manage_nodes.c ft_quotes.c ft_str_utils.c ft_tokenization.c ft_parsing.c ft_executor.c ft_split_cmd.c ft_wildcard.c ft_aux_check.c ft_check.c ft_count.c ft_env.c ft_expand.c ft_export.c ft_free.c ft_get_elements.c ft_init.c ft_measurements.c ft_print.c ft_signals.c ft_strdup_variants.c ft_testing_tools.c ft_token_utils.c ft_brackets.c ft_executor2.c ft_executor3.c ft_executor4.c ft_executor5.c ft_executor6.c ft_executor7.c ft_executor8.c ft_executor9.c ft_path.c ft_redir.c ft_analisis.c ft_executor13.c ft_executor14.c ft_echo.c ft_heredoc.c ft_executor16.c ft_extras.c
-BSRC	= 
+BSRC	= ft_get_elements2.c ft_token_utils2.c ft_spaces.c ft_if.c ft_parsing2.c ft_find.c ft_operators.c ft_is_operator2.c ft_check_brackets.c ft_wildcard_helpers.c ft_wildcard_helpers2.c ft_aux_export.c ft_is_operator.c ft_unquote_if.c ft_unquote_inside.c ft_unquote_inside2.c ft_asterisk_mini.c ft_aux_aux_check.c ft_aux_brackets.c ft_variable.c ft_free_aux.c ft_asterisk.c ft_file_management.c ft_manage_nodes.c ft_quotes.c ft_str_utils.c ft_tokenization.c ft_parsing.c ft_executor.c ft_split_cmd.c ft_wildcard.c ft_aux_check.c ft_check.c ft_count.c ft_env.c ft_expand.c ft_export.c ft_free.c ft_get_elements.c ft_init.c ft_measurements.c ft_print.c ft_signals.c ft_strdup_variants.c ft_testing_tools.c ft_token_utils.c ft_brackets.c ft_executor2.c ft_executor3.c ft_executor4.c ft_executor5.c ft_executor6.c ft_executor7.c ft_executor8.c ft_executor9.c ft_path.c ft_redir.c ft_analisis.c ft_executor13.c ft_executor14.c ft_echo.c ft_heredoc.c ft_executor16.c ft_extras.c
 UTILS	= ft_utils.c
 GET	= get_next_line_bonus.c get_next_line_utils_bonus.c
 
@@ -163,16 +163,16 @@ $(LIBPRINTF):
 	@$(MAKE) --silent -C $(PRINTFDIR)
 
 $(NAME): $(MAIN) $(OBJS) $(OBJS_GET) $(OUTILS) $(LIBPRINTF)
-	# $(call progress)
+	$(call progress)
 	@: printf "%-42b%b" "$(PURPLE)$<:" "$(BLUE)$(@F)$(RESET)\n"
 	@$(CC) $(CFLAGS) $(MAIN) $(OBJS) $(OBJS_GET) $(OUTILS) $(LIBPRINTF) -o $(NAME) $(LDFLAGS) $(LDLIBS)
 
-
 bonus: $(BONUS) $(LIBPRINTF) $(LIB) Makefile
 
-$(BONUS): $(BMAIN) $(BOBJ) $(OBJS) $(LIBPRINTF)
+$(BONUS): $(MAIN) $(OBJS) $(OBJS_GET) $(OUTILS) $(LIBPRINTF)
+	$(call progress)
 	@: printf "%-42b%b" "$(PURPLE)$<:" "$(BLUE)$(@F)$(RESET)\n"
-	@$(CC) $(CFLAGS) $(BMAIN) $(BOBJ) $(OBJS) $(LIBPRINTF) -o $(BONUS)
+	@$(CC) $(CFLAGS) $(MAIN) $(OBJS) $(OBJS_GET) $(OUTILS) $(LIBPRINTF) -o $(NAME) $(LDFLAGS) $(LDLIBS)
 
 # Limpiar objetos y dependencias
 clean:
@@ -193,4 +193,4 @@ fclean: clean
 # Reconstrucción total
 re: fclean all
 
-.PHONY: all clean fclean re $(LIBPRINTF)
+.PHONY: all clean fclean re $(LIBPRINTF) bonus

@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 23:12:59 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/25 22:21:26 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/26 05:52:55 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,4 +104,5 @@ void	ft_cd_route(t_minishell *shell, char *cmd)
 		return ;
 	}
 	write (2, "No such file or directory\n", 26);
+	ft_finish_build(1, shell);
 }

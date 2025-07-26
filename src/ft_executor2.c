@@ -6,13 +6,11 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:08:11 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/23 20:58:13 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/26 05:56:08 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
-#include <fcntl.h>
-#include <sys/wait.h>
 
 void	ft_safe_free(void **p)
 {
@@ -48,7 +46,7 @@ void	ft_arrange_fd(t_pipex *pipex)
 		ft_safe_free((void **)&pipex->docs_out);
 }
 
-int	ft_check_cd(char *file, char *pwd)
+int	ft_check_cd(char *file, char *pwd, t_minishell *shell)
 {
 	char	*temp;
 	char	*final;
@@ -58,7 +56,7 @@ int	ft_check_cd(char *file, char *pwd)
 	ft_safe_free((void **)&temp);
 	if (access(final, F_OK) != 0 || access(final, X_OK) != 0)
 		return (write (2, "Cannot be accessed\n", 19),
-			ft_safe_free((void **)&final), 0);
+			ft_safe_free((void **)&final), ft_finish_build(1, shell), 0);
 	else
 		return (ft_safe_free((void **)&final), 1);
 }

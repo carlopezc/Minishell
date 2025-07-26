@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:09:11 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/24 21:43:10 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/26 05:57:25 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,7 @@ void	ft_cd_add(t_minishell *shell, char *temp)
 	char	*corrected;
 
 	pwd = ft_search_pwd(shell);
-	if (!ft_check_cd(temp + 1, (pwd->next)->value))
+	if (!ft_check_cd(temp + 1, (pwd->next)->value, shell))
 		return ;
 	join = ft_strjoin((pwd->next)->value, "/");
 	new_temp = ft_strjoin(join, temp + 1);

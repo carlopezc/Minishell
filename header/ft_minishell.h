@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 11:59:23 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/26 05:20:16 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/26 05:56:28 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -243,7 +243,7 @@ t_pipex			*ft_init_pipex(void);
 void			ft_free_pipex(t_pipex **pipex);
 char			*ft_errase_route(char *route);
 void			ft_cd_add(t_minishell *shell, char *temp);
-int				ft_check_cd(char *file, char *pwd);
+int				ft_check_cd(char *file, char *pwd, t_minishell *shell);
 void			ft_old_pwd(t_env **env, t_env *pwd);
 char			*ft_correct_cd(char *path);
 void			ft_add_node(t_env **list, t_env *prev, t_env *node);

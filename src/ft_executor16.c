@@ -6,13 +6,11 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/24 20:03:24 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/26 02:55:07 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/26 05:00:02 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
-#include <fcntl.h>
-#include <sys/wait.h>
 
 void	ft_finish_build(int num, t_minishell *shell)
 {

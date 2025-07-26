@@ -6,13 +6,13 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:12:04 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/26 02:56:31 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/26 05:03:31 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
 
-static int	ft_env2(char **var, int i, t_env *env_tmp)
+static int	ft_env2(char **var, int i, t_env *env_tmp, t_minishell *shell)
 {
 	int		flag;
 	t_env	*node;
@@ -30,6 +30,7 @@ static int	ft_env2(char **var, int i, t_env *env_tmp)
 	if (!flag)
 	{
 		ft_printf("Wrong varibale declaration format\n");
+		ft_finish_build(127, shell);
 		return (-1);
 	}
 	i++;
@@ -50,9 +51,14 @@ void	ft_env(t_minishell *shell, char *cmd)
 		return (ft_free_array(var), ft_print_env(shell->env));
 	env_tmp = ft_strdup_env(shell->env);
 	while (i != -1 && var[i])
-		i = ft_env2(var, i, env_tmp);
+	{
+		i = ft_env2(var, i, env_tmp, shell);
+		if (i == -1)
+			return (ft_free_env(&env_tmp), ft_free_array(var));
+	}
 	ft_print_env(env_tmp);
 	ft_free_array(var);
+	ft_free_env(&env_tmp);
 	return ;
 }
 

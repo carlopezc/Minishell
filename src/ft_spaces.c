@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 18:14:34 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/26 03:28:25 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/26 05:47:46 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void	ft_skip_spaces(char *input, int *i)
 		(*i)++;
 	return ;
 }
-
+/*
 int	ft_parse_spaces(char **input)
 {
 	int		i;
@@ -52,6 +52,56 @@ int	ft_parse_spaces(char **input)
 			final = ft_strjoin_char(final, tmp[i++]);
 		}
 		if (!final)
+			return (0);
+	}
+	free(*input);
+	*input = final;
+	return (1);
+}
+*/
+
+static void	ft_aux_parse_spaces(char *tmp, int *i, char **final, char *prev)
+{
+	if (tmp[*i] == ' ' && ((*prev
+				&& (*prev != '(' && *prev != ')'))
+			|| ft_check_operator(&(tmp[*i]) + 1)))
+		*final = ft_strjoin_char(*final, tmp[(*i)++]);
+}
+
+static int	ft_aux_parse_spaces2(char *tmp, int *i, char **final, char *prev)
+{
+	if (tmp[*i])
+	{
+		*prev = tmp[*i];
+		*final = ft_strjoin_char(*final, tmp[(*i)++]);
+	}
+	if (!*final)
+		return (0);
+	return (1);
+}
+
+int	ft_parse_spaces(char **input)
+{
+	int		i;
+	char	*final;
+	char	*tmp;
+	char	prev;
+	t_quote	q;
+
+	i = 0;
+	tmp = *input;
+	final = NULL;
+	ft_init_quote(&q);
+	ft_skip_spaces(tmp, &i);
+	prev = tmp[i];
+	while (tmp[i])
+	{
+		if ((tmp[i] == '\'' || tmp[i] == '\"') && (!i || tmp[i - 1] != '\\'))
+			ft_check_quote(&q, tmp[i]);
+		ft_aux_parse_spaces(tmp, &i, &final, &prev);
+		while (tmp[i] && tmp[i] == ' ' && !q.flag)
+			i++;
+		if (!ft_aux_parse_spaces2(tmp, &i, &final, &prev))
 			return (0);
 	}
 	free(*input);

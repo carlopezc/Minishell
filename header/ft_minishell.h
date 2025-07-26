@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 11:59:23 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/26 05:00:25 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/26 05:20:16 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,7 +145,8 @@ int				ft_parse_spaces(char **input);
 int				ft_first_or_last(char *str, int i);
 void			ft_quit_first_last(t_token **token);
 int				ft_reorder(t_token *token, t_minishell *shell);
-int				ft_get_value_join(char **value, char *equal, int *i, char **tmp);
+int				ft_get_value_join(char **value,
+					char *equal, int *i, char **tmp);
 char			*ft_clean_value(char *value);
 
 //ft_token_utils.c

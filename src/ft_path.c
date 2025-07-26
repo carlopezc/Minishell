@@ -1,18 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_executor10.c                                    :+:      :+:    :+:   */
+/*   ft_path.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/31 18:17:41 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/23 20:33:15 by lbellmas         ###   ########.fr       */
+/*   Created: 2025/07/25 22:08:46 by lbellmas          #+#    #+#             */
+/*   Updated: 2025/07/25 22:10:16 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
-#include <fcntl.h>
-#include <sys/wait.h>
 
 char	*ft_find_path(t_env **env)
 {
@@ -78,25 +76,4 @@ int	ft_path(t_env **env, t_pipex **pipex, char *cmd)
 	if (!split)
 		return (0);
 	return (ft_path2(pipex, split, cmd));
-}
-
-void	ft_free_pipex(t_pipex **pipex)
-{
-	int	p;
-
-	p = 0;
-	if (!*pipex)
-		return ;
-	if ((*pipex)->path)
-		ft_safe_free((void **)&(*pipex)->path);
-	if ((*pipex)->command)
-	{
-		while ((*pipex)->command[p])
-		{
-			ft_safe_free((void **)&(*pipex)->command[p]);
-			p++;
-		}
-		ft_safe_free((void **)&(*pipex)->command);
-	}
-	ft_safe_free((void **)pipex);
 }

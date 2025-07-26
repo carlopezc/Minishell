@@ -6,7 +6,7 @@
 #    By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/27 14:17:48 by lbellmas          #+#    #+#              #
-#    Updated: 2025/05/28 18:09:40 by carlopez         ###   ########.fr        #
+#    Updated: 2025/07/25 20:18:28 by lbellmas         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -50,7 +50,7 @@ $(DEPSDIR):
 
 $(LIBFT):
 	@: printf "%b" "$(BLUE)$(@F)$(RESET)\n"
-	@$(MAKE) --silent -C $(LIBFTDIR) 
+	$(MAKE) --silent -C $(LIBFTDIR) 
 
 $(NAME): $(OBJS) $(LIBFT) 
 	@: printf "%-42b%b" "$(PURPLE)$(<):" "$(BLUE)$(@F)$(RESET)\n"

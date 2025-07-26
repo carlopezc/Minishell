@@ -6,7 +6,7 @@
 #    By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/27 15:14:10 by carlopez          #+#    #+#              #
-#    Updated: 2025/07/25 18:14:46 by carlopez         ###   ########.fr        #
+#    Updated: 2025/07/26 02:30:52 by carlopez         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -41,7 +41,7 @@ LIB	= header/ft_minishell.h
 LIBGET	= $(GETDIR)/get_next_line_bonus.h
 
 # Archivos fuente
-SRC	= ft_spaces.c ft_find.c ft_operators.c ft_is_operator2.c ft_check_brackets.c ft_wildcard_helpers.c ft_wildcard_helpers2.c ft_aux_export.c ft_is_operator.c ft_unquote_if.c ft_unquote_inside.c ft_unquote_inside2.c ft_asterisk_mini.c ft_aux_aux_check.c ft_aux_brackets.c ft_variable.c ft_free_aux.c ft_asterisk.c ft_file_management.c ft_manage_nodes.c ft_quotes.c ft_str_utils.c ft_tokenization.c ft_parsing.c ft_executor.c ft_split_cmd.c ft_wildcard.c ft_aux_check.c ft_check.c ft_count.c ft_env.c ft_expand.c ft_export.c ft_free.c ft_get_elements.c ft_init.c ft_measurements.c ft_print.c ft_signals.c ft_strdup_variants.c ft_testing_tools.c ft_token_utils.c ft_brackets.c ft_executor2.c ft_executor3.c ft_executor4.c ft_executor5.c ft_executor6.c ft_executor7.c ft_executor8.c ft_executor9.c ft_executor10.c ft_executor11.c ft_executor12.c ft_executor13.c ft_executor14.c ft_echo.c ft_heredoc.c ft_executor16.c ft_extras.c
+SRC	= ft_spaces.c ft_if.c ft_parsing2.c ft_find.c ft_operators.c ft_is_operator2.c ft_check_brackets.c ft_wildcard_helpers.c ft_wildcard_helpers2.c ft_aux_export.c ft_is_operator.c ft_unquote_if.c ft_unquote_inside.c ft_unquote_inside2.c ft_asterisk_mini.c ft_aux_aux_check.c ft_aux_brackets.c ft_variable.c ft_free_aux.c ft_asterisk.c ft_file_management.c ft_manage_nodes.c ft_quotes.c ft_str_utils.c ft_tokenization.c ft_parsing.c ft_executor.c ft_split_cmd.c ft_wildcard.c ft_aux_check.c ft_check.c ft_count.c ft_env.c ft_expand.c ft_export.c ft_free.c ft_get_elements.c ft_init.c ft_measurements.c ft_print.c ft_signals.c ft_strdup_variants.c ft_testing_tools.c ft_token_utils.c ft_brackets.c ft_executor2.c ft_executor3.c ft_executor4.c ft_executor5.c ft_executor6.c ft_executor7.c ft_executor8.c ft_executor9.c ft_path.c ft_redir.c ft_analisis.c ft_executor13.c ft_executor14.c ft_echo.c ft_heredoc.c ft_executor16.c ft_extras.c
 BSRC	= 
 UTILS	= ft_utils.c
 GET	= get_next_line_bonus.c get_next_line_utils_bonus.c
@@ -119,7 +119,7 @@ endef
 
 
 # Objetivo principal
-all: $(LIBPRINTF) $(NAME) $(LIB) $(LIBGET) Makefile
+all: $(NAME) $(LIB) $(LIBGET) Makefile
 
 -include $(DEPS)
 
@@ -131,7 +131,7 @@ $(OBJS): $(OBJDIR)/%.o : $(SRCDIR)/%.c Makefile | $(OBJDIR) $(DEPDIR)
 
 $(BOBJ): $(BOBJDIR)/%.o : $(BSRCDIR)/%.c Makefile | $(BOBJDIR) $(DEPDIR)
 	@: printf "%-42b%b" "$(PURPLE)$<:" "$(BLUE)$(@F)$(RESET)\n"
-	@$(CC) $(CFLAGS) $(OFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) $(OFLAGS) -c $< -o $@
 	@mv $(OBJDIR)/*.d $(DEPDIR)
 
 $(OBJS_GET): $(OBJ_GETDIR)/%.o : $(GETDIR)/%.c Makefile | $(OBJ_GETDIR) $(DEPDIR)
@@ -165,7 +165,7 @@ $(LIBPRINTF):
 $(NAME): $(MAIN) $(OBJS) $(OBJS_GET) $(OUTILS) $(LIBPRINTF)
 	# $(call progress)
 	@: printf "%-42b%b" "$(PURPLE)$<:" "$(BLUE)$(@F)$(RESET)\n"
-	@$(CC) $(CFLAGS) $(MAIN) $(OBJS) $(OBJS_GET) $(OUTILS) $(LIBPRINTF) -o $(NAME) $(LDFLAGS) $(LDLIBS)
+	$(CC) $(CFLAGS) $(MAIN) $(OBJS) $(OBJS_GET) $(OUTILS) $(LIBPRINTF) -o $(NAME) $(LDFLAGS) $(LDLIBS)
 
 bonus: $(BONUS) $(LIBPRINTF) $(LIB) Makefile
 

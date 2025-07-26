@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 11:59:23 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/25 19:59:42 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/26 02:29:53 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,6 +143,7 @@ int				ft_cmp_except(char *str, char *str2, int n);
 t_env			*ft_search_pwd(t_minishell *shell);
 int				ft_parse_spaces(char **input);
 int				ft_first_or_last(char *str, int i);
+void			ft_quit_first_last(t_token **token);
 
 //ft_token_utils.c
 void			ft_add_node_back(t_token **lst, t_token *new);
@@ -309,7 +310,8 @@ void			ft_set_to_quit(int *open, int *close, int *to_quit);
 int				ft_add_while(char *value, int *i, char c, char **new_value);
 int				ft_first_or_last(char *str, int i);
 void			ft_skip_spaces(char *input, int *i);
-
+int				ft_if_no_next(t_env **tmp, t_env **list);
+int				ft_check_heredoc(t_token *save, t_pipex *pipex);
 // ft_heredoc.
 t_token			*ft_heredoc(t_token *save, t_pipex *pipex);
 void			ft_skip_spaces(char *input, int *i);

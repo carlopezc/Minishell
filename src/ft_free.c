@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 15:52:48 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 17:35:14 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/25 22:11:35 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,18 +33,25 @@ void	ft_free_tokens(t_minishell **minishell)
 	return ;
 }
 
-static int	ft_if_no_next(t_env **tmp, t_env **list)
+void	ft_free_pipex(t_pipex **pipex)
 {
-	if (*tmp && !(*tmp)->next)
+	int	p;
+
+	p = 0;
+	if (!*pipex)
+		return ;
+	if ((*pipex)->path)
+		ft_safe_free((void **)&(*pipex)->path);
+	if ((*pipex)->command)
 	{
-		ft_safe_free((void **)&(*tmp)->name);
-		ft_safe_free((void **)&(*tmp)->value);
-		ft_safe_free((void **)tmp);
-		*list = NULL;
-		list = NULL;
-		return (0);
+		while ((*pipex)->command[p])
+		{
+			ft_safe_free((void **)&(*pipex)->command[p]);
+			p++;
+		}
+		ft_safe_free((void **)&(*pipex)->command);
 	}
-	return (1);
+	ft_safe_free((void **)pipex);
 }
 
 void	ft_free_node2(t_env **prev, t_env **tmp, t_env **list)

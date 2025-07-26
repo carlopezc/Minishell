@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 15:51:45 by carlopez          #+#    #+#             */
-/*   Updated: 2025/06/13 11:32:21 by carlotalcd       ###   ########.fr       */
+/*   Updated: 2025/07/26 01:38:02 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void	ft_print_value(char *value)
 	ft_printf("\"");
 	while (value[i])
 	{
-		if (value[i] == '\"' || value[i] == '\'')
+		if (value[i] == '\"')
 			write(1, "\\", 1);
 		if (value[i] == '$')
 			write(1, "\\", 1);

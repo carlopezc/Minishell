@@ -6,13 +6,11 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:14:50 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/26 01:41:46 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/26 02:28:24 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
-#include <fcntl.h>
-#include <sys/wait.h>
 
 void	ft_remove_var(t_minishell **shell, t_env *node, t_env **list)
 {

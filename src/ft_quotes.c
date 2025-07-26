@@ -6,18 +6,11 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 15:15:42 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 19:50:39 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/25 21:31:11 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
-
-int	ft_is_quote(char c)
-{
-	if (c == '\'' || c == '\"')
-		return (1);
-	return (0);
-}
 
 char	*ft_simp_unquote(char *input, int *i, t_quote q)
 {
@@ -53,29 +46,36 @@ void	ft_aux_unquote(char *input, int *i, char **final, t_quote q)
 		*final = ft_strjoin_char(*final, input[(*i)++]);
 }
 
+void	ft_mini_if(int in_word, int *i, char **final, char **input)
+{
+	if (in_word)
+		(*i)++;
+	else
+		*final = ft_strjoin_char(*final, (*input)[(*i)++]);
+}
+
 void	ft_unquote_loop(char **input, int *i, char **final, t_quote *q)
 {
 	char	*simp;
 	int		in_word;
+	char	*tmp;
 
 	simp = NULL;
 	in_word = 1;
+	tmp = NULL;
 	if ((*input)[*i] == '\'' && (!(*i) || (*input)[*i - 1] != '\\'))
 	{
 		simp = ft_simp_unquote(*input, i, *q);
-		*final = ft_strjoin(*final, simp);
-		ft_safe_free((void **)&simp);
-		return ;
+		tmp = *final;
+		*final = ft_strjoin(tmp, simp);
+		return (ft_safe_free((void **)&tmp), ft_safe_free((void **)&simp));
 	}
 	ft_check_in_word(&in_word, (*input)[*i]);
 	if (((*input)[*i] == '\'' || (*input)[*i] == '\"')
 		&& (!(*i) || (*input)[*i - 1] != '\\'))
 	{
 		ft_check_quote(q, (*input)[*i]);
-		if (in_word)
-			(*i)++;
-		else
-			*final = ft_strjoin_char(*final, (*input)[(*i)++]);
+		ft_mini_if(in_word, i, final, input);
 	}
 	else
 		ft_aux_unquote(*input, i, final, *q);

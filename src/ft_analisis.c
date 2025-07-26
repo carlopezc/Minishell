@@ -1,36 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_executor12.c                                    :+:      :+:    :+:   */
+/*   ft_analisis.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/31 18:19:49 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/25 18:25:05 by lbellmas         ###   ########.fr       */
+/*   Created: 2025/07/25 22:16:33 by lbellmas          #+#    #+#             */
+/*   Updated: 2025/07/25 22:16:37 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
-#include <fcntl.h>
-#include <sys/wait.h>
-
-int	ft_check_heredoc(t_token *save, t_pipex *pipex)
-{
-	t_token	*tmp;
-
-	tmp = save;
-	while (tmp && tmp->type != PIPE && tmp->type != AND && tmp->type != OR)
-	{
-		if (tmp->type == HEREDOC)
-		{
-			tmp = ft_heredoc(tmp, pipex);
-			if (!tmp)
-				return (0);
-		}
-		tmp = tmp->next;
-	}
-	return (1);
-}
 
 static int	ft_mega_if(t_token **save)
 {
@@ -50,7 +30,7 @@ void	ft_analisis_comands2(t_pipex *pipex, t_minishell *shell, t_token *tmp)
 {
 	char	*temp;
 
-	if (ft_strchr(tmp->str, '/'))
+	if (tmp->str[0] == '/')
 	{
 		temp = ft_strrchr(tmp->str, '/');
 		pipex->command = ft_split(temp + 1, ' ');

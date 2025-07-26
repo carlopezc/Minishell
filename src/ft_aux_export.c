@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/24 02:38:38 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/24 02:39:00 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/26 02:58:04 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,12 +38,19 @@ void	ft_change_value(char *str, t_env **node)
 	char	*equal;
 	char	*str_value;
 	char	*name;
+	char	*value;
 
 	equal = ft_strchr(str, '=');
 	name = ft_get_name(str);
 	str_value = ft_get_value(str);
+	value = NULL;
 	if (*(equal - 1) == '+')
-		(*node)->value = ft_strjoin((*node)->value, str_value);
+	{
+		value = (*node)->value;
+		(*node)->value = ft_strjoin(value, str_value);
+		ft_safe_free((void **)&value);
+		ft_safe_free((void **)&str_value);
+	}
 	else
 		ft_aux_change_value(&name, &str_value, node);
 	ft_safe_free((void **)&name);

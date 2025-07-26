@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 12:44:53 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/25 19:25:17 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/26 02:29:05 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,35 +64,6 @@ void	ft_last(t_token **token)
 		&& (*token)->type == O_BRACKET && ft_check_to_quit(*token))
 		ft_quit_first_last(token);
 	return ;
-}
-
-int	ft_parse_spaces(char **input)
-{
-	int		i;
-	t_quote	q;
-	char	*final;
-	char	*tmp;
-
-	i = 0;
-	tmp = *input;
-	ft_init_quote(&q);
-	final = NULL;
-	while (tmp[i])
-	{
-		if ((tmp[i] == '\'' || tmp[i] == '\"') && (!i || tmp[i - 1] != '\\'))
-			ft_check_quote(&q, tmp[i]);
-		if (tmp[i] == ' ')
-			final = ft_strjoin_char(final, tmp[i++]);
-		while (tmp[i] && tmp[i] == ' ' && !q.flag)
-			i++;
-		if (tmp[i])
-			final = ft_strjoin_char(final, tmp[i++]);
-		if (!final)
-			return (0);
-	}
-	free(*input);
-	*input = final;
-	return (1);
 }
 
 char	*ft_parsing(char **input, t_minishell **minishell)

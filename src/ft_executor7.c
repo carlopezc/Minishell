@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:14:50 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/25 23:46:49 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/26 02:28:24 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ void	ft_check_pwd(t_minishell *shell, char *cmd)
 
 void	ft_exec_build(t_minishell *shell, char *cmd)
 {
-	if (ft_strlen(cmd) == 4)
+	if (ft_strlen(cmd) == 4 && !ft_strncmp(cmd, "echo", ft_strlen("echo")))
 	{
 		write(1, "\n", 1);
 		return ;

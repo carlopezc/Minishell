@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 20:12:24 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/25 12:25:22 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/25 18:45:37 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,15 +45,6 @@ t_token_type	ft_is_operator2(char **value, char *input, int *i, int flag)
 	if (type != NOT_SET)
 		return (type);
 	return (ft_is_operator3(value, input, i, flag));
-}
-
-void	ft_skip_spaces(char *input, int *i)
-{
-	if (!input)
-		return ;
-	while (input[*i] && input[*i] == ' ')
-		(*i)++;
-	return ;
 }
 
 t_token_type	ft_is_operator(char **value, char *input, int *i)

@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:08:11 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/26 05:56:08 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/26 16:41:39 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,18 @@ void	ft_safe_free(void **p)
 		*p = NULL;
 	}
 	return ;
+}
+
+void	ft_close_all(int *files)
+{
+	int p;
+
+	p = 0;
+	while (files[p])
+	{
+		close(files[p]);
+		p++;
+	}
 }
 
 void	ft_arrange_fd(t_pipex *pipex)
@@ -41,9 +53,13 @@ void	ft_arrange_fd(t_pipex *pipex)
 		pipex->pipe[1][1] = 0;
 	}
 	if (pipex->docs_in)
-		ft_safe_free((void **)&pipex->docs_in);
+		ft_close_all(pipex->docs_in);
+	ft_safe_free((void **)&pipex->docs_in);
 	if (pipex->docs_out)
-		ft_safe_free((void **)&pipex->docs_out);
+		ft_close_all(pipex->docs_out);
+	ft_safe_free((void **)&pipex->docs_out);
+	if (pipex->heredoc)
+		close(pipex->heredoc);
 }
 
 int	ft_check_cd(char *file, char *pwd, t_minishell *shell)

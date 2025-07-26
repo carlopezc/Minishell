@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/24 20:03:24 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/26 01:50:01 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/26 02:55:07 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 
 void	ft_finish_build(int num, t_minishell *shell)
 {
-	int pid;
+	int	pid;
 
 	pid = fork();
 	if (pid == 0)
@@ -53,7 +53,8 @@ void	ft_exit(t_pipex *pipex, t_minishell *shell, t_token *save)
 	unsigned int	temp;
 
 	temp = 0;
-	if (pipex->brackets_count || ft_check_pipes(save, shell) || pipex->pipe[0][0])
+	if (pipex->brackets_count || ft_check_pipes(save, shell)
+		|| pipex->pipe[0][0])
 		return (ft_finish_build(0, shell));
 	if (ft_strlen(save->str) > 5)
 		temp = ft_atoi(save->str + 4);

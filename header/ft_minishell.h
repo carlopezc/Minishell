@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 11:59:23 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/26 02:29:53 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/26 03:15:01 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,6 +144,9 @@ t_env			*ft_search_pwd(t_minishell *shell);
 int				ft_parse_spaces(char **input);
 int				ft_first_or_last(char *str, int i);
 void			ft_quit_first_last(t_token **token);
+int				ft_reorder(t_token *token, t_minishell *shell);
+int				ft_get_value_join(char **value, char *equal, int *i, char **tmp);
+char			*ft_clean_value(char *value);
 
 //ft_token_utils.c
 void			ft_add_node_back(t_token **lst, t_token *new);

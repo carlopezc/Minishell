@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_token_utils.c                                   :+:      :+:    :+:   */
+/*   ft_token_utils2.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
+/*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/29 16:26:52 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/26 02:52:36 by lbellmas         ###   ########.fr       */
+/*   Created: 2025/07/26 02:52:03 by lbellmas          #+#    #+#             */
+/*   Updated: 2025/07/26 02:53:13 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
-/*
+
 void	ft_special_swap(t_token *token, t_minishell *shell)
 {
 	t_token	*tmp;
@@ -101,102 +101,4 @@ int	ft_reorder(t_token *token, t_minishell *shell)
 		list = list->next;
 	}
 	return (0);
-}*/
-
-static t_token	*ft_reorder_init(int *i, int *flag, t_minishell *shell)
-{
-	*i = 1;
-	*flag = 0;
-	return (shell->tokens);
-}
-
-void	ft_reorder_tokens(t_minishell *shell)
-{
-	t_token	*tmp;
-	int		i;
-	int		flag;
-
-	tmp = ft_reorder_init(&i, &flag, shell);
-	while (tmp)
-	{
-		flag = 0;
-		if (tmp->type == COMMAND)
-			i = 0;
-		else if (tmp->type == PIPE || tmp->type == AND
-			|| tmp->type == OR || tmp->type == C_BRACKET)
-			i = 1;
-		else if ((tmp->type == REDIR_IN || tmp->type == HEREDOC
-				|| tmp->type == REDIR_OUT || tmp->type == APPEND) && i)
-		{
-			if (ft_reorder(tmp, shell))
-				tmp = shell->tokens;
-			else
-				tmp = tmp->next;
-			flag = 1;
-		}
-		if (!flag)
-			tmp = tmp->next;
-	}
-}
-
-void	ft_add_node_back(t_token **lst, t_token *new)
-{
-	t_token	*temp;
-
-	if (!lst || !new)
-		return ;
-	if (!*lst)
-	{
-		*lst = new;
-		return ;
-	}
-	temp = *lst;
-	while (temp->next)
-		temp = temp->next;
-	temp->next = new;
-	return ;
-}
-
-t_token	*ft_create_token(char *str, t_token_type type)
-{
-	t_token	*token;
-
-	if (!str)
-		return (NULL);
-	token = (t_token *)malloc(sizeof(t_token));
-	if (!token)
-		return (NULL);
-	token->str = ft_strdup(str);
-	token->type = type;
-	token->next = NULL;
-	return (token);
-}
-
-void	ft_connect_token(t_token **tokens, t_token *new, t_token *prev)
-{
-	t_token	*tmp;
-	t_token	*save;
-
-	save = NULL;
-	tmp = *tokens;
-	if (!tokens)
-		return ;
-	if (!prev)
-	{
-		new->next = *tokens;
-		*tokens = new;
-		return ;
-	}
-	while (tmp)
-	{
-		if (tmp == prev)
-		{
-			save = tmp->next;
-			tmp->next = new;
-			new->next = save;
-			return ;
-		}
-		tmp = tmp->next;
-	}
-	return ;
 }

@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 18:14:34 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/25 18:43:55 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/26 03:28:25 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,8 @@ int	ft_parse_spaces(char **input)
 		if ((tmp[i] == '\'' || tmp[i] == '\"') && (!i || tmp[i - 1] != '\\'))
 			ft_check_quote(&q, tmp[i]);
 		if (tmp[i] == ' ' && ((prev
-			&& (prev != '(' && prev != ')')) || ft_check_operator(&(tmp[i]) + 1)))
+					&& (prev != '(' && prev != ')'))
+				|| ft_check_operator(&(tmp[i]) + 1)))
 			final = ft_strjoin_char(final, tmp[i++]);
 		while (tmp[i] && tmp[i] == ' ' && !q.flag)
 			i++;
@@ -57,4 +58,3 @@ int	ft_parse_spaces(char **input)
 	*input = final;
 	return (1);
 }
-

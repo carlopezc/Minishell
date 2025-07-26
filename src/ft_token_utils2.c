@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 02:52:03 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/26 02:53:13 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/26 03:29:33 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,16 +83,9 @@ int	ft_reorder(t_token *token, t_minishell *shell)
 	{
 		if (token == list)
 		{
-			if ((list->type == HEREDOC) && (list->next
-					&& ((list->next->type == COMMAND)
-						|| (list->next->type == EXEC)
-						|| (list->next->type == BUILTIN))))
-			{
-				ft_swap_tokens(token, shell);
-				return (1);
-			}
-			else if (((list->type == REDIR_IN) || (list->type == REDIR_OUT)
-					|| (list->type == APPEND)) && ft_check_reorder(list))
+			if (((list->type == REDIR_IN) || (list->type == REDIR_OUT)
+					|| (list->type == APPEND || list->type == HEREDOC))
+				&& ft_check_reorder(list))
 			{
 				ft_special_swap(token, shell);
 				return (1);

@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 19:24:52 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/25 14:12:30 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/25 19:09:33 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,6 +105,5 @@ int	ft_variable(char **input, t_minishell **minishell)
 	}
 	ft_safe_free((void **)input);
 	*input = final;
-	//*input = ft_check_final(final);
 	return (1);
 }

@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 11:59:23 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/25 18:45:15 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/25 19:59:42 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -311,6 +311,7 @@ int				ft_first_or_last(char *str, int i);
 void			ft_skip_spaces(char *input, int *i);
 
 // ft_heredoc.
-int				ft_heredoc(t_token *save, t_pipex *pipex);
+t_token			*ft_heredoc(t_token *save, t_pipex *pipex);
 void			ft_skip_spaces(char *input, int *i);
+void			ft_reorder_tokens(t_minishell *shell);
 #endif

@@ -6,39 +6,11 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 13:48:46 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/25 13:53:15 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/26 21:23:59 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
-
-void	ft_sort_list(t_env *head)
-{
-	t_env		*ptr;
-	t_env		*lptr;
-	int			swapped;
-
-	if (!head)
-		return ;
-	swapped = 1;
-	lptr = NULL;
-	while (swapped)
-	{
-		swapped = 0;
-		ptr = head;
-		while (ptr->next != lptr)
-		{
-			if (ft_strncmp(ptr->name, ptr->next->name,
-					ft_max_strlen(ptr->name, ptr->next->name)) > 0)
-			{
-				ft_swap_list(ptr, ptr->next);
-				swapped = 1;
-			}
-			ptr = ptr->next;
-		}
-		lptr = ptr;
-	}
-}
 
 void	ft_aux_echo_print(char *cmd, int *i, t_quote *q, int *check)
 {
@@ -82,21 +54,47 @@ void	ft_echo_print(char *cmd)
 	}
 }
 
-int	ft_echo_flag(char *str, int *n)
+int	ft_aux_echo_flag(char *str, int *n, int *i)
 {
-	if (!str)
-		return (0);
-	if (str[*n] && str[*n] == '-' && str[*n + 1] == 'n')
-		(*n) += 2;
-	while (str[*n] && str[*n] == 'n')
-		(*n)++;
-	if (!str[*n] || str[*n] == ' ')
+	if (str[*i] && str[*i] != '-')
 	{
-		while (str[*n] && str[*n] == ' ')
-			(*n)++;
+		*n = *i;
 		return (1);
 	}
+	else
+		(*i)++;
+	if (!str[(*i)] || str[(*i)] != 'n')
+	{
+		(*i)--;
+		*n = *i;
+		return (1);
+	}
+	while (str[*i] && str[*i] == 'n')
+		(*i)++;
 	return (0);
+}
+
+int	ft_echo_flag(char *str, int *n)
+{
+	int	i;
+
+	i = 0;
+	while (str && str[i])
+	{
+		if (ft_aux_echo_flag(str, n, &i))
+			return (1);
+		if (!str[i])
+		{
+			*n = i;
+			return (1);
+		}
+		if (!str[i] || str[i] != ' ')
+			return (1);
+		while (str[i] && str[i] == ' ')
+			i++;
+		*n = i;
+	}
+	return (1);
 }
 
 void	ft_echo(char *cmd)
@@ -105,14 +103,14 @@ void	ft_echo(char *cmd)
 	int		n;
 
 	n = 0;
-	temp = ft_strchr(cmd, ' ');
+	temp = ft_strchr(cmd, ' ') + 1;
 	if (!temp)
 		ft_printf("\n");
-	if (!ft_strncmp(temp + 1, "-n", 2) && ft_echo_flag(temp + 1, &n))
-		ft_echo_print(temp + n + 1);
+	if (!ft_strncmp(temp, "-n", 2) && ft_echo_flag(temp, &n))
+		ft_echo_print(temp + n);
 	else
 	{
-		ft_echo_print(temp + 1);
+		ft_echo_print(temp);
 		ft_printf("\n");
 	}
 	return ;

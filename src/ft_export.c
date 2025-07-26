@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 16:13:37 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/26 01:42:03 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/26 04:05:53 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,6 @@ static int	ft_export_loop(char **split, t_minishell *shell)
 				name = ft_get_name(split[i]);
 				node = ft_create_node(name, NULL);
 				ft_connect_node(&shell->undefined_var, node);
-				ft_safe_free((void **)name);
 			}
 		}
 		i++;

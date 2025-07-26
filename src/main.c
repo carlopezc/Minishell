@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:15:05 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/25 20:52:48 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/26 04:29:57 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@ int	ft_check_otokens(t_minishell *shell)
 {
 	t_token	*tokens;
 
-	ft_printf("ENTRA\n");
 	tokens = shell->tokens;
 	if (!tokens)
 		return (0);
@@ -35,7 +34,6 @@ int	ft_check_otokens(t_minishell *shell)
 	if (tokens->type == PIPE || tokens->type == AND || tokens->type == OR)
 		return (ft_printf("Error with operators\n"), 0);
 	ft_reorder_tokens(shell);
-	ft_print_tokens(shell->tokens);
 	return (1);
 }
 

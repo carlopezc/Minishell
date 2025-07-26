@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 16:36:42 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/26 02:50:38 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/26 04:03:42 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ static char	*ft_clean_value(char *value)
 	int		i;
 	
 	tmp = NULL;
-	flag = 0;
+	flag = -1;
 	i = 0;
 	if ((value[i] == '\'') || value[i] == '\"')
 	{

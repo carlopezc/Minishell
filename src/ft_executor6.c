@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:13:20 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/26 02:23:52 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/26 03:24:21 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,6 @@ int	ft_check_name(char *var)
 	int	i;
 
 	i = 0;
-	if (!ft_strchr(var, '='))
-		return (ft_printf("Not a valid identifier\n"), 0);
 	if (!ft_isalpha(var[i]) && (var[i] != '_')
 		&& (var[i] != '\'') && (var[i] != '\"'))
 	{

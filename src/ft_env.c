@@ -6,11 +6,39 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 16:16:23 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/23 13:08:34 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/26 21:23:49 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
+
+void	ft_sort_list(t_env *head)
+{
+	t_env		*ptr;
+	t_env		*lptr;
+	int			swapped;
+
+	if (!head)
+		return ;
+	swapped = 1;
+	lptr = NULL;
+	while (swapped)
+	{
+		swapped = 0;
+		ptr = head;
+		while (ptr->next != lptr)
+		{
+			if (ft_strncmp(ptr->name, ptr->next->name,
+					ft_max_strlen(ptr->name, ptr->next->name)) > 0)
+			{
+				ft_swap_list(ptr, ptr->next);
+				swapped = 1;
+			}
+			ptr = ptr->next;
+		}
+		lptr = ptr;
+	}
+}
 
 char	**ft_create_array_env(t_env *env)
 {

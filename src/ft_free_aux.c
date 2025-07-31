@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 21:49:31 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/21 18:54:38 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/26 16:49:02 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,5 +45,15 @@ void	ft_free_array(char **arr)
 	while (arr[i])
 		ft_safe_free((void **)&arr[i++]);
 	free(arr);
+	return ;
+}
+
+void	ft_safe_free(void **p)
+{
+	if (p && *p)
+	{
+		free(*p);
+		*p = NULL;
+	}
 	return ;
 }

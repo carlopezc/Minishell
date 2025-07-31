@@ -6,25 +6,15 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:08:11 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/26 16:41:39 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/26 16:50:00 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
 
-void	ft_safe_free(void **p)
-{
-	if (p && *p)
-	{
-		free(*p);
-		*p = NULL;
-	}
-	return ;
-}
-
 void	ft_close_all(int *files)
 {
-	int p;
+	int	p;
 
 	p = 0;
 	while (files[p])

@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:15:05 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/26 04:29:57 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/26 16:38:46 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,6 @@ int	ft_main_loop(t_minishell **minishell)
 		if (!input)
 		{
 			ft_free_minishell(minishell);
-			rl_clear_history();
 			exit(0);
 		}
 		check = ft_check_main_loop(minishell, input);

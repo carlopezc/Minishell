@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 22:16:33 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/25 22:16:37 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/31 18:41:10 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,13 +29,13 @@ static int	ft_mega_if(t_token **save)
 void	ft_analisis_comands2(t_pipex *pipex, t_minishell *shell, t_token *tmp)
 {
 	char	*temp;
+	char	**split;
 
 	if (tmp->str[0] == '/')
 	{
+		split = ft_split(tmp->str, ' ');
 		temp = ft_strrchr(tmp->str, '/');
-		pipex->command = ft_split(temp + 1, ' ');
-		*temp = '\0';
-		pipex->path = ft_strdup(tmp->str);
+		pipex->command = split;
 		return ;
 	}
 	pipex->command = ft_split(tmp->str, ' ');
@@ -61,7 +61,7 @@ t_token	*ft_analisis_comands(t_pipex *pipex, t_minishell *shell, t_token **save)
 			*save = (*save)->next;
 		if (*save && (*save)->type == PIPE)
 			pipe(pipex->pipe[1]);
-		if (!ft_check_heredoc(tmp, pipex))
+		if (!ft_check_heredoc(tmp, pipex, shell))
 			return (NULL);
 		pipex->pid = fork();
 		pipex->childs++;

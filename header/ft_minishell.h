@@ -6,7 +6,7 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 11:59:23 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/26 05:56:28 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/31 19:09:13 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@
 # include <sys/wait.h>
 # include <fcntl.h>
 
-extern volatile int	g_control_c;
+extern int	g_control_c;
 
 typedef enum e_token_type
 {
@@ -315,9 +315,10 @@ int				ft_add_while(char *value, int *i, char c, char **new_value);
 int				ft_first_or_last(char *str, int i);
 void			ft_skip_spaces(char *input, int *i);
 int				ft_if_no_next(t_env **tmp, t_env **list);
-int				ft_check_heredoc(t_token *save, t_pipex *pipex);
+int				ft_check_heredoc(t_token *save,
+					t_pipex *pipex, t_minishell *shell);
 // ft_heredoc.
-t_token			*ft_heredoc(t_token *save, t_pipex *pipex);
+t_token			*ft_heredoc(t_token *save, t_pipex *pipex, t_minishell *shell);
 void			ft_skip_spaces(char *input, int *i);
 void			ft_reorder_tokens(t_minishell *shell);
 void			ft_finish_build(int num, t_minishell *shell);

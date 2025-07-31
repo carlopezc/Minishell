@@ -6,13 +6,13 @@
 /*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:15:05 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/26 16:38:46 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/31 18:33:57 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
 
-volatile int	g_control_c;
+int	g_control_c;
 
 int	ft_check_otokens(t_minishell *shell)
 {

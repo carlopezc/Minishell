@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 23:12:59 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/26 05:52:55 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/31 19:23:23 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,11 @@
 void	ft_decide_exec(t_minishell *shell, t_token *save, t_pipex *pipex)
 {
 	if (save->type == HEREDOC)
+	{
+		close(pipex->heredoc);
+		unlink(".heredoc");
 		exit(0);
+	}
 	if (save->type == BUILTIN)
 	{
 		ft_exec_build(shell, save->str);
@@ -23,10 +27,7 @@ void	ft_decide_exec(t_minishell *shell, t_token *save, t_pipex *pipex)
 			exit (0);
 	}
 	else
-	{
-		ft_manage_child_signals();
 		ft_pre_exec_command(pipex, save, shell);
-	}
 }
 
 void	ft_exec(t_minishell *shell, t_pipex *pipex, t_token *save)

@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:16:20 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/24 20:14:16 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/31 19:08:09 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ void	ft_pre_exec_command(t_pipex *pipex, t_token *cmd, t_minishell *shell)
 	env = NULL;
 	path_command = NULL;
 	command = NULL;
+	ft_manage_child_signals();
 	if (cmd->type == EXEC)
 	{
 		command = ft_split(cmd->str, ' ');

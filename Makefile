@@ -6,7 +6,7 @@
 #    By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/27 15:14:10 by carlopez          #+#    #+#              #
-#    Updated: 2025/07/26 16:47:39 by lbellmas         ###   ########.fr        #
+#    Updated: 2025/07/31 19:10:28 by lbellmas         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,7 @@ CC	= cc
 INCLUDES = -I/opt/homebrew/opt/readline/include
 LDFLAGS = -L/opt/homebrew/opt/readline/lib
 LDLIBS = -lreadline -lhistory -lcurses
-CFLAGS	= -g -Wall -Wextra -Werror -fsanitize=address 
+CFLAGS	= -g -Wall -Wextra -Werror #-fsanitize=address 
 OFLAGS	= -MMD -MF $(@:.o=.d)
 
 # Directorios

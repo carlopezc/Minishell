@@ -6,29 +6,31 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/24 19:57:09 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/26 02:28:47 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/07/31 19:19:03 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/ft_minishell.h"
 
-int	ft_check_line(char *line)
+int	ft_check_line(char *line, t_minishell *shell)
 {
 	if (!line)
 		return (ft_manage_shell_signals(), 0);
 	if (g_control_c == -1)
 	{
 		g_control_c = 0;
+		unlink(".heredoc");
+		shell->status = 130;
 		return (free(line), ft_manage_shell_signals(), 0);
 	}
 	return (1);
 }
 
-int	ft_heredoc_loop(int fd, char *line, t_token **save)
+int	ft_heredoc_loop(int fd, char *line, t_token **save, t_minishell *shell)
 {
 	line = NULL;
 	line = readline("> ");
-	if (ft_check_line(line) == 0)
+	if (ft_check_line(line, shell) == 0)
 		return (0);
 	while (ft_strncmp(line, (*save)->str, ft_strlen((*save)->str)))
 	{
@@ -36,7 +38,7 @@ int	ft_heredoc_loop(int fd, char *line, t_token **save)
 		write(fd, "\n", 1);
 		free(line);
 		line = readline("> ");
-		if (ft_check_line(line) == 0)
+		if (ft_check_line(line, shell) == 0)
 			return (0);
 	}
 	if (line)
@@ -48,7 +50,7 @@ int	ft_heredoc_loop(int fd, char *line, t_token **save)
 	return (1);
 }
 
-t_token	*ft_heredoc(t_token *save, t_pipex *pipex)
+t_token	*ft_heredoc(t_token *save, t_pipex *pipex, t_minishell *shell)
 {
 	int		fd;
 	char	*line;
@@ -62,8 +64,8 @@ t_token	*ft_heredoc(t_token *save, t_pipex *pipex)
 	while (cpy && cpy->type == HEREDOC)
 	{
 		prev = cpy;
-		if (ft_heredoc_loop(fd, line, &cpy) == 0)
-			return (NULL);
+		if (ft_heredoc_loop(fd, line, &cpy, shell) == 0)
+			return (close(fd), NULL);
 	}
 	if (line)
 		free(line);

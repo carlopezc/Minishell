@@ -6,7 +6,7 @@
 /*   By: carlopez <carlopez@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 16:05:18 by carlopez          #+#    #+#             */
-/*   Updated: 2025/07/25 22:15:33 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/07/31 18:37:39 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ void	ft_check_quote(t_quote *quote, char c)
 	return ;
 }
 
-int	ft_check_heredoc(t_token *save, t_pipex *pipex)
+int	ft_check_heredoc(t_token *save, t_pipex *pipex, t_minishell *shell)
 {
 	t_token	*tmp;
 
@@ -60,7 +60,7 @@ int	ft_check_heredoc(t_token *save, t_pipex *pipex)
 	{
 		if (tmp->type == HEREDOC)
 		{
-			tmp = ft_heredoc(tmp, pipex);
+			tmp = ft_heredoc(tmp, pipex, shell);
 			if (!tmp)
 				return (0);
 		}

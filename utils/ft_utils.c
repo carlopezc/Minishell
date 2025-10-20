@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_utils.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
+/*   By: carlopez <carlopez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/27 17:47:17 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/25 14:38:01 by carlopez         ###   ########.fr       */
+/*   Updated: 2025/10/20 15:25:14 by carlopez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,8 @@ char	*ft_quit_quotes(char **s_input, t_minishell **minishell)
 		i++;
 	}
 	input = ft_create_array(s_input);
-	ft_parse_spaces(&input);
+    if (input && *input)
+	    ft_parse_spaces(&input);
 	return (input);
 }
 

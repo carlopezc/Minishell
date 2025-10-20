@@ -6,7 +6,7 @@
 #    By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/27 15:14:10 by carlopez          #+#    #+#              #
-#    Updated: 2025/07/31 19:10:28 by lbellmas         ###   ########.fr        #
+#    Updated: 2025/10/20 15:17:02 by carlopez         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,7 @@ CC	= cc
 INCLUDES = -I/opt/homebrew/opt/readline/include
 LDFLAGS = -L/opt/homebrew/opt/readline/lib
 LDLIBS = -lreadline -lhistory -lcurses
-CFLAGS	= -g -Wall -Wextra -Werror #-fsanitize=address 
+CFLAGS	= -g -Wall -Wextra -Werror -fsanitize=address 
 OFLAGS	= -MMD -MF $(@:.o=.d)
 
 # Directorios
@@ -70,54 +70,6 @@ CYAN       = \033[0;36m
 RESET      = \033[m
 DARKGREEN = \033[38;5;22m
 
-define banner
-	@RED='\033[38;2;255;20;147m'; RESET='\033[0m'; \
-	clear; \
-	cols=$$(tput cols); \
-	rows=$$(tput lines); \
-	banner_lines=5; \
-	vpad=$$(((rows - banner_lines - 1) / 2)); \
-	for i in $$(seq 1 $$vpad); do echo ""; done; \
-	len=66; \
-	padding=$$(((cols - len) / 2 - 5)); \
-	printf "%*s" $$padding ""; echo -e "$$RED███    ███ ██ ███    ██ ██ ███████ ██   ██ ███████ ██      ██$$RESET"; \
-	printf "%*s" $$padding ""; echo -e "$$RED████  ████ ██ ████   ██ ██ ██      ██   ██ ██      ██      ██$$RESET"; \
-	printf "%*s" $$padding ""; echo -e "$$RED██ ████ ██ ██ ██ ██  ██ ██ ███████ ███████ █████   ██      ██$$RESET"; \
-	printf "%*s" $$padding ""; echo -e "$$RED██  ██  ██ ██ ██  ██ ██ ██      ██ ██   ██ ██      ██      ██$$RESET"; \
-	printf "%*s" $$padding ""; echo -e "$$RED██      ██ ██ ██   ████ ██ ███████ ██   ██ ███████ ███████ ███████$$RESET"; \
-	authors="by lbellmas & carlopez"; \
-	authors_len=$$(echo -n "$$authors" | wc -c); \
-	authors_pad=$$((cols - authors_len - 4)); \
-	printf "%*s" $$authors_pad ""; echo -e "$$RED$$authors$$RESET"; \
-	sleep 3; \
-	clear
-endef
-
-define progress
-	@cols=$$(tput cols); \
-	rows=$$(tput lines); \
-	bar_size=46; \
-	padding=$$(((cols - bar_size) / 2)); \
-	vpadding=$$((rows / 2 - 1)); \
-	clear; \
-	for i in $$(seq 1 $$vpadding); do echo ""; done; \
-	printf "%*s" $$padding ""; echo -n "Compilating: ["; \
-	for i in $$(seq 1 23); do \
-		sleep 0.1; \
-		if [ $$i -le 5 ]; then color="$(RED)"; \
-		elif [ $$i -le 10 ]; then color="$(ORANGE)"; \
-		elif [ $$i -le 15 ]; then color="$(YELLOW)"; \
-		elif [ $$i -le 19 ]; then color="$(GREEN)"; \
-		else color="$(DARKGREEN)"; fi; \
-		printf "$${color}■$(RESET)"; \
-	done; \
-	echo "] ¡Done!"; \
-	sleep 3; \
-	clear
-	$(banner)
-endef
-
-
 # Objetivo principal
 all: $(NAME) $(LIB) $(LIBGET) Makefile
 
@@ -126,22 +78,22 @@ all: $(NAME) $(LIB) $(LIBGET) Makefile
 # Compilación de archivos fuente generales
 $(OBJS): $(OBJDIR)/%.o : $(SRCDIR)/%.c Makefile | $(OBJDIR) $(DEPDIR)
 	@: printf "%-42b%b" "$(PURPLE)$<:" "$(BLUE)$(@F)$(RESET)\n"
-	@$(CC) $(CFLAGS) $(INCLUDES) $(OFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) $(INCLUDES) $(OFLAGS) -c $< -o $@
 	@mv $(OBJDIR)/*.d $(DEPDIR)
 
 $(BOBJ): $(BOBJDIR)/%.o : $(BSRCDIR)/%.c Makefile | $(BOBJDIR) $(DEPDIR)
 	@: printf "%-42b%b" "$(PURPLE)$<:" "$(BLUE)$(@F)$(RESET)\n"
-	@$(CC) $(CFLAGS) $(OFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) $(OFLAGS) -c $< -o $@
 	@mv $(OBJDIR)/*.d $(DEPDIR)
 
 $(OBJS_GET): $(OBJ_GETDIR)/%.o : $(GETDIR)/%.c Makefile | $(OBJ_GETDIR) $(DEPDIR)
 	@: printf "%-42b%b" "$(PURPLE)$<:" "$(BLUE)$(@F)$(RESET)\n"
-	@$(CC) $(CFLAGS) $(OFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) $(OFLAGS) -c $< -o $@
 	@mv $(OBJ_GETDIR)/*.d $(DEPDIR)
 
 $(OUTILS): $(OUTILSDIR)/%.o : $(UTILSDIR)/%.c Makefile | $(OUTILSDIR) $(DEPSDIR)
 	@: printf "%-42b%b" "$(PURPLE)$<:" "$(BLUE)$(@F)$(RESET)\n"
-	@$(CC) $(CFLAGS) $(OFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) $(OFLAGS) -c $< -o $@
 	@mv $(OUTILSDIR)/*.d deps/
 
 # Creación de directorios
@@ -163,14 +115,12 @@ $(LIBPRINTF):
 	@$(MAKE) --silent -C $(PRINTFDIR)
 
 $(NAME): $(MAIN) $(OBJS) $(OBJS_GET) $(OUTILS) $(LIBPRINTF)
-	$(call progress)
 	@: printf "%-42b%b" "$(PURPLE)$<:" "$(BLUE)$(@F)$(RESET)\n"
 	@$(CC) $(CFLAGS) $(MAIN) $(OBJS) $(OBJS_GET) $(OUTILS) $(LIBPRINTF) -o $(NAME) $(LDFLAGS) $(LDLIBS)
 
 bonus: $(BONUS) $(LIBPRINTF) $(LIB) Makefile
 
-$(BONUS): $(MAIN) $(OBJS) $(OBJS_GET) $(OUTILS) $(LIBPRINTF)
-	$(call progress)
+$(BONUS): $(MAIN) $(OBJS) $(OBJS_GET) $(OUTILS) #$(LIBPRINTF)
 	@: printf "%-42b%b" "$(PURPLE)$<:" "$(BLUE)$(@F)$(RESET)\n"
 	@$(CC) $(CFLAGS) $(MAIN) $(OBJS) $(OBJS_GET) $(OUTILS) $(LIBPRINTF) -o $(NAME) $(LDFLAGS) $(LDLIBS)
 

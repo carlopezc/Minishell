@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_analisis.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
+/*   By: carlotalcd <carlotalcd@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 22:16:33 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/07/31 18:41:10 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/11/19 12:59:04 by carlotalcd       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,13 +28,11 @@ static int	ft_mega_if(t_token **save)
 
 void	ft_analisis_comands2(t_pipex *pipex, t_minishell *shell, t_token *tmp)
 {
-	char	*temp;
 	char	**split;
 
 	if (tmp->str[0] == '/')
 	{
 		split = ft_split(tmp->str, ' ');
-		temp = ft_strrchr(tmp->str, '/');
 		pipex->command = split;
 		return ;
 	}
@@ -77,8 +75,6 @@ t_token	*ft_analisis_comands(t_pipex *pipex, t_minishell *shell, t_token **save)
 
 t_token	*ft_analisis_redir(t_token *save, t_pipex *pipex, t_token *tmp)
 {
-	int	temp;
-
 	if (pipex->childs != 0)
 	{
 		if (save->type == REDIR_IN)
@@ -95,9 +91,9 @@ t_token	*ft_analisis_redir(t_token *save, t_pipex *pipex, t_token *tmp)
 	else if (!tmp)
 	{
 		if (save && save->type == REDIR_OUT)
-			temp = open(save->str, O_CREAT, 0777);
+			open(save->str, O_CREAT, 0777);
 		else if (save && save->type == APPEND)
-			temp = open(save->str, O_CREAT, 0777);
+			open(save->str, O_CREAT, 0777);
 		save = save->next;
 	}
 	return (save);

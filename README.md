@@ -10,13 +10,12 @@ This is a major project that combines many core concepts of **system programming
 
 ## 🛠️ Technical Details
 
-* **Parsing:** Implements a full lexer and parser to interpret the user's command line. It splits the input into tokens, handles quotes (`'` and `"`), and builds a command structure.
-* **Command Execution:** Uses `execve()` to run external commands, searching for them in the `PATH` environment variable.
-* **Built-ins:** Implements a set of commands *within* the shell itself, such as `echo`, `cd`, `pwd`, `export`, `unset`, `env`, and `exit`, which do not run as separate processes.
-* **Pipes & Redirections:** Managages complex I/O. It can handle multiple pipes (`|`) and all standard redirections (`<`, `>`, `<<`, `>>`), correctly linking the `stdin` and `stdout` of all processes.
-* **Signal Handling:** Uses `sigaction()` to correctly manage `Ctrl-C` (which should show a new prompt, not exit) and `Ctrl-\` (which should do nothing), just like in `bash`.
-* **Environment Variables:** Manages a list of environment variables, supporting expansion (e.g., `echo $PATH`) and modification (using `export` and `unset`).
-* **Challenge:** The parser is notoriously complex, especially when handling edge cases with quotes and special characters. Managing all file descriptors correctly in a long chain of pipes (`cmd1 | cmd2 | cmd3`) is another huge challenge.
+* **Command Parsing:** Developed a lexer and parser to correctly interpret user input, handling single and double quotes, special characters, and environment variable expansion (e.g., `$USER`).
+* **Process Management:** The shell manages the lifecycle of processes, allowing it to execute external commands found in the system's `PATH`.
+* **Pipes & Redirections:** Implements full support for input/output redirection (`<`, `>`, `>>`, `<<`) and pipelines (`|`), allowing data to flow seamlessly between commands.
+* **Built-in Commands:** Recreated core shell utilities internally, including `echo`, `cd`, `pwd`, `export`, `unset`, `env`, and `exit`.
+* **Signal Handling:** Mimics standard terminal behavior, correctly processing interrupt signals (like `Ctrl-C`) without crashing the shell.
+* **Challenge:** The main challenge was coordinating the logic between the parser and the execution engine, ensuring that memory is managed perfectly during long sessions and that multiple processes communicate without errors.
 
 ## ⚙️ How to Compile & Run
 
